@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>Guia Completo do TCC | Versão Mobile</title>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5934337773167764"
-     crossorigin="anonymous"></script>
+    <title>Guia Completo do TCC | Desktop e Mobile</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5934337773167764"
+     crossorigin="anonymous"></script>
     <style>
+        /* RESET E VARIÁVEIS */
         * {
             margin: 0;
             padding: 0;
@@ -39,85 +40,81 @@
             color: var(--text-main);
             line-height: 1.6;
             overflow-x: hidden;
-            width: 100%;
-            position: relative;
         }
 
         .container {
             width: 100%;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 1rem;
+            padding: 0 1.5rem;
         }
 
-        /* ===== MENU HAMBÚRGUER ===== */
+        /* ===== NAVEGAÇÃO ===== */
         .navbar {
             background: var(--nav-bg);
-            padding: 0.8rem 0;
+            padding: 1rem 0;
             position: sticky;
             top: 0;
             z-index: 1000;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            width: 100%;
         }
 
         .nav-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: relative;
         }
 
         .brand {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
             text-decoration: none;
             color: white;
-            font-size: 0.9rem;
         }
 
         .brand-logo {
             background: var(--primary);
-            width: 32px;
-            height: 32px;
+            width: 35px;
+            height: 35px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 6px;
             font-weight: 800;
-            font-size: 0.9rem;
         }
 
-        .brand span {
+        /* Menu Desktop (padrão) */
+        .nav-links-desktop {
             display: none;
+            gap: 1.5rem;
         }
 
-        @media (min-width: 480px) {
-            .brand span {
-                display: inline;
-            }
+        .nav-links-desktop a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: 0.3s;
         }
 
-        /* Botão Hamburguer */
+        .nav-links-desktop a:hover {
+            color: var(--primary);
+        }
+
+        /* Menu Mobile (hamburguer) */
         .menu-toggle {
             background: transparent;
             border: none;
             color: white;
             font-size: 1.8rem;
             cursor: pointer;
-            display: block;
-            width: 40px;
-            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: 0.3s;
+            width: 40px;
+            height: 40px;
             z-index: 1001;
-        }
-
-        .menu-toggle:hover {
-            color: var(--primary);
         }
 
         .menu-toggle .fa-times {
@@ -132,8 +129,7 @@
             display: block;
         }
 
-        /* Menu Mobile */
-        .nav-links {
+        .nav-links-mobile {
             position: fixed;
             top: 60px;
             left: -100%;
@@ -144,23 +140,22 @@
             display: flex;
             flex-direction: column;
             padding: 2rem 1.5rem;
-            gap: 1.5rem;
-            transition: 0.4s ease-in-out;
+            gap: 1rem;
+            transition: 0.3s ease-in-out;
             z-index: 999;
             box-shadow: 4px 0 15px rgba(0,0,0,0.2);
             overflow-y: auto;
         }
 
-        .nav-links.active {
+        .nav-links-mobile.active {
             left: 0;
         }
 
-        .nav-links a {
+        .nav-links-mobile a {
             color: #cbd5e1;
             text-decoration: none;
             font-size: 1.1rem;
             font-weight: 500;
-            transition: 0.3s;
             padding: 0.8rem 1rem;
             border-radius: 8px;
             display: flex;
@@ -168,22 +163,16 @@
             gap: 12px;
         }
 
-        .nav-links a i {
+        .nav-links-mobile a i {
             width: 24px;
-            font-size: 1.2rem;
             color: var(--primary);
         }
 
-        .nav-links a:hover {
+        .nav-links-mobile a:hover {
             background: #1e293b;
             color: white;
         }
 
-        .nav-links a:hover i {
-            color: white;
-        }
-
-        /* Overlay escuro */
         .overlay {
             position: fixed;
             top: 0;
@@ -200,31 +189,45 @@
             display: block;
         }
 
+        /* Desktop: mostra menu normal, esconde mobile */
+        @media (min-width: 1024px) {
+            .nav-links-desktop {
+                display: flex;
+            }
+            .menu-toggle {
+                display: none;
+            }
+            .nav-links-mobile {
+                display: none;
+            }
+        }
+
         /* ===== HERO ===== */
         .hero {
             background: linear-gradient(135deg, var(--nav-bg) 0%, #1e293b 100%);
             color: white;
-            padding: 3rem 0;
+            padding: 5rem 0;
             text-align: center;
             border-bottom: 5px solid var(--primary);
         }
 
         .hero h1 {
-            font-size: 2rem;
+            font-size: clamp(2rem, 5vw, 3rem);
             font-weight: 800;
             margin-bottom: 1rem;
             line-height: 1.2;
         }
 
         .hero p {
-            font-size: 1rem;
+            font-size: clamp(1rem, 2vw, 1.2rem);
             color: #94a3b8;
-            max-width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
         }
 
         .hero-highlight {
             background: rgba(14, 165, 233, 0.15);
-            padding: 1.2rem;
+            padding: 1.5rem;
             border-radius: 12px;
             margin-top: 2rem;
             border-left: 4px solid var(--primary);
@@ -233,36 +236,46 @@
 
         /* ===== SEÇÕES ===== */
         section {
-            padding: 3rem 0;
+            padding: clamp(2rem, 5vw, 5rem) 0;
             border-bottom: 1px solid var(--border);
         }
 
         .section-header {
-            margin-bottom: 2.5rem;
+            margin-bottom: clamp(2rem, 4vw, 4rem);
             text-align: center;
         }
 
         .section-header h2 {
-            font-size: 1.8rem;
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
             font-weight: 800;
             color: var(--nav-bg);
-            margin-bottom: 0.8rem;
-            line-height: 1.2;
+            margin-bottom: 1rem;
         }
 
         .section-header p {
             color: var(--text-muted);
-            font-size: 1rem;
+            font-size: clamp(0.95rem, 2vw, 1.1rem);
         }
 
-        /* ===== CARDS RESPONSIVOS ===== */
+        /* ===== TIPOS DE TCC ===== */
+        .types-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
         .type-block {
             background: var(--white);
-            border-radius: 20px;
+            border-radius: 24px;
             border: 1px solid var(--border);
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            margin-bottom: 2rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+
+        .type-block:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.1);
         }
 
         .type-main-info {
@@ -278,7 +291,7 @@
 
         .type-sidebar {
             background: var(--accent-bg);
-            padding: 1.5rem;
+            padding: 2rem;
             border-bottom: 1px solid var(--border);
         }
 
@@ -291,7 +304,7 @@
         }
 
         .type-content {
-            padding: 1.5rem;
+            padding: 2rem;
         }
 
         @media (min-width: 768px) {
@@ -301,21 +314,21 @@
         }
 
         .icon-box {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             background: var(--primary);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 10px;
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
+            border-radius: 12px;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
         }
 
         h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
+            font-size: clamp(1.3rem, 3vw, 1.8rem);
+            margin-bottom: 1rem;
             color: var(--nav-bg);
         }
 
@@ -324,10 +337,14 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             color: var(--primary);
-            margin-bottom: 1.2rem;
+            margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+        }
+
+        .step-list {
+            list-style: none;
         }
 
         .step-item {
@@ -358,7 +375,6 @@
             display: block;
             margin-bottom: 4px;
             color: var(--nav-bg);
-            font-size: 1rem;
         }
 
         .step-desc {
@@ -371,91 +387,82 @@
             padding: 4px 12px;
             background: #e0f2fe;
             color: #0369a1;
-            border-radius: 20px;
-            font-size: 0.7rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
             font-weight: 600;
             margin-top: 10px;
         }
 
-        /* ===== GRIDS RESPONSIVOS ===== */
-        .grid-2, 
-        [style*="grid-template-columns: repeat(3, 1fr)"],
-        [style*="grid-template-columns: repeat(4, 1fr)"],
-        [style*="grid-template-columns: repeat(2, 1fr)"] {
+        /* ===== GRIDS ===== */
+        .grid-auto {
             display: grid;
-            grid-template-columns: 1fr !important;
-            gap: 1rem;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
         }
 
         @media (min-width: 640px) {
-            .grid-2,
-            [style*="grid-template-columns: repeat(2, 1fr)"] {
-                grid-template-columns: repeat(2, 1fr) !important;
-            }
-        }
-
-        @media (min-width: 768px) {
-            [style*="grid-template-columns: repeat(3, 1fr)"] {
-                grid-template-columns: repeat(2, 1fr) !important;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            [style*="grid-template-columns: repeat(3, 1fr)"] {
-                grid-template-columns: repeat(3, 1fr) !important;
-            }
-            [style*="grid-template-columns: repeat(4, 1fr)"] {
-                grid-template-columns: repeat(4, 1fr) !important;
-            }
-        }
-
-        /* Cards de elementos pré-textuais */
-        .grid-cards {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1rem;
-        }
-
-        @media (min-width: 480px) {
-            .grid-cards {
+            .grid-auto {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
 
-        @media (min-width: 768px) {
-            .grid-cards {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
         @media (min-width: 1024px) {
-            .grid-cards {
+            .grid-auto {
                 grid-template-columns: repeat(4, 1fr);
             }
         }
 
-        .card-item {
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .grid-2 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 640px) {
+            .grid-3 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .grid-3 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Cards */
+        .card {
             background: white;
             padding: 1.5rem;
             border-radius: 12px;
             border: 1px solid var(--border);
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .card-center {
             text-align: center;
         }
 
-        .card-item i {
-            font-size: 2rem;
+        .card-center i {
+            font-size: 2.5rem;
             color: var(--primary);
             margin-bottom: 1rem;
-        }
-
-        .card-item h4 {
-            justify-content: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .card-item p {
-            font-size: 0.85rem;
-            color: var(--text-muted);
         }
 
         /* ===== TIMELINE ===== */
@@ -473,8 +480,8 @@
         }
 
         .timeline-number {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             background: var(--primary);
             color: white;
             border-radius: 50%;
@@ -482,7 +489,7 @@
             align-items: center;
             justify-content: center;
             font-weight: 800;
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             flex-shrink: 0;
         }
 
@@ -495,7 +502,7 @@
         }
 
         .timeline-content h3 {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             margin-bottom: 0.5rem;
         }
 
@@ -503,80 +510,101 @@
         .normas-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 1rem;
+            gap: 1.5rem;
+            margin-top: 2rem;
         }
 
-        @media (min-width: 480px) {
+        @media (min-width: 640px) {
             .normas-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
 
+        @media (min-width: 1024px) {
+            .normas-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
         .norma-card {
             background: white;
-            padding: 1.5rem;
+            padding: 2rem;
             border-radius: 12px;
             border: 1px solid var(--border);
             text-align: center;
         }
 
         .norma-card i {
-            font-size: 2rem;
+            font-size: 2.5rem;
             color: var(--primary);
-            margin-bottom: 0.8rem;
-        }
-
-        .norma-card h4 {
-            justify-content: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .norma-card p {
-            font-size: 0.85rem;
+            margin-bottom: 1rem;
         }
 
         /* ===== TABELA ===== */
-        table {
-            display: block;
-            width: 100%;
+        .table-responsive {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
-            font-size: 0.85rem;
+            margin: 1rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 500px;
         }
 
         th, td {
-            padding: 0.8rem !important;
-            white-space: normal;
-            word-break: break-word;
+            padding: 1rem;
+            text-align: left;
+            border: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
         }
 
         /* ===== DICAS ===== */
         .dicas {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
-            padding: 2rem 1.5rem;
-            border-radius: 20px;
+            padding: clamp(2rem, 5vw, 3rem);
+            border-radius: 24px;
+            margin-top: 2rem;
         }
 
         .dicas h3 {
             color: white;
-            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .dicas ul {
+            list-style: none;
         }
 
         .dicas li {
-            font-size: 0.95rem;
-            align-items: flex-start;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
 
         .dicas i {
-            margin-top: 3px;
+            color: white;
+            font-size: 1.2rem;
         }
 
         /* ===== FAQ ===== */
         .faq-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 1rem;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .faq-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         .faq-item {
@@ -587,82 +615,47 @@
         }
 
         .faq-item h4 {
-            margin-bottom: 0.5rem;
             color: var(--nav-bg);
             text-transform: none;
             font-size: 1.1rem;
+            margin-bottom: 0.5rem;
         }
 
         /* ===== FOOTER ===== */
         footer {
             background: var(--nav-bg);
             color: #94a3b8;
-            padding: 3rem 0;
-            text-align: center;
-            font-size: 0.9rem;
-        }
-
-        footer p {
-            max-width: 100%;
-            padding: 0 1rem;
-        }
-
-        /* ===== UTILITÁRIOS ===== */
-        .text-center-mobile {
+            padding: 4rem 0;
             text-align: center;
         }
 
-        .d-block-mobile {
-            display: block;
-            width: 100%;
-        }
-
-        .btn-mobile-full {
-            width: 100%;
+        /* Utilitários */
+        .text-center {
             text-align: center;
         }
 
-        /* Correções para estilos inline */
-        [style*="display: grid"] {
-            display: grid !important;
+        .mt-2 {
+            margin-top: 2rem;
         }
 
-        [style*="padding: 3rem"] {
-            padding: 1.5rem !important;
+        .mb-2 {
+            margin-bottom: 2rem;
         }
 
-        @media (min-width: 768px) {
-            [style*="padding: 3rem"] {
-                padding: 2rem !important;
-            }
+        .bg-white {
+            background: white;
         }
 
-        [style*="font-size: 1.2rem"] {
-            font-size: 1rem !important;
+        .p-3 {
+            padding: 2rem;
         }
 
-        /* Ajuste para o grid de 3 colunas da introdução */
-        [style*="grid-template-columns: repeat(3, 1fr)"].intro-grid {
-            display: grid !important;
-            grid-template-columns: 1fr !important;
-            gap: 1.5rem !important;
+        .rounded-2 {
+            border-radius: 24px;
         }
 
-        @media (min-width: 640px) {
-            [style*="grid-template-columns: repeat(3, 1fr)"].intro-grid {
-                grid-template-columns: repeat(2, 1fr) !important;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            [style*="grid-template-columns: repeat(3, 1fr)"].intro-grid {
-                grid-template-columns: repeat(3, 1fr) !important;
-            }
-        }
-
-        /* Melhorias de toque para mobile */
-        a, button, .type-block, .card-item, .norma-card, .faq-item {
-            -webkit-tap-highlight-color: rgba(14, 165, 233, 0.2);
+        .border {
+            border: 1px solid var(--border);
         }
     </style>
 </head>
@@ -674,21 +667,32 @@
                 <div class="brand-logo">TCC</div>
                 <span>GUIA COMPLETO DO TCC</span>
             </a>
-            
+
+            <!-- Menu Desktop -->
+            <div class="nav-links-desktop">
+                <a href="#inicio">Comece Aqui</a>
+                <a href="#modalidades">Tipos de TCC</a>
+                <a href="#fluxo">Passo a Passo</a>
+                <a href="#normas">Normas ABNT</a>
+                <a href="#dicas">Dicas Finais</a>
+            </div>
+
+            <!-- Botão Mobile -->
             <button class="menu-toggle" id="menuToggle" aria-label="Menu">
                 <i class="fas fa-bars"></i>
                 <i class="fas fa-times"></i>
             </button>
-
-            <div class="nav-links" id="navLinks">
-                <a href="#inicio"><i class="fas fa-home"></i> Comece Aqui</a>
-                <a href="#modalidades"><i class="fas fa-book-open"></i> Tipos de TCC</a>
-                <a href="#fluxo"><i class="fas fa-map-signs"></i> Passo a Passo</a>
-                <a href="#normas"><i class="fas fa-ruler"></i> Normas ABNT</a>
-                <a href="#dicas"><i class="fas fa-lightbulb"></i> Dicas Finais</a>
-            </div>
         </div>
     </nav>
+
+    <!-- Menu Mobile -->
+    <div class="nav-links-mobile" id="navLinksMobile">
+        <a href="#inicio"><i class="fas fa-home"></i> Comece Aqui</a>
+        <a href="#modalidades"><i class="fas fa-book-open"></i> Tipos de TCC</a>
+        <a href="#fluxo"><i class="fas fa-map-signs"></i> Passo a Passo</a>
+        <a href="#normas"><i class="fas fa-ruler"></i> Normas ABNT</a>
+        <a href="#dicas"><i class="fas fa-lightbulb"></i> Dicas Finais</a>
+    </div>
 
     <div class="overlay" id="overlay"></div>
 
@@ -705,7 +709,7 @@
     </header>
 
     <main>
-        <!-- SEÇÃO INTRODUTÓRIA -->
+        <!-- O QUE É TCC -->
         <section id="o-que-e-tcc">
             <div class="container">
                 <div class="section-header">
@@ -713,41 +717,41 @@
                     <p>Antes de começar, você precisa entender a natureza e o propósito do seu TCC</p>
                 </div>
                 
-                <div style="background: white; padding: 1.5rem; border-radius: 20px; border: 1px solid var(--border);">
-                    <p style="font-size: 1rem; margin-bottom: 1.5rem;">O TCC é uma <strong>pesquisa científica</strong> ou <strong>projeto prático</strong> que demonstra sua capacidade de aplicar o conhecimento adquirido durante o curso para resolver um problema real ou investigar um fenômeno.</p>
+                <div class="bg-white p-3 rounded-2 border">
+                    <p style="font-size: 1.1rem; margin-bottom: 2rem;">O TCC é uma <strong>pesquisa científica</strong> ou <strong>projeto prático</strong> que demonstra sua capacidade de aplicar o conhecimento adquirido durante o curso para resolver um problema real ou investigar um fenômeno.</p>
                     
-                    <div class="intro-grid" style="display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin: 1.5rem 0;">
-                        <div style="text-align: center;">
-                            <div style="width: 70px; height: 70px; background: #e0f2fe; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
-                                <i class="fas fa-search" style="font-size: 1.8rem; color: var(--primary);"></i>
+                    <div class="grid-3">
+                        <div class="text-center">
+                            <div style="width: 80px; height: 80px; background: #e0f2fe; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                                <i class="fas fa-search" style="font-size: 2rem; color: var(--primary);"></i>
                             </div>
                             <h4>Pesquisa</h4>
-                            <p style="font-size: 0.9rem;">Investigar algo que ainda não foi totalmente explorado</p>
+                            <p>Investigar algo que ainda não foi totalmente explorado</p>
                         </div>
-                        <div style="text-align: center;">
-                            <div style="width: 70px; height: 70px; background: #e0f2fe; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
-                                <i class="fas fa-pencil-alt" style="font-size: 1.8rem; color: var(--primary);"></i>
+                        <div class="text-center">
+                            <div style="width: 80px; height: 80px; background: #e0f2fe; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                                <i class="fas fa-pencil-alt" style="font-size: 2rem; color: var(--primary);"></i>
                             </div>
                             <h4>Documentação</h4>
-                            <p style="font-size: 0.9rem;">Registrar todo o processo de forma estruturada</p>
+                            <p>Registrar todo o processo de forma estruturada</p>
                         </div>
-                        <div style="text-align: center;">
-                            <div style="width: 70px; height: 70px; background: #e0f2fe; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
-                                <i class="fas fa-chalkboard-teacher" style="font-size: 1.8rem; color: var(--primary);"></i>
+                        <div class="text-center">
+                            <div style="width: 80px; height: 80px; background: #e0f2fe; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                                <i class="fas fa-chalkboard-teacher" style="font-size: 2rem; color: var(--primary);"></i>
                             </div>
                             <h4>Defesa</h4>
-                            <p style="font-size: 0.9rem;">Apresentar e defender seus resultados para uma banca</p>
+                            <p>Apresentar e defender seus resultados para uma banca</p>
                         </div>
                     </div>
                     
-                    <div style="background: #fef3c7; padding: 1rem; border-radius: 10px; border-left: 4px solid var(--warning);">
-                        <p style="font-size: 0.9rem;"><strong>Dica fundamental:</strong> O TCC deve responder a uma pergunta clara (problema de pesquisa) ou resolver um problema específico. Tudo que você fizer deve estar alinhado com esse objetivo principal.</p>
+                    <div style="background: #fef3c7; padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--warning); margin-top: 2rem;">
+                        <p><strong>Dica fundamental:</strong> O TCC deve responder a uma pergunta clara (problema de pesquisa) ou resolver um problema específico. Tudo que você fizer deve estar alinhado com esse objetivo principal.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- SEÇÃO: ESCOLHA DO TEMA -->
+        <!-- ESCOLHA DO TEMA -->
         <section id="escolha-tema">
             <div class="container">
                 <div class="section-header">
@@ -755,31 +759,31 @@
                     <p>80% do sucesso do seu TCC depende de um tema bem definido e factível</p>
                 </div>
                 
-                <div style="display: grid; grid-template-columns: 1fr; gap: 1rem;">
-                    <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border);">
+                <div class="grid-2">
+                    <div class="card">
                         <h4 style="color: var(--primary);"><i class="fas fa-check-circle"></i> Critérios para um bom tema</h4>
                         <ul style="list-style: none;">
-                            <li style="margin-bottom: 0.8rem; font-size: 0.9rem;"><i class="fas fa-check" style="color: var(--success); margin-right: 10px;"></i> <strong>Relevância:</strong> O tema tem importância acadêmica ou social?</li>
-                            <li style="margin-bottom: 0.8rem; font-size: 0.9rem;"><i class="fas fa-check" style="color: var(--success); margin-right: 10px;"></i> <strong>Viabilidade:</strong> Você consegue acesso aos dados ou materiais necessários?</li>
-                            <li style="margin-bottom: 0.8rem; font-size: 0.9rem;"><i class="fas fa-check" style="color: var(--success); margin-right: 10px;"></i> <strong>Originalidade:</strong> Você está trazendo uma nova perspectiva?</li>
-                            <li style="margin-bottom: 0.8rem; font-size: 0.9rem;"><i class="fas fa-check" style="color: var(--success); margin-right: 10px;"></i> <strong>Afinidade:</strong> Você tem interesse genuíno no assunto?</li>
+                            <li style="margin-bottom: 1rem;"><i class="fas fa-check" style="color: var(--success); margin-right: 10px;"></i> <strong>Relevância:</strong> O tema tem importância acadêmica ou social?</li>
+                            <li style="margin-bottom: 1rem;"><i class="fas fa-check" style="color: var(--success); margin-right: 10px;"></i> <strong>Viabilidade:</strong> Você consegue acesso aos dados ou materiais necessários?</li>
+                            <li style="margin-bottom: 1rem;"><i class="fas fa-check" style="color: var(--success); margin-right: 10px;"></i> <strong>Originalidade:</strong> Você está trazendo uma nova perspectiva?</li>
+                            <li style="margin-bottom: 1rem;"><i class="fas fa-check" style="color: var(--success); margin-right: 10px;"></i> <strong>Afinidade:</strong> Você tem interesse genuíno no assunto?</li>
                         </ul>
                     </div>
                     
-                    <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border);">
-                        <h4 style="color: var(--primary);"><i class="fas fa-times-circle"></i> Erros comuns na escolha</h4>
+                    <div class="card">
+                        <h4 style="color: var(--primary);"><i class="fas fa-times-circle"></i> Erros comuns</h4>
                         <ul style="list-style: none;">
-                            <li style="margin-bottom: 0.8rem; font-size: 0.9rem;"><i class="fas fa-times" style="color: var(--danger); margin-right: 10px;"></i> Temas muito amplos (ex: "A violência no Brasil")</li>
-                            <li style="margin-bottom: 0.8rem; font-size: 0.9rem;"><i class="fas fa-times" style="color: var(--danger); margin-right: 10px;"></i> Temas sem bibliografia disponível</li>
-                            <li style="margin-bottom: 0.8rem; font-size: 0.9rem;"><i class="fas fa-times" style="color: var(--danger); margin-right: 10px;"></i> Temas que exigem recursos inacessíveis</li>
-                            <li style="margin-bottom: 0.8rem; font-size: 0.9rem;"><i class="fas fa-times" style="color: var(--danger); margin-right: 10px;"></i> Escolher por pressão de terceiros</li>
+                            <li style="margin-bottom: 1rem;"><i class="fas fa-times" style="color: var(--danger); margin-right: 10px;"></i> Temas muito amplos (ex: "A violência no Brasil")</li>
+                            <li style="margin-bottom: 1rem;"><i class="fas fa-times" style="color: var(--danger); margin-right: 10px;"></i> Temas sem bibliografia disponível</li>
+                            <li style="margin-bottom: 1rem;"><i class="fas fa-times" style="color: var(--danger); margin-right: 10px;"></i> Temas que exigem recursos inacessíveis</li>
+                            <li style="margin-bottom: 1rem;"><i class="fas fa-times" style="color: var(--danger); margin-right: 10px;"></i> Escolher por pressão de terceiros</li>
                         </ul>
                     </div>
                 </div>
                 
-                <div style="background: var(--accent-bg); padding: 1.5rem; border-radius: 12px; margin-top: 1.5rem;">
-                    <h4 style="font-size: 1.1rem;">Exercício prático:</h4>
-                    <ol style="margin-left: 1.5rem; font-size: 0.9rem;">
+                <div style="background: var(--accent-bg); padding: 2rem; border-radius: 12px; margin-top: 2rem;">
+                    <h4>Exercício prático para definir seu tema:</h4>
+                    <ol style="margin-left: 2rem;">
                         <li>Quais disciplinas do curso mais me interessaram?</li>
                         <li>Que problema eu observo na minha área que gostaria de resolver?</li>
                         <li>Existe algum autor ou teoria que me chamou atenção?</li>
@@ -789,7 +793,7 @@
             </div>
         </section>
 
-        <!-- SEÇÃO: ELEMENTOS PRÉ-TEXTUAIS -->
+        <!-- ELEMENTOS PRÉ-TEXTUAIS -->
         <section id="pre-textuais">
             <div class="container">
                 <div class="section-header">
@@ -797,43 +801,43 @@
                     <p>A estrutura inicial do seu trabalho</p>
                 </div>
                 
-                <div class="grid-cards">
-                    <div class="card-item">
+                <div class="grid-auto">
+                    <div class="card card-center">
                         <i class="fas fa-file-alt"></i>
                         <h4>Capa</h4>
                         <p>Nome da instituição, curso, título, autor, local e ano</p>
                     </div>
-                    <div class="card-item">
+                    <div class="card card-center">
                         <i class="fas fa-clipboard-list"></i>
                         <h4>Folha de Rosto</h4>
                         <p>Repete a capa + natureza do trabalho e nome do orientador</p>
                     </div>
-                    <div class="card-item">
+                    <div class="card card-center">
                         <i class="fas fa-check-square"></i>
                         <h4>Folha de Aprovação</h4>
                         <p>Espaço para assinaturas da banca</p>
                     </div>
-                    <div class="card-item">
+                    <div class="card card-center">
                         <i class="fas fa-heart"></i>
                         <h4>Dedicatória</h4>
                         <p>Opcionais, mas valorizam o trabalho</p>
                     </div>
-                    <div class="card-item">
+                    <div class="card card-center">
                         <i class="fas fa-quote-right"></i>
                         <h4>Epígrafe</h4>
                         <p>Uma citação inspiradora relacionada ao tema</p>
                     </div>
-                    <div class="card-item">
+                    <div class="card card-center">
                         <i class="fas fa-list"></i>
                         <h4>Resumo/Abstract</h4>
                         <p>Visão geral em português e inglês</p>
                     </div>
-                    <div class="card-item">
+                    <div class="card card-center">
                         <i class="fas fa-list-ol"></i>
                         <h4>Sumário</h4>
                         <p>Lista de todas as seções</p>
                     </div>
-                    <div class="card-item">
+                    <div class="card card-center">
                         <i class="fas fa-image"></i>
                         <h4>Listas</h4>
                         <p>Figuras, tabelas, gráficos</p>
@@ -842,73 +846,76 @@
             </div>
         </section>
 
-        <!-- SEÇÃO MODALIDADES (resumida por economia de espaço - você pode manter todos os tipos) -->
+        <!-- TIPOS DE TCC -->
         <section id="modalidades">
             <div class="container">
                 <div class="section-header">
                     <h2>3. Tipos de TCC</h2>
-                    <p>Cada curso permite diferentes formatos</p>
+                    <p>Cada curso e instituição permite diferentes formatos</p>
                 </div>
 
-                <div class="type-block">
-                    <div class="type-main-info">
-                        <div class="type-sidebar">
-                            <div class="icon-box"><i class="fas fa-book-bookmark"></i></div>
-                            <h3>Monografia</h3>
-                            <p>Pesquisa bibliográfica aprofundada sobre um tema específico.</p>
-                            <span class="course-badge">Humanas, Direito, Saúde</span>
-                        </div>
-                        <div class="type-content">
-                            <h4><i class="fas fa-list-ol"></i> Passo a Passo</h4>
-                            <div class="step-list">
-                                <div class="step-item" data-step="1">
-                                    <span class="step-title">Levantamento Bibliográfico</span>
-                                    <p class="step-desc">Busca em bases como Scielo, Google Acadêmico. Mínimo 30 fontes confiáveis.</p>
-                                </div>
-                                <div class="step-item" data-step="2">
-                                    <span class="step-title">Fichamento</span>
-                                    <p class="step-desc">Organize fichas com autor, ano, ideia principal e citações.</p>
-                                </div>
-                                <div class="step-item" data-step="3">
-                                    <span class="step-title">Redação</span>
-                                    <p class="step-desc">Escreva em diálogo: Autor A complementa ou discorda do Autor B.</p>
-                                </div>
-                                <div class="step-item" data-step="4">
-                                    <span class="step-title">Considerações Finais</span>
-                                    <p class="step-desc">Retome o problema e mostre o que os autores permitiram concluir.</p>
+                <div class="types-container">
+                    <!-- MONOGRAFIA -->
+                    <div class="type-block">
+                        <div class="type-main-info">
+                            <div class="type-sidebar">
+                                <div class="icon-box"><i class="fas fa-book-bookmark"></i></div>
+                                <h3>Monografia</h3>
+                                <p>Pesquisa bibliográfica aprofundada sobre um tema específico, baseada em autores consagrados.</p>
+                                <span class="course-badge">Indicado para: Humanas, Saúde, Direito</span>
+                            </div>
+                            <div class="type-content">
+                                <h4><i class="fas fa-list-ol"></i> Passo a Passo de Desenvolvimento</h4>
+                                <div class="step-list">
+                                    <div class="step-item" data-step="1">
+                                        <span class="step-title">Levantamento Bibliográfico</span>
+                                        <p class="step-desc">Busca em bases como Scielo, Google Acadêmico. Mínimo 30 fontes confiáveis.</p>
+                                    </div>
+                                    <div class="step-item" data-step="2">
+                                        <span class="step-title">Fichamento</span>
+                                        <p class="step-desc">Organize fichas com autor, ano, ideia principal e citações.</p>
+                                    </div>
+                                    <div class="step-item" data-step="3">
+                                        <span class="step-title">Redação</span>
+                                        <p class="step-desc">Escreva em diálogo: Autor A complementa ou discorda do Autor B.</p>
+                                    </div>
+                                    <div class="step-item" data-step="4">
+                                        <span class="step-title">Considerações Finais</span>
+                                        <p class="step-desc">Retome o problema e mostre o que os autores permitiram concluir.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- ARTIGO CIENTÍFICO -->
-                <div class="type-block">
-                    <div class="type-main-info">
-                        <div class="type-sidebar">
-                            <div class="icon-box"><i class="fas fa-file-alt"></i></div>
-                            <h3>Artigo Científico</h3>
-                            <p>Texto conciso com estrutura IMRaD (Introdução, Métodos, Resultados e Discussão).</p>
-                            <span class="course-badge">Todas as áreas</span>
-                        </div>
-                        <div class="type-content">
-                            <h4><i class="fas fa-list-ol"></i> Passo a Passo</h4>
-                            <div class="step-list">
-                                <div class="step-item" data-step="1">
-                                    <span class="step-title">Foco e Escopo</span>
-                                    <p class="step-desc">Defina exatamente qual aspecto do tema será abordado.</p>
-                                </div>
-                                <div class="step-item" data-step="2">
-                                    <span class="step-title">Pesquisa Direcionada</span>
-                                    <p class="step-desc">Busque artigos recentes em periódicos bem avaliados.</p>
-                                </div>
-                                <div class="step-item" data-step="3">
-                                    <span class="step-title">Estrutura IMRaD</span>
-                                    <p class="step-desc">Introdução, Métodos, Resultados, Discussão e Conclusão.</p>
-                                </div>
-                                <div class="step-item" data-step="4">
-                                    <span class="step-title">Revisão</span>
-                                    <p class="step-desc">Peça para colegas ou professor lerem e criticarem.</p>
+                    <!-- ARTIGO CIENTÍFICO -->
+                    <div class="type-block">
+                        <div class="type-main-info">
+                            <div class="type-sidebar">
+                                <div class="icon-box"><i class="fas fa-file-alt"></i></div>
+                                <h3>Artigo Científico</h3>
+                                <p>Texto conciso com estrutura IMRaD (Introdução, Métodos, Resultados e Discussão).</p>
+                                <span class="course-badge">Todas as áreas</span>
+                            </div>
+                            <div class="type-content">
+                                <h4><i class="fas fa-list-ol"></i> Passo a Passo</h4>
+                                <div class="step-list">
+                                    <div class="step-item" data-step="1">
+                                        <span class="step-title">Foco e Escopo</span>
+                                        <p class="step-desc">Defina exatamente qual aspecto do tema será abordado.</p>
+                                    </div>
+                                    <div class="step-item" data-step="2">
+                                        <span class="step-title">Pesquisa Direcionada</span>
+                                        <p class="step-desc">Busque artigos recentes em periódicos bem avaliados.</p>
+                                    </div>
+                                    <div class="step-item" data-step="3">
+                                        <span class="step-title">Estrutura IMRaD</span>
+                                        <p class="step-desc">Introdução, Métodos, Resultados, Discussão e Conclusão.</p>
+                                    </div>
+                                    <div class="step-item" data-step="4">
+                                        <span class="step-title">Revisão</span>
+                                        <p class="step-desc">Peça para colegas ou professor lerem e criticarem.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -917,7 +924,90 @@
             </div>
         </section>
 
-        <!-- SEÇÃO: NORMAS ABNT -->
+        <!-- PROJETO DE PESQUISA -->
+        <section id="projeto-pesquisa">
+            <div class="container">
+                <div class="section-header">
+                    <h2>4. O Projeto de Pesquisa</h2>
+                    <p>Seu mapa do tesouro - o documento que orientará todo seu trabalho</p>
+                </div>
+                
+                <div class="bg-white p-3 rounded-2 border">
+                    <div class="grid-3">
+                        <div>
+                            <h4 style="color: var(--primary);">Introdução</h4>
+                            <ul>
+                                <li>Contextualização do tema</li>
+                                <li>Problema de pesquisa</li>
+                                <li>Hipóteses</li>
+                                <li>Objetivos</li>
+                                <li>Justificativa</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--primary);">Referencial</h4>
+                            <ul>
+                                <li>Conceitos fundamentais</li>
+                                <li>Teorias que embasam</li>
+                                <li>Estudos anteriores</li>
+                                <li>Lacuna da pesquisa</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--primary);">Metodologia</h4>
+                            <ul>
+                                <li>Tipo de pesquisa</li>
+                                <li>Instrumentos de coleta</li>
+                                <li>Técnicas de análise</li>
+                                <li>Cronograma</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 2rem; padding: 1rem; background: #e0f2fe; border-radius: 8px;">
+                        <p><strong>Exemplo de problema:</strong> "Como a implementação de um sistema de gestão escolar impacta a eficiência administrativa em escolas públicas de São Paulo?"</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EXECUÇÃO -->
+        <section id="execucao">
+            <div class="container">
+                <div class="section-header">
+                    <h2>5. Execução: Mãos à Obra</h2>
+                    <p>A fase mais longa e desafiadora</p>
+                </div>
+                
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-number">1</div>
+                        <div class="timeline-content">
+                            <h3>Pesquisa Bibliográfica</h3>
+                            <p>Busque em bases confiáveis: Scielo, Google Acadêmico, Periódicos Capes. Use operadores booleanos (AND, OR, NOT).</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-number">2</div>
+                        <div class="timeline-content">
+                            <h3>Coleta de Dados</h3>
+                            <p>Aplique os instrumentos: questionários, entrevistas, observações. Respeite os aspectos éticos.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-number">3</div>
+                        <div class="timeline-content">
+                            <h3>Análise dos Dados</h3>
+                            <p>Quantitativa: estatística descritiva. Qualitativa: análise de conteúdo ou discurso.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NORMAS ABNT -->
         <section id="normas">
             <div class="container">
                 <div class="section-header">
@@ -947,10 +1037,54 @@
                         <p>Ordem alfabética<br>SOBRENOME, Nome. Título. Editora, ano.</p>
                     </div>
                 </div>
+                
+                <div style="background: white; padding: 2rem; border-radius: 12px; margin-top: 2rem;">
+                    <h4>Ferramentas que facilitam:</h4>
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
+                        <span style="background: var(--primary); color: white; padding: 0.5rem 1rem; border-radius: 6px;">Mendeley</span>
+                        <span style="background: var(--primary); color: white; padding: 0.5rem 1rem; border-radius: 6px;">Zotero</span>
+                        <span style="background: var(--primary); color: white; padding: 0.5rem 1rem; border-radius: 6px;">Gerador de Referências</span>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- SEÇÃO: DICAS FINAIS -->
+        <!-- DEFESA -->
+        <section id="defesa">
+            <div class="container">
+                <div class="section-header">
+                    <h2>7. A Defesa</h2>
+                    <p>Sua hora de brilhar</p>
+                </div>
+                
+                <div class="grid-2">
+                    <div class="card">
+                        <h4><i class="fas fa-check-circle" style="color: var(--success);"></i> Preparação</h4>
+                        <ul>
+                            <li>Prepare slides objetivos (máximo 15)</li>
+                            <li>Treine em voz alta</li>
+                            <li>Antecipe possíveis perguntas</li>
+                            <li>Prepare-se para 15-20 minutos</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4><i class="fas fa-exclamation-triangle" style="color: var(--warning);"></i> Durante</h4>
+                        <ul>
+                            <li>Contato visual com a banca</li>
+                            <li>Fale com clareza</li>
+                            <li>Não leia os slides</li>
+                            <li>Controle o tempo</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 2rem; background: #f0fdf4; padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--success);">
+                    <p><strong>Checklist:</strong> Leve 3 cópias do TCC, pen drive com backup, notebook, água, caneta. Chegue com 30 minutos de antecedência.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- DICAS -->
         <section id="dicas">
             <div class="container">
                 <div class="dicas">
@@ -967,7 +1101,7 @@
             </div>
         </section>
 
-        <!-- SEÇÃO: PERGUNTAS FREQUENTES -->
+        <!-- FAQ -->
         <section id="faq">
             <div class="container">
                 <div class="section-header">
@@ -977,20 +1111,69 @@
                 
                 <div class="faq-grid">
                     <div class="faq-item">
-                        <h4>Posso mudar de tema depois de começar?</h4>
-                        <p style="font-size: 0.9rem;">Sim, mas é preferível definir bem no início. Converse com seu orientador.</p>
+                        <h4>Posso mudar de tema?</h4>
+                        <p>Sim, mas é preferível definir bem no início. Converse com seu orientador.</p>
                     </div>
                     <div class="faq-item">
-                        <h4>Quantas páginas deve ter?</h4>
-                        <p style="font-size: 0.9rem;">Monografia (40-60), artigo (15-25), projeto técnico (30-50).</p>
+                        <h4>Quantas páginas?</h4>
+                        <p>Monografia (40-60), artigo (15-25), projeto técnico (30-50).</p>
                     </div>
                     <div class="faq-item">
-                        <h4>Como escolher o orientador ideal?</h4>
-                        <p style="font-size: 0.9rem;">Alguém com conhecimento na área, disponibilidade e boa comunicação.</p>
+                        <h4>Como escolher o orientador?</h4>
+                        <p>Alguém com conhecimento na área, disponibilidade e boa comunicação.</p>
                     </div>
                     <div class="faq-item">
-                        <h4>O que é plágio acadêmico?</h4>
-                        <p style="font-size: 0.9rem;">Copiar texto de outro autor sem citar a fonte.</p>
+                        <h4>O que é plágio?</h4>
+                        <p>Copiar texto de outro autor sem citar a fonte.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CRONOGRAMA -->
+        <section id="cronograma">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Cronograma Sugerido (6 meses)</h2>
+                    <p>Organize seu tempo</p>
+                </div>
+                
+                <div class="bg-white p-3 rounded-2 border">
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Mês</th>
+                                    <th>Atividades Principais</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Mês 1</strong></td>
+                                    <td>Definição do tema, orientador, projeto de pesquisa</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Mês 2</strong></td>
+                                    <td>Pesquisa bibliográfica, introdução e referencial</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Mês 3</strong></td>
+                                    <td>Coleta de dados ou desenvolvimento do produto</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Mês 4</strong></td>
+                                    <td>Análise dos dados, resultados e discussão</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Mês 5</strong></td>
+                                    <td>Conclusão, revisão, formatação ABNT</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Mês 6</strong></td>
+                                    <td>Entrega, preparação da apresentação</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -1000,35 +1183,33 @@
     <footer>
         <div class="container">
             <p><strong>Guia Completo do TCC - Do Zero à Aprovação</strong></p>
-            <p style="font-size: 0.7rem; margin-top: 0.5rem;">Baseado nas diretrizes ABNT NBR 15287 e 14724</p>
-            <p style="margin-top: 1.5rem;">&copy; 2026 - Material gratuito para orientação de estudantes.</p>
+            <p style="font-size: 0.8rem; margin-top: 0.5rem;">Baseado nas diretrizes ABNT NBR 15287 e 14724</p>
+            <p style="margin-top: 2rem;">&copy; 2026 - Material gratuito para orientação de estudantes.</p>
         </div>
     </footer>
 
     <script>
-        // Menu Hamburguer
+        // Menu Mobile
         const menuToggle = document.getElementById('menuToggle');
-        const navLinks = document.getElementById('navLinks');
+        const navLinksMobile = document.getElementById('navLinksMobile');
         const overlay = document.getElementById('overlay');
         
         function toggleMenu() {
             menuToggle.classList.toggle('active');
-            navLinks.classList.toggle('active');
+            navLinksMobile.classList.toggle('active');
             overlay.classList.toggle('active');
-            document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
+            document.body.style.overflow = navLinksMobile.classList.contains('active') ? 'hidden' : '';
         }
 
         menuToggle.addEventListener('click', toggleMenu);
         overlay.addEventListener('click', toggleMenu);
 
-        // Fechar menu ao clicar em um link
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', (e) => {
-                toggleMenu();
-            });
+        // Fechar menu ao clicar em link
+        document.querySelectorAll('.nav-links-mobile a').forEach(link => {
+            link.addEventListener('click', toggleMenu);
         });
 
-        // Ajustar âncoras para não ficarem escondidas pelo menu fixo
+        // Rolagem suave para âncoras
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
