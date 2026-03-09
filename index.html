@@ -2,409 +2,1049 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guia ultracompleto do TCC | Roteiro passo a passo do zero à aprovação</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Guia Completo do TCC | Versão Mobile</title>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5934337773167764"
      crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0ea5e9;
+            --primary-dark: #0284c7;
+            --secondary: #6366f1;
+            --bg-body: #f1f5f9;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --nav-bg: #0f172a;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --accent-bg: #f8fafc;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
         body {
-            font-family: "Inter", sans-serif;
-            background: #f8fafc;
-            color: #0b1e33;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
             line-height: 1.6;
-            scroll-behavior: smooth;
+            overflow-x: hidden;
+            width: 100%;
+            position: relative;
         }
-        .container { max-width: 1300px; margin:0 auto; padding:0 2rem; }
 
-        /* Navegação */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* ===== MENU HAMBÚRGUER ===== */
         .navbar {
-            background: #0b1e33;
-            padding: 1rem 0;
+            background: var(--nav-bg);
+            padding: 0.8rem 0;
             position: sticky;
-            top:0; z-index:1000;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 100%;
         }
-        .nav-content { display:flex; justify-content:space-between; align-items:center; }
-        .brand { display:flex; align-items:center; gap:1rem; color:white; text-decoration:none; font-weight:600; }
-        .brand-logo { background:#0284c7; width:40px; height:40px; display:flex; align-items:center; justify-content:center; border-radius:10px; font-weight:800; }
-        .nav-links { display:flex; gap:2rem; }
-        .nav-links a { color:#cbd5e1; text-decoration:none; font-size:0.9rem; font-weight:500; transition:0.2s; }
-        .nav-links a:hover { color:#38bdf8; }
 
-        /* Hero */
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .brand-logo {
+            background: var(--primary);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 0.9rem;
+        }
+
+        .brand span {
+            display: none;
+        }
+
+        @media (min-width: 480px) {
+            .brand span {
+                display: inline;
+            }
+        }
+
+        /* Botão Hamburguer */
+        .menu-toggle {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            display: block;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            z-index: 1001;
+        }
+
+        .menu-toggle:hover {
+            color: var(--primary);
+        }
+
+        .menu-toggle .fa-times {
+            display: none;
+        }
+
+        .menu-toggle.active .fa-bars {
+            display: none;
+        }
+
+        .menu-toggle.active .fa-times {
+            display: block;
+        }
+
+        /* Menu Mobile */
+        .nav-links {
+            position: fixed;
+            top: 60px;
+            left: -100%;
+            width: 85%;
+            max-width: 320px;
+            height: calc(100vh - 60px);
+            background: var(--nav-bg);
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 1.5rem;
+            gap: 1.5rem;
+            transition: 0.4s ease-in-out;
+            z-index: 999;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.2);
+            overflow-y: auto;
+        }
+
+        .nav-links.active {
+            left: 0;
+        }
+
+        .nav-links a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: 0.3s;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-links a i {
+            width: 24px;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        .nav-links a:hover {
+            background: #1e293b;
+            color: white;
+        }
+
+        .nav-links a:hover i {
+            color: white;
+        }
+
+        /* Overlay escuro */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 998;
+            display: none;
+            backdrop-filter: blur(3px);
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* ===== HERO ===== */
         .hero {
-            background: linear-gradient(145deg, #0b1e33 0%, #1a2e44 100%);
-            color:white;
-            padding: 5rem 0;
-            border-bottom: 6px solid #0284c7;
+            background: linear-gradient(135deg, var(--nav-bg) 0%, #1e293b 100%);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+            border-bottom: 5px solid var(--primary);
         }
-        .hero h1 { font-size:3.2rem; font-weight:800; line-height:1.2; }
-        .hero p { font-size:1.3rem; color:#b0c4de; max-width:800px; margin:1.5rem auto 0; }
+
+        .hero h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1rem;
+            color: #94a3b8;
+            max-width: 100%;
+        }
+
         .hero-highlight {
-            background:rgba(2,132,199,0.15);
-            border-left:6px solid #0284c7;
-            padding:1.8rem;
-            border-radius:24px;
-            margin-top:2.5rem;
-            font-size:1.1rem;
+            background: rgba(14, 165, 233, 0.15);
+            padding: 1.2rem;
+            border-radius: 12px;
+            margin-top: 2rem;
+            border-left: 4px solid var(--primary);
+            text-align: left;
         }
 
-        /* seções */
-        section { padding:5rem 0; border-bottom:1px solid #e0e7ef; }
-        .section-header { max-width:1000px; margin:0 auto 4rem; text-align:center; }
-        .section-header h2 { font-size:2.8rem; font-weight:700; color:#0b1e33; letter-spacing:-0.02em; }
-        .section-header p { font-size:1.2rem; color:#33475b; margin-top:1rem; }
-
-        /* cards e blocos */
-        .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
-        .card-white {
-            background:white;
-            border-radius:28px;
-            padding:2rem;
-            border:1px solid #e2e8f0;
-            box-shadow:0 12px 30px -8px rgba(0,0,0,0.05);
-            transition: transform 0.2s;
-        }
-        .card-white:hover { transform:translateY(-5px); box-shadow:0 20px 35px -10px rgba(0,20,40,0.15); }
-
-        .badge {
-            display:inline-block;
-            background:#e0f2fe;
-            color:#0369a1;
-            font-weight:600;
-            font-size:0.8rem;
-            padding:0.3rem 1rem;
-            border-radius:40px;
+        /* ===== SEÇÕES ===== */
+        section {
+            padding: 3rem 0;
+            border-bottom: 1px solid var(--border);
         }
 
-        h3 { font-size:1.9rem; margin:1rem 0; color:#0b1e33; }
-        h4 { font-size:1.3rem; margin-bottom:1rem; display:flex; gap:0.7rem; align-items:center; color:#1e3a5f; }
+        .section-header {
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
 
-        .step-list { list-style:none; }
+        .section-header h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--nav-bg);
+            margin-bottom: 0.8rem;
+            line-height: 1.2;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        /* ===== CARDS RESPONSIVOS ===== */
+        .type-block {
+            background: var(--white);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+
+        .type-main-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (min-width: 768px) {
+            .type-main-info {
+                flex-direction: row;
+            }
+        }
+
+        .type-sidebar {
+            background: var(--accent-bg);
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        @media (min-width: 768px) {
+            .type-sidebar {
+                width: 35%;
+                border-right: 1px solid var(--border);
+                border-bottom: none;
+            }
+        }
+
+        .type-content {
+            padding: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .type-content {
+                width: 65%;
+            }
+        }
+
+        .icon-box {
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--nav-bg);
+        }
+
+        h4 {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary);
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .step-item {
-            margin-bottom:2rem;
-            padding-left:2.8rem;
-            position:relative;
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+            position: relative;
         }
+
         .step-item::before {
-            content:attr(data-step);
-            position:absolute; left:0; top:0;
-            width:32px; height:32px;
-            background:#0b1e33;
-            color:white; font-weight:bold;
-            border-radius:50%;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-size:0.9rem;
+            content: attr(data-step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 24px;
+            height: 24px;
+            background: var(--nav-bg);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
         }
 
-        .type-block { background:white; border-radius:32px; border:1px solid #e2e8f0; overflow:hidden; margin-bottom:2.5rem; }
-        .type-main-info { display:grid; grid-template-columns:1fr 2fr; }
-        .type-sidebar { background:#f1f6fd; padding:2.5rem; border-right:1px solid #e2e8f0; }
+        .step-title {
+            font-weight: 700;
+            display: block;
+            margin-bottom: 4px;
+            color: var(--nav-bg);
+            font-size: 1rem;
+        }
 
-        .icon-box { width:60px; height:60px; background:#0284c7; border-radius:18px; display:flex; align-items:center; justify-content:center; color:white; font-size:1.8rem; margin-bottom:1.5rem; }
+        .step-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
 
-        .timeline-item { display:flex; gap:2rem; margin-bottom:2rem; }
-        .timeline-number { width:60px; height:60px; background:#0284c7; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.5rem; color:white; flex-shrink:0; }
-        .timeline-content { background:white; padding:1.8rem; border-radius:20px; border:1px solid #e2e8f0; width:100%; }
+        .course-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #e0f2fe;
+            color: #0369a1;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-top: 10px;
+        }
 
-        .normas-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:2rem; margin:2rem 0; }
-        .norma-card { background:white; padding:2rem; border-radius:20px; text-align:center; border:1px solid #e2e8f0; }
-        .norma-card i { font-size:2.5rem; color:#0284c7; margin-bottom:1rem; }
+        /* ===== GRIDS RESPONSIVOS ===== */
+        .grid-2, 
+        [style*="grid-template-columns: repeat(3, 1fr)"],
+        [style*="grid-template-columns: repeat(4, 1fr)"],
+        [style*="grid-template-columns: repeat(2, 1fr)"] {
+            display: grid;
+            grid-template-columns: 1fr !important;
+            gap: 1rem;
+        }
 
+        @media (min-width: 640px) {
+            .grid-2,
+            [style*="grid-template-columns: repeat(2, 1fr)"] {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+
+        @media (min-width: 768px) {
+            [style*="grid-template-columns: repeat(3, 1fr)"] {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            [style*="grid-template-columns: repeat(3, 1fr)"] {
+                grid-template-columns: repeat(3, 1fr) !important;
+            }
+            [style*="grid-template-columns: repeat(4, 1fr)"] {
+                grid-template-columns: repeat(4, 1fr) !important;
+            }
+        }
+
+        /* Cards de elementos pré-textuais */
+        .grid-cards {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        @media (min-width: 480px) {
+            .grid-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 768px) {
+            .grid-cards {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .grid-cards {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .card-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .card-item i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .card-item h4 {
+            justify-content: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-item p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* ===== TIMELINE ===== */
+        .timeline-item {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (min-width: 640px) {
+            .timeline-item {
+                flex-direction: row;
+            }
+        }
+
+        .timeline-number {
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            flex: 1;
+        }
+
+        .timeline-content h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* ===== NORMAS ===== */
+        .normas-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        @media (min-width: 480px) {
+            .normas-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .norma-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .norma-card i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.8rem;
+        }
+
+        .norma-card h4 {
+            justify-content: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .norma-card p {
+            font-size: 0.85rem;
+        }
+
+        /* ===== TABELA ===== */
+        table {
+            display: block;
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            font-size: 0.85rem;
+        }
+
+        th, td {
+            padding: 0.8rem !important;
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        /* ===== DICAS ===== */
         .dicas {
-            background: linear-gradient(145deg, #0284c7, #4f46e5);
-            color:white;
-            padding:3rem;
-            border-radius:32px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 2rem 1.5rem;
+            border-radius: 20px;
         }
-        .dicas ul { list-style:none; }
-        .dicas li { margin-bottom:1rem; display:flex; gap:1rem; align-items:center; }
-        .dicas i { color:white; }
 
-        footer { background:#0b1e33; color:#94a3b8; padding:4rem 0; text-align:center; }
+        .dicas h3 {
+            color: white;
+            font-size: 1.5rem;
+        }
 
-        @media (max-width:900px) {
-            .type-main-info { grid-template-columns:1fr; }
-            .type-sidebar { border-right:0; border-bottom:1px solid #e2e8f0; }
-            .grid-2 { grid-template-columns:1fr; }
+        .dicas li {
+            font-size: 0.95rem;
+            align-items: flex-start;
+        }
+
+        .dicas i {
+            margin-top: 3px;
+        }
+
+        /* ===== FAQ ===== */
+        .faq-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .faq-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .faq-item h4 {
+            margin-bottom: 0.5rem;
+            color: var(--nav-bg);
+            text-transform: none;
+            font-size: 1.1rem;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--nav-bg);
+            color: #94a3b8;
+            padding: 3rem 0;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        footer p {
+            max-width: 100%;
+            padding: 0 1rem;
+        }
+
+        /* ===== UTILITÁRIOS ===== */
+        .text-center-mobile {
+            text-align: center;
+        }
+
+        .d-block-mobile {
+            display: block;
+            width: 100%;
+        }
+
+        .btn-mobile-full {
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Correções para estilos inline */
+        [style*="display: grid"] {
+            display: grid !important;
+        }
+
+        [style*="padding: 3rem"] {
+            padding: 1.5rem !important;
+        }
+
+        @media (min-width: 768px) {
+            [style*="padding: 3rem"] {
+                padding: 2rem !important;
+            }
+        }
+
+        [style*="font-size: 1.2rem"] {
+            font-size: 1rem !important;
+        }
+
+        /* Ajuste para o grid de 3 colunas da introdução */
+        [style*="grid-template-columns: repeat(3, 1fr)"].intro-grid {
+            display: grid !important;
+            grid-template-columns: 1fr !important;
+            gap: 1.5rem !important;
+        }
+
+        @media (min-width: 640px) {
+            [style*="grid-template-columns: repeat(3, 1fr)"].intro-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            [style*="grid-template-columns: repeat(3, 1fr)"].intro-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+            }
+        }
+
+        /* Melhorias de toque para mobile */
+        a, button, .type-block, .card-item, .norma-card, .faq-item {
+            -webkit-tap-highlight-color: rgba(14, 165, 233, 0.2);
         }
     </style>
 </head>
 <body>
 
-<nav class="navbar">
-    <div class="container nav-content">
-        <a href="#" class="brand"><div class="brand-logo">TCC</div><span>GUIA COMPLETO DO TCC</span></a>
-        <div class="nav-links">
-            <a href="#inicio">Comece Aqui</a><a href="#modalidades">Tipos de TCC</a><a href="#fluxo">Passo a Passo</a><a href="#normas">Normas ABNT</a><a href="#dicas">Dicas Finais</a>
-        </div>
-    </div>
-</nav>
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="#" class="brand">
+                <div class="brand-logo">TCC</div>
+                <span>GUIA COMPLETO DO TCC</span>
+            </a>
+            
+            <button class="menu-toggle" id="menuToggle" aria-label="Menu">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-times"></i>
+            </button>
 
-<header class="hero" id="inicio">
-    <div class="container">
-        <h1>Como construir seu TCC do zero (e ser aprovado)</h1>
-        <p>Guia definitivo, autoexplicativo e detalhado: cada etapa explicada com exemplos, cronogramas, checklist e tudo o que você precisa.</p>
-        <div class="hero-highlight">
-            <i class="fas fa-lightbulb" style="color:#0284c7; margin-right:10px;"></i>
-            <strong>Entenda de uma vez:</strong> O TCC é um processo organizado em fases. Vamos descomplicar cada uma delas com informações práticas.
-        </div>
-    </div>
-</header>
-
-<main class="container">
-
-    <!-- O QUE É TCC (expandido) -->
-    <section id="o-que-e-tcc">
-        <div class="section-header">
-            <h2>O que é um Trabalho de Conclusão de Curso?</h2>
-            <p>Compreenda a essência, os objetivos e a importância acadêmica</p>
-        </div>
-        <div class="card-white">
-            <p style="font-size:1.3rem; margin-bottom:2rem;">O TCC é uma <strong>pesquisa científica ou projeto técnico</strong> que demonstra sua capacidade de aplicar conhecimentos para investigar um fenômeno ou resolver um problema real. Não é apenas um "trabalho longo": é um exercício de método, pensamento crítico e comunicação.</p>
-            <div class="grid-2" style="margin:2rem 0;">
-                <div><i class="fas fa-check-circle" style="color:#10b981;"></i> <strong>Finalidade acadêmica:</strong> comprovar que você domina as técnicas de pesquisa da sua área.</div>
-                <div><i class="fas fa-check-circle" style="color:#10b981;"></i> <strong>Finalidade prática:</strong> gerar conhecimento novo ou uma solução aplicável.</div>
-            </div>
-            <div style="background:#fef9e7; padding:1.5rem; border-radius:20px;">
-                <p><strong>🧠 Lembre-se:</strong> todo TCC parte de uma <strong>pergunta-problema</strong>. Ex: “Como a música influencia o aprendizado de inglês em crianças?”. Tudo que você escrever deve ajudar a responder essa pergunta.</p>
+            <div class="nav-links" id="navLinks">
+                <a href="#inicio"><i class="fas fa-home"></i> Comece Aqui</a>
+                <a href="#modalidades"><i class="fas fa-book-open"></i> Tipos de TCC</a>
+                <a href="#fluxo"><i class="fas fa-map-signs"></i> Passo a Passo</a>
+                <a href="#normas"><i class="fas fa-ruler"></i> Normas ABNT</a>
+                <a href="#dicas"><i class="fas fa-lightbulb"></i> Dicas Finais</a>
             </div>
         </div>
-    </section>
+    </nav>
 
-    <!-- ESCOLHA DO TEMA (agora com muito mais detalhes) -->
-    <section id="escolha-tema">
-        <div class="section-header">
-            <h2>1. Escolha do tema: a decisão mais estratégica</h2>
-            <p>80% do sucesso vem de um tema bem delimitado, viável e relevante</p>
-        </div>
-        <div class="grid-2">
-            <div class="card-white">
-                <h4><i class="fas fa-check-circle" style="color:#10b981;"></i> Critérios para um bom tema</h4>
-                <ul style="list-style:none;">
-                    <li style="margin-bottom:1rem;"><i class="fas fa-check" style="color:#10b981; margin-right:10px;"></i> <strong>Relevância:</strong> O tema interessa à comunidade acadêmica/sociedade? Existe discussão atual?</li>
-                    <li style="margin-bottom:1rem;"><i class="fas fa-check" style="color:#10b981; margin-right:10px;"></i> <strong>Viabilidade:</strong> Você consegue acesso a livros, artigos, dados, empresas ou laboratórios?</li>
-                    <li style="margin-bottom:1rem;"><i class="fas fa-check" style="color:#10b981; margin-right:10px;"></i> <strong>Originalidade:</strong> Não precisa ser inédito, mas traga um novo olhar (outra cidade, outro público, nova abordagem).</li>
-                    <li style="margin-bottom:1rem;"><i class="fas fa-check" style="color:#10b981; margin-right:10px;"></i> <strong>Interesse pessoal:</strong> Você vai conviver meses com isso. Escolha algo que te motive.</li>
-                </ul>
-            </div>
-            <div class="card-white">
-                <h4><i class="fas fa-times-circle" style="color:#ef4444;"></i> Armadilhas comuns</h4>
-                <ul style="list-style:none;">
-                    <li style="margin-bottom:1rem;"><i class="fas fa-times" style="color:#ef4444; margin-right:10px;"></i> Temas amplos demais (ex: “A violência urbana”) – recorte: “Violência em escolas municipais de Fortaleza”.</li>
-                    <li style="margin-bottom:1rem;"><i class="fas fa-times" style="color:#ef4444; margin-right:10px;"></i> Tema sem bibliografia: pesquise antes no Google Acadêmico para ver se existem pelo menos 20 fontes.</li>
-                    <li style="margin-bottom:1rem;"><i class="fas fa-times" style="color:#ef4444; margin-right:10px;"></i> Escolher por pressão de terceiros (pais, colegas).</li>
-                </ul>
+    <div class="overlay" id="overlay"></div>
+
+    <header class="hero" id="inicio">
+        <div class="container">
+            <h1>Como Construir seu TCC do Zero</h1>
+            <p>Um guia completo, detalhado e prático que explica cada etapa do processo, desde a escolha do tema até a apresentação final.</p>
+            
+            <div class="hero-highlight">
+                <i class="fas fa-lightbulb" style="color: var(--primary); margin-right: 10px;"></i>
+                <strong>Entenda de uma vez por todas:</strong> O TCC não é um bicho de sete cabeças. É um processo científico organizado em etapas lógicas. Vamos descomplicar!
             </div>
         </div>
-        <div style="background:#f1f5f9; border-radius:28px; padding:2rem; margin-top:2rem;">
-            <h4>Exercício prático para delimitar o tema:</h4>
-            <ol style="margin-left:2rem;">
-                <li>Liste 5 assuntos que você gosta no curso.</li>
-                <li>Para cada um, pense num problema concreto: "O que não funciona bem?" ou "O que eu gostaria de entender melhor?"</li>
-                <li>Transforme numa pergunta: "Como...?", "Qual o impacto...?", "De que forma...?"</li>
-                <li>Avalie cada pergunta com os critérios de viabilidade. A vencedora será seu tema.</li>
-            </ol>
-            <p class="badge" style="margin-top:1.5rem;">ex: de “Redes sociais” para “O impacto do Instagram na autoimagem de adolescentes de 15 a 18 anos em escolas particulares de Curitiba”</p>
-        </div>
-    </section>
+    </header>
 
-    <!-- ELEMENTOS PRÉ-TEXTUAIS (detalhados) -->
-    <section id="pre-textuais">
-        <div class="section-header">
-            <h2>2. Elementos pré-textuais: a estrutura formal</h2>
-            <p>Partes que antecedem o texto principal (obrigatórias ou opcionais segundo a ABNT)</p>
-        </div>
-        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1.5rem;">
-            <div class="card-white" style="text-align:center;"><i class="fas fa-file-alt" style="font-size:2.5rem; color:#0284c7;"></i><h4>Capa</h4><p>Instituição, curso, título (centralizado), autor, local e ano.</p></div>
-            <div class="card-white" style="text-align:center;"><i class="fas fa-clipboard-list" style="font-size:2.5rem; color:#0284c7;"></i><h4>Folha de rosto</h4><p>Repete a capa + natureza do trabalho (ex: “Trabalho de conclusão de curso apresentado ao...” ) e nome do orientador.</p></div>
-            <div class="card-white" style="text-align:center;"><i class="fas fa-check-square" style="font-size:2.5rem; color:#0284c7;"></i><h4>Folha de aprovação</h4><p>Deixe em branco (será preenchida após a defesa). Contém espaço para banca e notas.</p></div>
-            <div class="card-white" style="text-align:center;"><i class="fas fa-heart" style="font-size:2.5rem; color:#0284c7;"></i><h4>Dedicatória / Agradecimentos</h4><p>Opcional. Agradeça a pessoas importantes (orientador, família, amigos).</p></div>
-            <div class="card-white" style="text-align:center;"><i class="fas fa-quote-right" style="font-size:2.5rem; color:#0284c7;"></i><h4>Epígrafe</h4><p>Uma frase ou citação que inspira e se relaciona com o tema.</p></div>
-            <div class="card-white" style="text-align:center;"><i class="fas fa-list" style="font-size:2.5rem; color:#0284c7;"></i><h4>Resumo/Abstract</h4><p>Resumo em português e inglês (250 a 500 palavras) com objetivo, método, resultados e conclusão. Inclui palavras-chave.</p></div>
-            <div class="card-white" style="text-align:center;"><i class="fas fa-list-ol" style="font-size:2.5rem; color:#0284c7;"></i><h4>Sumário</h4><p>Lista automática com títulos e páginas. Use a ferramenta de sumário do Word.</p></div>
-            <div class="card-white" style="text-align:center;"><i class="fas fa-image" style="font-size:2.5rem; color:#0284c7;"></i><h4>Listas</h4><p>Lista de ilustrações, tabelas, gráficos, siglas (se houver).</p></div>
-        </div>
-    </section>
+    <main>
+        <!-- SEÇÃO INTRODUTÓRIA -->
+        <section id="o-que-e-tcc">
+            <div class="container">
+                <div class="section-header">
+                    <h2>O que é um Trabalho de Conclusão de Curso?</h2>
+                    <p>Antes de começar, você precisa entender a natureza e o propósito do seu TCC</p>
+                </div>
+                
+                <div style="background: white; padding: 1.5rem; border-radius: 20px; border: 1px solid var(--border);">
+                    <p style="font-size: 1rem; margin-bottom: 1.5rem;">O TCC é uma <strong>pesquisa científica</strong> ou <strong>projeto prático</strong> que demonstra sua capacidade de aplicar o conhecimento adquirido durante o curso para resolver um problema real ou investigar um fenômeno.</p>
+                    
+                    <div class="intro-grid" style="display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin: 1.5rem 0;">
+                        <div style="text-align: center;">
+                            <div style="width: 70px; height: 70px; background: #e0f2fe; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                                <i class="fas fa-search" style="font-size: 1.8rem; color: var(--primary);"></i>
+                            </div>
+                            <h4>Pesquisa</h4>
+                            <p style="font-size: 0.9rem;">Investigar algo que ainda não foi totalmente explorado</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="width: 70px; height: 70px; background: #e0f2fe; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                                <i class="fas fa-pencil-alt" style="font-size: 1.8rem; color: var(--primary);"></i>
+                            </div>
+                            <h4>Documentação</h4>
+                            <p style="font-size: 0.9rem;">Registrar todo o processo de forma estruturada</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="width: 70px; height: 70px; background: #e0f2fe; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                                <i class="fas fa-chalkboard-teacher" style="font-size: 1.8rem; color: var(--primary);"></i>
+                            </div>
+                            <h4>Defesa</h4>
+                            <p style="font-size: 0.9rem;">Apresentar e defender seus resultados para uma banca</p>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #fef3c7; padding: 1rem; border-radius: 10px; border-left: 4px solid var(--warning);">
+                        <p style="font-size: 0.9rem;"><strong>Dica fundamental:</strong> O TCC deve responder a uma pergunta clara (problema de pesquisa) ou resolver um problema específico. Tudo que você fizer deve estar alinhado com esse objetivo principal.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <!-- MODALIDADES DE TCC (MUITO MAIS EXPLICATIVO) -->
-    <section id="modalidades">
-        <div class="section-header">
-            <h2>3. Tipos de TCC: qual o seu?</h2>
-            <p>Cada formato tem estrutura, objetivos e passos específicos. Veja detalhes completos.</p>
-        </div>
-        <div class="types-container">
+        <!-- SEÇÃO: ESCOLHA DO TEMA -->
+        <section id="escolha-tema">
+            <div class="container">
+                <div class="section-header">
+                    <h2>1. A Escolha do Tema</h2>
+                    <p>80% do sucesso do seu TCC depende de um tema bem definido e factível</p>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr; gap: 1rem;">
+                    <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border);">
+                        <h4 style="color: var(--primary);"><i class="fas fa-check-circle"></i> Critérios para um bom tema</h4>
+                        <ul style="list-style: none;">
+                            <li style="margin-bottom: 0.8rem; font-size: 0.9rem;"><i class="fas fa-check" style="color: var(--success); margin-right: 10px;"></i> <strong>Relevância:</strong> O tema tem importância acadêmica ou social?</li>
+                            <li style="margin-bottom: 0.8rem; font-size: 0.9rem;"><i class="fas fa-check" style="color: var(--success); margin-right: 10px;"></i> <strong>Viabilidade:</strong> Você consegue acesso aos dados ou materiais necessários?</li>
+                            <li style="margin-bottom: 0.8rem; font-size: 0.9rem;"><i class="fas fa-check" style="color: var(--success); margin-right: 10px;"></i> <strong>Originalidade:</strong> Você está trazendo uma nova perspectiva?</li>
+                            <li style="margin-bottom: 0.8rem; font-size: 0.9rem;"><i class="fas fa-check" style="color: var(--success); margin-right: 10px;"></i> <strong>Afinidade:</strong> Você tem interesse genuíno no assunto?</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border);">
+                        <h4 style="color: var(--primary);"><i class="fas fa-times-circle"></i> Erros comuns na escolha</h4>
+                        <ul style="list-style: none;">
+                            <li style="margin-bottom: 0.8rem; font-size: 0.9rem;"><i class="fas fa-times" style="color: var(--danger); margin-right: 10px;"></i> Temas muito amplos (ex: "A violência no Brasil")</li>
+                            <li style="margin-bottom: 0.8rem; font-size: 0.9rem;"><i class="fas fa-times" style="color: var(--danger); margin-right: 10px;"></i> Temas sem bibliografia disponível</li>
+                            <li style="margin-bottom: 0.8rem; font-size: 0.9rem;"><i class="fas fa-times" style="color: var(--danger); margin-right: 10px;"></i> Temas que exigem recursos inacessíveis</li>
+                            <li style="margin-bottom: 0.8rem; font-size: 0.9rem;"><i class="fas fa-times" style="color: var(--danger); margin-right: 10px;"></i> Escolher por pressão de terceiros</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div style="background: var(--accent-bg); padding: 1.5rem; border-radius: 12px; margin-top: 1.5rem;">
+                    <h4 style="font-size: 1.1rem;">Exercício prático:</h4>
+                    <ol style="margin-left: 1.5rem; font-size: 0.9rem;">
+                        <li>Quais disciplinas do curso mais me interessaram?</li>
+                        <li>Que problema eu observo na minha área que gostaria de resolver?</li>
+                        <li>Existe algum autor ou teoria que me chamou atenção?</li>
+                        <li>O que eu gostaria de pesquisar se tivesse todo o tempo do mundo?</li>
+                    </ol>
+                </div>
+            </div>
+        </section>
 
-            <!-- MONOGRAFIA -->
-            <div class="type-block">
-                <div class="type-main-info">
-                    <div class="type-sidebar"><div class="icon-box"><i class="fas fa-book-bookmark"></i></div><h3>Monografia</h3><p>Revisão bibliográfica aprofundada, típica de humanas, direito e saúde. Exige diálogo entre autores.</p><span class="badge">📚 mínimo 40 páginas</span></div>
-                    <div class="type-content">
-                        <h4><i class="fas fa-list-ol"></i> Passo a passo completo</h4>
-                        <div class="step-list">
-                            <div class="step-item" data-step="1"><span class="step-title">Pesquisa exploratória:</span> busque palavras‑chave em bases (Scielo, Google Acadêmico, Scopus). Levante no mínimo 30 fontes (livros, teses, artigos).</div>
-                            <div class="step-item" data-step="2"><span class="step-title">Leitura e fichamento:</span> crie fichas (Word, planilha ou papel) com: autor, ano, ideia principal, citações literais e comentários pessoais. Isso evita perder referências.</div>
-                            <div class="step-item" data-step="3"><span class="step-title">Redação do referencial:</span> não copie e cole. Escreva conectando autores: “Silva (2020) corrobora essa visão ao afirmar que... já Souza (2021) discorda, pois...”.</div>
-                            <div class="step-item" data-step="4"><span class="step-title">Conclusão:</span> retome a pergunta inicial e mostre o que a literatura permitiu concluir. Não traga ideias novas.</div>
+        <!-- SEÇÃO: ELEMENTOS PRÉ-TEXTUAIS -->
+        <section id="pre-textuais">
+            <div class="container">
+                <div class="section-header">
+                    <h2>2. Elementos Pré-textuais</h2>
+                    <p>A estrutura inicial do seu trabalho</p>
+                </div>
+                
+                <div class="grid-cards">
+                    <div class="card-item">
+                        <i class="fas fa-file-alt"></i>
+                        <h4>Capa</h4>
+                        <p>Nome da instituição, curso, título, autor, local e ano</p>
+                    </div>
+                    <div class="card-item">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h4>Folha de Rosto</h4>
+                        <p>Repete a capa + natureza do trabalho e nome do orientador</p>
+                    </div>
+                    <div class="card-item">
+                        <i class="fas fa-check-square"></i>
+                        <h4>Folha de Aprovação</h4>
+                        <p>Espaço para assinaturas da banca</p>
+                    </div>
+                    <div class="card-item">
+                        <i class="fas fa-heart"></i>
+                        <h4>Dedicatória</h4>
+                        <p>Opcionais, mas valorizam o trabalho</p>
+                    </div>
+                    <div class="card-item">
+                        <i class="fas fa-quote-right"></i>
+                        <h4>Epígrafe</h4>
+                        <p>Uma citação inspiradora relacionada ao tema</p>
+                    </div>
+                    <div class="card-item">
+                        <i class="fas fa-list"></i>
+                        <h4>Resumo/Abstract</h4>
+                        <p>Visão geral em português e inglês</p>
+                    </div>
+                    <div class="card-item">
+                        <i class="fas fa-list-ol"></i>
+                        <h4>Sumário</h4>
+                        <p>Lista de todas as seções</p>
+                    </div>
+                    <div class="card-item">
+                        <i class="fas fa-image"></i>
+                        <h4>Listas</h4>
+                        <p>Figuras, tabelas, gráficos</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO MODALIDADES (resumida por economia de espaço - você pode manter todos os tipos) -->
+        <section id="modalidades">
+            <div class="container">
+                <div class="section-header">
+                    <h2>3. Tipos de TCC</h2>
+                    <p>Cada curso permite diferentes formatos</p>
+                </div>
+
+                <div class="type-block">
+                    <div class="type-main-info">
+                        <div class="type-sidebar">
+                            <div class="icon-box"><i class="fas fa-book-bookmark"></i></div>
+                            <h3>Monografia</h3>
+                            <p>Pesquisa bibliográfica aprofundada sobre um tema específico.</p>
+                            <span class="course-badge">Humanas, Direito, Saúde</span>
+                        </div>
+                        <div class="type-content">
+                            <h4><i class="fas fa-list-ol"></i> Passo a Passo</h4>
+                            <div class="step-list">
+                                <div class="step-item" data-step="1">
+                                    <span class="step-title">Levantamento Bibliográfico</span>
+                                    <p class="step-desc">Busca em bases como Scielo, Google Acadêmico. Mínimo 30 fontes confiáveis.</p>
+                                </div>
+                                <div class="step-item" data-step="2">
+                                    <span class="step-title">Fichamento</span>
+                                    <p class="step-desc">Organize fichas com autor, ano, ideia principal e citações.</p>
+                                </div>
+                                <div class="step-item" data-step="3">
+                                    <span class="step-title">Redação</span>
+                                    <p class="step-desc">Escreva em diálogo: Autor A complementa ou discorda do Autor B.</p>
+                                </div>
+                                <div class="step-item" data-step="4">
+                                    <span class="step-title">Considerações Finais</span>
+                                    <p class="step-desc">Retome o problema e mostre o que os autores permitiram concluir.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ARTIGO CIENTÍFICO -->
+                <div class="type-block">
+                    <div class="type-main-info">
+                        <div class="type-sidebar">
+                            <div class="icon-box"><i class="fas fa-file-alt"></i></div>
+                            <h3>Artigo Científico</h3>
+                            <p>Texto conciso com estrutura IMRaD (Introdução, Métodos, Resultados e Discussão).</p>
+                            <span class="course-badge">Todas as áreas</span>
+                        </div>
+                        <div class="type-content">
+                            <h4><i class="fas fa-list-ol"></i> Passo a Passo</h4>
+                            <div class="step-list">
+                                <div class="step-item" data-step="1">
+                                    <span class="step-title">Foco e Escopo</span>
+                                    <p class="step-desc">Defina exatamente qual aspecto do tema será abordado.</p>
+                                </div>
+                                <div class="step-item" data-step="2">
+                                    <span class="step-title">Pesquisa Direcionada</span>
+                                    <p class="step-desc">Busque artigos recentes em periódicos bem avaliados.</p>
+                                </div>
+                                <div class="step-item" data-step="3">
+                                    <span class="step-title">Estrutura IMRaD</span>
+                                    <p class="step-desc">Introdução, Métodos, Resultados, Discussão e Conclusão.</p>
+                                </div>
+                                <div class="step-item" data-step="4">
+                                    <span class="step-title">Revisão</span>
+                                    <p class="step-desc">Peça para colegas ou professor lerem e criticarem.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <!-- ARTIGO CIENTÍFICO -->
-            <div class="type-block">
-                <div class="type-main-info">
-                    <div class="type-sidebar"><div class="icon-box"><i class="fas fa-file-alt"></i></div><h3>Artigo científico</h3><p>Mais conciso, segue estrutura IMRaD (Introdução, Métodos, Resultados e Discussão). Comum em todas as áreas, principalmente pós.</p><span class="badge">📄 15 a 25 páginas</span></div>
-                    <div class="type-content">
-                        <h4><i class="fas fa-list-ol"></i> Passo a passo</h4>
-                        <div class="step-list">
-                            <div class="step-item" data-step="1"><span class="step-title">Foco restrito:</span> escolha um único problema bem delimitado. Ex: “Uso de simuladores no ensino de física no ensino médio”.</div>
-                            <div class="step-item" data-step="2"><span class="step-title">Introdução:</span> contexto, problema, objetivos e justificativa. Termine com a pergunta de pesquisa.</div>
-                            <div class="step-item" data-step="3"><span class="step-title">Métodos:</span> descreva como a pesquisa foi feita (tipo de estudo, participantes, instrumentos, análise).</div>
-                            <div class="step-item" data-step="4"><span class="step-title">Resultados e discussão:</span> apresente os achados (tabelas/gráficos) e interprete à luz da teoria. Compare com estudos anteriores.</div>
-                        </div>
+        <!-- SEÇÃO: NORMAS ABNT -->
+        <section id="normas">
+            <div class="container">
+                <div class="section-header">
+                    <h2>6. Normas ABNT</h2>
+                    <p>A formatação correta do seu trabalho</p>
+                </div>
+                
+                <div class="normas-grid">
+                    <div class="norma-card">
+                        <i class="fas fa-ruler"></i>
+                        <h4>Margens</h4>
+                        <p>Superior/Esquerda: 3 cm<br>Inferior/Direita: 2 cm</p>
+                    </div>
+                    <div class="norma-card">
+                        <i class="fas fa-font"></i>
+                        <h4>Fonte</h4>
+                        <p>Arial ou Times, tamanho 12<br>Espaçamento 1,5</p>
+                    </div>
+                    <div class="norma-card">
+                        <i class="fas fa-quote-left"></i>
+                        <h4>Citações</h4>
+                        <p>Direta: (AUTOR, ano, p.)<br>Indireta: (AUTOR, ano)</p>
+                    </div>
+                    <div class="norma-card">
+                        <i class="fas fa-book"></i>
+                        <h4>Referências</h4>
+                        <p>Ordem alfabética<br>SOBRENOME, Nome. Título. Editora, ano.</p>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <!-- PROTÓTIPO / PRODUTO TÉCNICO -->
-            <div class="type-block">
-                <div class="type-main-info">
-                    <div class="type-sidebar"><div class="icon-box"><i class="fas fa-code"></i></div><h3>Produto técnico</h3><p>Software, aplicativo, manual, equipamento, com documentação completa. Muito comum em TI, engenharias, design.</p><span class="badge">⚙️ + relatório técnico</span></div>
-                    <div class="type-content">
-                        <h4><i class="fas fa-list-ol"></i> Passo a passo</h4>
-                        <div class="step-list">
-                            <div class="step-item" data-step="1"><span class="step-title">Levantamento de requisitos:</span> entreviste usuários, observe o problema. Liste funcionalidades e documente.</div>
-                            <div class="step-item" data-step="2"><span class="step-title">Arquitetura/design:</span> fluxogramas, wireframes, diagramas UML. Aprovação do orientador.</div>
-                            <div class="step-item" data-step="3"><span class="step-title">Desenvolvimento iterativo:</span> construa em ciclos, teste cada módulo. Documente versões.</div>
-                            <div class="step-item" data-step="4"><span class="step-title">Validação:</span> teste com usuários reais, colete feedback, ajuste. Mostre que o produto resolve o problema.</div>
-                        </div>
+        <!-- SEÇÃO: DICAS FINAIS -->
+        <section id="dicas">
+            <div class="container">
+                <div class="dicas">
+                    <h3>Dicas de Ouro para um TCC de Sucesso</h3>
+                    <ul>
+                        <li><i class="fas fa-check-circle"></i> <strong>Comece ontem:</strong> Estabeleça uma rotina de escrita (ex: 2 horas por dia).</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Comunique-se com seu orientador:</strong> Reuniões regulares evitam problemas.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Backup, backup, backup:</strong> Use Google Drive, Dropbox, pendrive.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Plágio é crime:</strong> Cite corretamente todas as fontes.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Cuide da saúde:</strong> Durma bem, alimente-se, faça pausas.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Revise, revise, revise:</strong> Peça para outras pessoas lerem.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO: PERGUNTAS FREQUENTES -->
+        <section id="faq">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Perguntas Frequentes</h2>
+                    <p>Dúvidas comuns de quem está começando</p>
+                </div>
+                
+                <div class="faq-grid">
+                    <div class="faq-item">
+                        <h4>Posso mudar de tema depois de começar?</h4>
+                        <p style="font-size: 0.9rem;">Sim, mas é preferível definir bem no início. Converse com seu orientador.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>Quantas páginas deve ter?</h4>
+                        <p style="font-size: 0.9rem;">Monografia (40-60), artigo (15-25), projeto técnico (30-50).</p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>Como escolher o orientador ideal?</h4>
+                        <p style="font-size: 0.9rem;">Alguém com conhecimento na área, disponibilidade e boa comunicação.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>O que é plágio acadêmico?</h4>
+                        <p style="font-size: 0.9rem;">Copiar texto de outro autor sem citar a fonte.</p>
                     </div>
                 </div>
             </div>
+        </section>
+    </main>
 
-            <!-- Estudo de caso (ampliado) -->
-            <div class="type-block">
-                <div class="type-main-info">
-                    <div class="type-sidebar"><div class="icon-box"><i class="fas fa-microscope"></i></div><h3>Estudo de caso</h3><p>Investigação profunda de um fenômeno contemporâneo em seu contexto real (empresa, comunidade, pessoa).</p><span class="badge">🏢 fontes múltiplas</span></div>
-                    <div class="type-content">
-                        <h4><i class="fas fa-list-ol"></i> Roteiro</h4>
-                        <div class="step-list">
-                            <div class="step-item" data-step="1"><span class="step-title">Seleção do caso:</span> escolha uma unidade que seja representativa ou única. Justifique a escolha (caso típico, extremo, revelador).</div>
-                            <div class="step-item" data-step="2"><span class="step-title">Coleta de evidências:</span> entrevistas, observação, documentos, registros. Use roteiros e diário de campo.</div>
-                            <div class="step-item" data-step="3"><span class="step-title">Triangulação:</span> cruze informações de diferentes fontes para dar robustez às conclusões.</div>
-                            <div class="step-item" data-step="4"><span class="step-title">Redação:</span> descreva o caso detalhadamente, mantendo anonimato se necessário. Sempre relacione com a teoria.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- (demais tipos foram mantidos, só adicionei mais detalhe nos principais) -->
+    <footer>
+        <div class="container">
+            <p><strong>Guia Completo do TCC - Do Zero à Aprovação</strong></p>
+            <p style="font-size: 0.7rem; margin-top: 0.5rem;">Baseado nas diretrizes ABNT NBR 15287 e 14724</p>
+            <p style="margin-top: 1.5rem;">&copy; 2026 - Material gratuito para orientação de estudantes.</p>
         </div>
-    </section>
+    </footer>
 
-    <!-- ESTRUTURA DO PROJETO DE PESQUISA (mapa do tesouro) -->
-    <section id="projeto-pesquisa">
-        <div class="section-header"><h2>4. Projeto de pesquisa: o guia que orienta tudo</h2><p>Sem projeto, você navega sem rumo. Ele contém:</p></div>
-        <div class="grid-2">
-            <div class="card-white"><h4>📌 Introdução</h4> <ul><li>Contextualização (2-3 parágrafos)</li><li>Problema (pergunta clara e delimitada)</li><li>Hipóteses (respostas provisórias)</li><li>Objetivo geral e específicos (começam com verbos: analisar, identificar, comparar...)</li><li>Justificativa (relevância acadêmica, social, pessoal)</li></ul></div>
-            <div class="card-white"><h4>📚 Referencial teórico</h4><ul><li>Conceitos-chave que embasam a pesquisa</li><li>Teorias que sustentam a análise</li><li>Estado da arte: o que já foi publicado sobre o tema</li></ul></div>
-            <div class="card-white"><h4>🔬 Metodologia</h4><ul><li>Tipo de pesquisa (qualitativa, quantitativa, mista)</li><li>Instrumentos (questionário, entrevista, experimento)</li><li>Procedimentos de coleta e análise</li><li>Cronograma (em meses) e recursos</li></ul></div>
-            <div class="card-white"><h4>📋 Elementos finais</h4><ul><li>Referências (já no formato ABNT)</li><li>Apêndices (instrumentos criados por você)</li><li>Anexos (documentos de terceiros)</li></ul></div>
-        </div>
-    </section>
+    <script>
+        // Menu Hamburguer
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+        const overlay = document.getElementById('overlay');
+        
+        function toggleMenu() {
+            menuToggle.classList.toggle('active');
+            navLinks.classList.toggle('active');
+            overlay.classList.toggle('active');
+            document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
+        }
 
-    <!-- EXECUÇÃO (coleta, análise) -->
-    <section id="execucao">
-        <div class="section-header"><h2>5. Execução: mãos à obra</h2><p>A fase mais longa exige disciplina e organização</p></div>
-        <div class="timeline-item"><div class="timeline-number">1</div><div class="timeline-content"><h3>Pesquisa bibliográfica</h3><p>Use operadores booleanos: ("ensino híbrido" AND "ensino médio") OR "blended learning". Gerencie as referências com Mendeley, Zotero ou EndNote.</p></div></div>
-        <div class="timeline-item"><div class="timeline-number">2</div><div class="timeline-content"><h3>Coleta de dados</h3><p>Questionérios online (Google Forms), entrevistas (grave e transcreva), observação (caderno de campo). Cuidados éticos: TCLE (termo de consentimento).</p></div></div>
-        <div class="timeline-item"><div class="timeline-number">3</div><div class="timeline-content"><h3>Análise</h3><p>Quantitativa: planilhas, estatística descritiva (média, desvio). Qualitativa: análise de conteúdo (categorização de temas) ou discurso. Use softwares como Excel, SPSS, NVivo.</p></div></div>
-        <div class="timeline-item"><div class="timeline-number">4</div><div class="timeline-content"><h3>Redação</h3><p>Estrutura: Introdução, Referencial, Metodologia, Resultados, Discussão, Conclusão. Escreva todos os dias um pouco, nem que seja 30 minutos.</p></div></div>
-    </section>
+        menuToggle.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
 
-    <!-- NORMAS ABNT -->
-    <section id="normas">
-        <div class="section-header"><h2>6. Normas ABNT essenciais</h2><p>Formatação obrigatória (consulte sempre a última versão)</p></div>
-        <div class="normas-grid">
-            <div class="norma-card"><i class="fas fa-ruler"></i><h4>Margens</h4><p>3cm superior/esquerda<br>2cm inferior/direita</p></div>
-            <div class="norma-card"><i class="fas fa-font"></i><h4>Fonte</h4><p>Arial ou Times, tamanho 12<br>Espaçamento 1,5<br>Citação longa: tamanho 10, recuo 4cm</p></div>
-            <div class="norma-card"><i class="fas fa-quote-left"></i><h4>Citações</h4><p>Direta curta: (AUTOR, ano, p.)<br>Indireta: (AUTOR, ano)<br>Apud: (citado por AUTOR, ano)</p></div>
-            <div class="norma-card"><i class="fas fa-book"></i><h4>Referências</h4><p>SOBRENOME, Nome. Título. Edição. Local: Editora, ano.</p></div>
-        </div>
-        <div style="background:white; border-radius:20px; padding:1.5rem; margin:2rem 0;"><i class="fas fa-lightbulb"></i> <strong>Ferramentas:</strong> gerador automático (More, Mendeley), templates ABNT para Word.</div>
-    </section>
+        // Fechar menu ao clicar em um link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                toggleMenu();
+            });
+        });
 
-    <!-- DEFESA -->
-    <section id="defesa">
-        <div class="section-header"><h2>7. Defesa: apresente com confiança</h2><p>A banca avalia conteúdo e sua postura</p></div>
-        <div class="grid-2">
-            <div class="card-white"><h4>✅ Preparação</h4><ul><li>Slides limpos (máx. 15). Use tópicos, imagens, gráficos.</li><li>Treine em voz alta, sozinho e para amigos. Cronometre.</li><li>Antecipe perguntas: pontos fracos, metodologia, contribuições.</li></ul></div>
-            <div class="card-white"><h4>🎤 Na apresentação</h4><ul><li>Contato visual com a banca.</li><li>Não leia os slides; use‑os como roteiro.</li><li>Controle o tempo (geralmente 15-20 min).</li><li>Responda com educação, agradeça as perguntas.</li></ul></div>
-        </div>
-        <div class="card-white" style="margin-top:2rem; border-left:6px solid #10b981;"><i class="fas fa-clipboard-check"></i> <strong>Checklist:</strong> 3 cópias impressas do TCC, pen drive com slides e PDF, notebook (opcional), água, caneta, chegar 30 min antes.</div>
-    </section>
+        // Ajustar âncoras para não ficarem escondidas pelo menu fixo
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const headerOffset = 70;
+                    const elementPosition = target.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
-    <!-- DICAS FINAIS (ainda mais completas) -->
-    <section id="dicas">
-        <div class="dicas">
-            <h3>🏆 Dicas de ouro para um TCC nota 10</h3>
-            <ul>
-                <li><i class="fas fa-check-circle"></i> <strong>Comece ontem:</strong> dedique 2 horas diárias, mesmo que seja para organizar ideias.</li>
-                <li><i class="fas fa-check-circle"></i> <strong>Orientador é seu copiloto:</strong> reúna-se regularmente (a cada 15 dias) e mostre avanços.</li>
-                <li><i class="fas fa-check-circle"></i> <strong>Grupo de apoio:</strong> crie um grupo com colegas para trocar revisões e motivação.</li>
-                <li><i class="fas fa-check-circle"></i> <strong>Backup triplo:</strong> nuvem (Google Drive, Dropbox) + HD externo + pendrive.</li>
-                <li><i class="fas fa-check-circle"></i> <strong>Plágio zero:</strong> cite tudo. Use CopySpider para verificar similaridades.</li>
-                <li><i class="fas fa-check-circle"></i> <strong>Saúde mental:</strong> durma, alimente-se, faça pausas. Ansiedade atrapalha a escrita.</li>
-                <li><i class="fas fa-check-circle"></i> <strong>Revisão final:</strong> peça para duas pessoas diferentes lerem (um leigo e um especialista).</li>
-                <li><i class="fas fa-check-circle"></i> <strong>Comemore cada etapa:</strong> capítulo finalizado, coleta concluída — cada passo é vitória.</li>
-            </ul>
-        </div>
-    </section>
-
-    <!-- CRONOGRAMA SUGERIDO (6 meses) -->
-    <section id="cronograma">
-        <div class="section-header"><h2>Cronograma modelo (6 meses)</h2><p>Adapte à sua realidade</p></div>
-        <div style="background:white; border-radius:28px; padding:2rem;">
-            <table style="width:100%; border-collapse:collapse;">
-                <thead style="background:#0284c7; color:white;"><tr><th style="padding:1rem;">Mês</th><th>Atividades</th></tr></thead>
-                <tbody>
-                    <tr><td style="padding:1rem; font-weight:bold;">1</td><td>Definir tema, orientador, projeto de pesquisa, primeiras leituras.</td></tr>
-                    <tr><td style="padding:1rem; font-weight:bold;">2</td><td>Referencial teórico, aprofundar bibliografia, escrever introdução.</td></tr>
-                    <tr><td style="padding:1rem; font-weight:bold;">3</td><td>Coleta de dados / desenvolvimento do produto.</td></tr>
-                    <tr><td style="padding:1rem; font-weight:bold;">4</td><td>Análise dos dados, redação dos resultados e discussão.</td></tr>
-                    <tr><td style="padding:1rem; font-weight:bold;">5</td><td>Conclusão, revisão geral, formatação ABNT.</td></tr>
-                    <tr><td style="padding:1rem; font-weight:bold;">6</td><td>Entrega, preparação dos slides, ensaio da defesa.</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-    <!-- FAQ -->
-    <section id="faq">
-        <div class="section-header"><h2>Perguntas frequentes</h2><p>Dúvidas clássicas</p></div>
-        <div class="grid-2">
-            <div class="card-white"><h4>📌 Posso mudar de tema?</h4><p>Sim, mas é melhor definir logo. Se necessário, converse com o orientador e justifique.</p></div>
-            <div class="card-white"><h4>📌 Quantas páginas?</h4><p>Monografia 40-60, artigo 15-25, projeto técnico 30-50. Veja manual do seu curso.</p></div>
-            <div class="card-white"><h4>📌 O que é plágio?</h4><p>Copiar texto sem citar a fonte. Auto-plágio também é crime (usar trabalho já entregue).</p></div>
-            <div class="card-white"><h4>📌 Como escolher o orientador?</h4><p>Pesquise a linha de pesquisa, converse com veteranos, escolha alguém acessível.</p></div>
-        </div>
-    </section>
-</main>
-
-<footer>
-    <div class="container">
-        <p><strong>Guia definitivo do TCC – versão ultra detalhada</strong></p>
-        <p style="font-size:0.8rem;">Baseado nas normas ABNT NBR 14724 e 15287. Sempre consulte o manual da sua instituição.</p>
-        <p style="margin-top:2rem;">© 2026 – Material gratuito e autoexplicativo. Compartilhe!</p>
-    </div>
-</footer>
-
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
 </body>
-
 </html>
