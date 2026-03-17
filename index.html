@@ -480,10 +480,8 @@
         }
 
         // Handle Google Redirect Result on page load
-        let handlingGoogleAuth = false;
         getRedirectResult(auth).then(async (result) => {
             if (!result) return;
-            handlingGoogleAuth = true;
             const docSnap = await getDoc(doc(db, "users", result.user.uid)).catch(() => null);
             if (docSnap && docSnap.exists()) {
                 window.location.href = 'dashboard.html';
@@ -495,21 +493,14 @@
         });
 
         // Auth State Observer — redirect when logged in
-        onAuthStateChanged(auth, (user) => {
-            if (user && !handlingGoogleAuth) {
-                // To avoid redirecting mid-modal, check if we're dealing with a brand new google auth user
-                getDoc(doc(db, "users", user.uid)).then(docSnap => {
-                    if (docSnap.exists() && !handlingGoogleAuth) {
-                        window.location.href = 'dashboard.html';
-                    } else if (!docSnap.exists() && !handlingGoogleAuth) {
-                        handlingGoogleAuth = true;
-                        showGoogleRoleModal(user);
-                    }
-                }).catch(e => {
-                    if (!handlingGoogleAuth) {
-                        window.location.href = 'dashboard.html';
-                    }
-                });
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const docSnap = await getDoc(doc(db, "users", user.uid)).catch(() => null);
+                // Only redirect if the profile already exists.
+                // If it doesn't exist, it means either getRedirectResult is showing the modal or manual signup is handling it.
+                if (docSnap && docSnap.exists()) {
+                    window.location.href = 'dashboard.html';
+                }
             }
         });
 
@@ -619,9 +610,9 @@
 
             try {
                 if (isLoginMode) {
+                    // SignIn is naturally handled by onAuthStateChanged if successful
                     await signInWithEmailAndPassword(auth, email, password);
                 } else {
-                    handlingGoogleAuth = true; // pause observer while we set up the document
                     const name = document.getElementById('nameInput').value.trim();
                     const role = document.getElementById('roleInput').value;
                     const cred = await createUserWithEmailAndPassword(auth, email, password);
@@ -629,7 +620,7 @@
                         uid: cred.user.uid, name, email, role,
                         status: role === 'professor' ? 'pendente' : 'ativo',
                         createdAt: new Date().toISOString()
-                    }).catch(err => console.warn("Erro ao salvar perfil:", err));
+                    });
                     window.location.href = 'dashboard.html';
                 }
             } catch (error) {
