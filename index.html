@@ -479,20 +479,8 @@
             }).catch(err => console.warn("Erro ao verificar perfil:", err));
         }
 
-        // Handle Google Redirect Result on page load
-        getRedirectResult(auth).then(async (result) => {
-            if (!result) return;
-            const docSnap = await getDoc(doc(db, "users", result.user.uid)).catch(() => null);
-            if (docSnap && docSnap.exists()) {
-                window.location.href = 'dashboard.html';
-            } else {
-                showGoogleRoleModal(result.user);
-            }
-        }).catch((error) => {
-            console.error("Redirect error:", error);
-        });
+        // Firebase Auth Init and Observer
 
-        // Auth State Observer — redirect when logged in
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const docSnap = await getDoc(doc(db, "users", user.uid)).catch(() => null);
@@ -643,7 +631,7 @@
             }
         });
 
-        // Google Auth (via redirect - more reliable than popup)
+        // Google Auth (via popup - highly reliable for local & web)
         document.getElementById('btnGoogleAuth').addEventListener('click', async () => {
             const errMsg = document.getElementById('authErrorMsg');
             const googleBtnText = document.getElementById('googleBtnText');
@@ -655,12 +643,25 @@
                 return;
             }
 
-            googleBtnText.innerText = 'Redirecionando para o Google...';
+            googleBtnText.innerText = 'Abrindo Google...';
             document.getElementById('btnGoogleAuth').disabled = true;
 
             try {
-                await signInWithRedirect(auth, new GoogleAuthProvider());
+                const result = await import("https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js").then(mod => mod.signInWithPopup(auth, new GoogleAuthProvider()));
+
+                // Immediately check if user is already registered in DB
+                const docSnap = await getDoc(doc(db, "users", result.user.uid)).catch(() => null);
+                if (docSnap && docSnap.exists()) {
+                    window.location.href = 'dashboard.html';
+                } else {
+                    // New user -> ask for role
+                    showGoogleRoleModal(result.user);
+                    googleBtnText.innerText = 'Entrar com Google';
+                    document.getElementById('btnGoogleAuth').disabled = false;
+                }
+
             } catch (error) {
+                console.error("Google Auth Error:", error);
                 document.getElementById('btnGoogleAuth').disabled = false;
                 googleBtnText.innerText = 'Entrar com Google';
                 errMsg.style.display = 'block';
