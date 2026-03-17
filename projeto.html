@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes da Modalidade | Guia do TCC</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .projeto-hero {
+            padding: 120px 0 60px;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary), var(--tertiary));
+            color: white;
+            border-radius: 0 0 50px 50px;
+            margin-bottom: 60px;
+        }
+        .projeto-hero h1 { font-size: 3rem; margin-bottom: 20px; font-family: 'Nunito', sans-serif;}
+        .projeto-hero p { font-size: 1.2rem; opacity: 0.9; max-width: 700px; margin: 0 auto;}
+        
+        .mod-section {
+            display: none; 
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .mod-section.active {
+            display: block;
+        }
+
+        .step-card {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+        .step-card:hover { transform: translateY(-5px); }
+        .step-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            min-width: 60px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 30px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+        .btn-back:hover { background: rgba(255,255,255,0.4); color: white;}
+    </style>
+</head>
+<body>
+    <header class="projeto-hero">
+        <div class="container">
+            <h1 id="mod-title">Carregando Modalidade...</h1>
+            <p id="mod-desc">Estamos preparando os detalhes para você.</p>
+            <a href="index.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Voltar para o Início</a>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <!-- 1. Pesquisa -->
+        <section id="pesquisa" class="mod-section">
+            <div class="step-card">
+                <div class="step-icon"><i class="fa-solid fa-1"></i></div>
+                <div>
+                    <h3>Fase Preparatória</h3>
+                    <p>Defina claramente o seu tema e encontre o problema de pesquisa que irá nortear todo o trabalho. Reflita sobre a originalidade e viabilidade do estudo.</p>
+                </div>
+            </div>
+            <div class="step-card">
+                <div class="step-icon"><i class="fa-solid fa-2"></i></div>
+                <div>
+                    <h3>Elaboração do Projeto</h3>
+                    <p>Escreva os objetivos, a justificativa e defina qual a metodologia (pesquisa de campo, revisão bibliográfica, etc) você usará.</p>
+                </div>
+            </div>
+            <div class="step-card">
+                <div class="step-icon"><i class="fa-solid fa-3"></i></div>
+                <div>
+                    <h3>Execução (Levantamento de Dados)</h3>
+                    <p>Parta para a prática. Busque artigos, aplique questionários ou faça entrevistas para coletar as informações necessárias para análise.</p>
+                </div>
+            </div>
+            <div class="step-card">
+                <div class="step-icon"><i class="fa-solid fa-4"></i></div>
+                <div>
+                    <h3>Redação do Relatório</h3>
+                    <p>Organize e escreva de forma científica (dentro das normas ABNT) tudo o que você descobriu e quais as conclusões tiradas.</p>
+                </div>
+            </div>
+            <div class="step-card">
+                <div class="step-icon"><i class="fa-solid fa-5"></i></div>
+                <div>
+                    <h3>Divulgação</h3>
+                    <p>Prepare o material visual e apresente para a banca examinadora com postura e domínio do assunto.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Tecnologia -->
+        <section id="tecnologia" class="mod-section">
+            <div class="step-card"><div class="step-icon"><i class="fa-solid fa-lightbulb"></i></div><div><h3>Ideação</h3><p>Identifique uma necessidade no mercado ou comunidade que possa ser resolvida com uma tecnologia, processo ou serviço inovador.</p></div></div>
+            <div class="step-card"><div class="step-icon"><i class="fa-solid fa-microchip"></i></div><div><h3>Modelagem e Design</h3><p>Projete como a tecnologia funcionará na vida real. Pode ser um software, um manual de processos ou fluxogramas aplicáveis.</p></div></div>
+            <div class="step-card"><div class="step-icon"><i class="fa-solid fa-hammer"></i></div><div><h3>Desenvolvimento</h3><p>Crie e coloque a tecnologia para rodar num ambiente de teste. Valide a eficácia daquilo que foi criado.</p></div></div>
+            <div class="step-card"><div class="step-icon"><i class="fa-solid fa-file-contract"></i></div><div><h3>Documentação Técnica (e Patente)</h3><p>Registre todas as etapas de criação do produto. Caso seja algo inédito e revolucionário, prepare os papéis para registro de propriedade intelectual.</p></div></div>
+        </section>
+
+        <!-- 3. Artigo -->
+        <section id="artigo" class="mod-section">
+            <div class="step-card"><div class="step-icon"><i class="fa-solid fa-searchengin"></i></div><div><h3>Revisão de Literatura</h3><p>Leia massivamente o que já foi publicado sobre o seu tema. O artigo científico foca em construir conhecimento em cima do que já existe.</p></div></div>
+            <div class="step-card"><div class="step-icon"><i class="fa-solid fa-pen-nib"></i></div><div><h3>Estruturação (Introdução a Conclusão)</h3><p>Monte o "esqueleto": Introdução, Metodologia, Resultados e Discussão, Conclusão e Referências Bibliográficas.</p></div></div>
+            <div class="step-card"><div class="step-icon"><i class="fa-solid fa-comments"></i></div><div><h3>Discussão e Argumentação</h3><p>Não basta só mostrar dados, você deve debater com os outros autores! Exponha as suas ideias e interpretações acadêmicas de forma contundente.</p></div></div>
+        </section>
+
+        <!-- 4. Monografia -->
+        <section id="monografia" class="mod-section">
+            <div class="step-card"><div class="step-icon"><i class="fa-solid fa-crosshairs"></i></div><div><h3>Foco em Tema Único</h3><p>A monografia requer uma pesquisa extensa sobre uma área específica. Defina um corte claro (por exemplo, ao invés de "Redes Sociais", foque em "O impacto do Instagram no Marketing de Lanchonetes").</p></div></div>
+            <div class="step-card"><div class="step-icon"><i class="fa-solid fa-book-bookmark"></i></div><div><h3>Estrutura Densamente Baseada (Aprofundamento)</h3><p>Desenvolva capítulos teóricos robustos com a ajuda do seu orientador, fundamentados com citações de livros, documentários e pesquisas fidedignas.</p></div></div>
+            <div class="step-card"><div class="step-icon"><i class="fa-solid fa-spell-check"></i></div><div><h3>Formatação ABNT Rigorosa</h3><p>Atente-se aos elementos Pré-Textuais (Capa, Sumário, Resumo), Textuais e Pós-Textuais característicos desta modalidade.</p></div></div>
+        </section>
+
+        <!-- 5. Relatório -->
+        <section id="relatorio" class="mod-section">
+            <div class="step-card"><div class="step-icon"><i class="fa-solid fa-clipboard-check"></i></div><div><h3>Coleta de Dados Padronizada</h3><p>Junte as informações técnicas sobre o prato, serviço ou produto desenvolvido de forma concisa e objetiva.</p></div></div>
+            <div class="step-card"><div class="step-icon"><i class="fa-solid fa-table-list"></i></div><div><h3>Criação da Ficha Técnica</h3><p>Monte a tabela final instrucionando ingredientes, custos, quantidade, validade, ou, no caso de serviços, os requisitos operacionais.</p></div></div>
+            <div class="step-card"><div class="step-icon"><i class="fa-solid fa-image"></i></div><div><h3>Anexação Visual</h3><p>Apresente registros fotográficos, esquemas visuais da confecção e o resultado final no relatório.</p></div></div>
+        </section>
+
+        <!-- 6. Protótipo -->
+        <section id="prototipo" class="mod-section">
+            <div class="step-card"><div class="step-icon"><i class="fa-solid fa-drafting-compass"></i></div><div><h3>Prototipagem Física ou Virtual</h3><p>Crie um modelo testável (em escala real ou reduzida) de um equipamento, peça ou ideia inédita que funcione e resolva ou melhore o problema proposto.</p></div></div>
+            <div class="step-card"><div class="step-icon"><i class="fa-solid fa-book"></i></div><div><h3>Redação do Manual Técnico</h3><p>Escreva o "manual de instruções". Detalhe passo a passo o funcionamento, os cuidados na manutenção e os componentes utilizados.</p></div></div>
+            <div class="step-card"><div class="step-icon"><i class="fa-solid fa-vial-circle-check"></i></div><div><h3>Bateria de Testes</h3><p>Execute o protótipo e prove à banca examinadora que ele não apenas é viável no papel, como também funciona no mundo real.</p></div></div>
+        </section>
+
+        <!-- 7. Maquete -->
+        <section id="maquete" class="mod-section">
+            <div class="step-card"><div class="step-icon"><i class="fa-solid fa-cubes"></i></div><div><h3>Construção Tridimensional</h3><p>Elabore as representações 3D (física com materiais diversos como madeira, isopor, etc, ou virtual via software CAD) que mostre o seu projeto aplicado em um espaço delimitado.</p></div></div>
+            <div class="step-card"><div class="step-icon"><i class="fa-solid fa-file-invoice"></i></div><div><h3>Memorial Descritivo</h3><p>Redija um documento anexado detalhando fielmente todo o material necessário, estimativas de cálculos, medidas reais e procedimentos de como ela foi concebida ou deveria ser em escala real.</p></div></div>
+        </section>
+
+        <!-- 8. Negócios -->
+        <section id="negocios" class="mod-section">
+            <div class="step-card"><div class="step-icon"><i class="fa-solid fa-store"></i></div><div><h3>Análise da Ideia ou Mercado</h3><p>Verifique o cenário de um negócio (já existente ou criado do zero). Responda: Existe público para  isso?</p></div></div>
+            <div class="step-card"><div class="step-icon"><i class="fa-solid fa-chart-pie"></i></div><div><h3>Plano Operacional e Marketing</h3><p>Trabalhe nos 4 Ps do mercado (Produto, Preço, Praça, Promoção) e defina todas as estratégias de vendas, parcerias e infraestrutura.</p></div></div>
+            <div class="step-card"><div class="step-icon"><i class="fa-solid fa-sack-dollar"></i></div><div><h3>Plano Financeiro</h3><p>Apresente o fluxo de caixa projetado, a margem de lucro e os custos inerentes à manutenção e abertura da empresa.</p></div></div>
+        </section>
+
+        <!-- 9. EVTEC -->
+        <section id="evtec" class="mod-section">
+            <div class="step-card"><div class="step-icon"><i class="fa-solid fa-microchip"></i></div><div><h3>Viabilidade Tecnológica</h3><p>Analise se há tecnologia suficiente, máquinas adequadas e processo industrial/tecnológico pronto para executar o modelo de negócio proposto.</p></div></div>
+            <div class="step-card"><div class="step-icon"><i class="fa-solid fa-money-bill-trend-up"></i></div><div><h3>Viabilidade Econômico-Financeira</h3><p>Coloque na ponta do lápis os indicadores de retorno de investimento (ROI), VPL e TIR. Demonstre matematicamente que o projeto dá dinheiro.</p></div></div>
+            <div class="step-card"><div class="step-icon"><i class="fa-solid fa-gavel"></i></div><div><h3>Emissão de Parecer/Conclusão</h3><p>Apresente o laudo final indicando se a proposta deve ser abandonada, melhorada ou seguida com força total.</p></div></div>
+        </section>
+
+        <!-- ELEMENTOS DO PROJETO -->
+
+        <!-- Problema de Pesquisa -->
+        <section id="problema" class="mod-section">
+            <div class="step-card">
+                <div class="step-icon"><i class="fa-solid fa-circle-question"></i></div>
+                <div>
+                    <h3>O que é o Problema de Pesquisa?</h3>
+                    <p>O problema de pesquisa é o <strong>"coração"</strong> do seu projeto. É a principal pergunta que o seu trabalho quer responder até o final da leitura. Todo TCC nasce de uma inquietação, de um problema não resolvido ou de uma oportunidade de melhoria que você observou no mercado, na indústria ou na sociedade.</p>
+                    <p class="mt-2"><strong>Dicas de Ouro:</strong><br>
+                    • Ele deve ser formulado como uma <em>pergunta clara e delimitada</em>.<br>
+                    • Não deve ser algo amplo demais (impossível de resolver em pouco tempo).<br>
+                    • Não pode ser respondido apenas com "Sim" ou "Não" (ex: "A poluição faz mal?").</p>
+                </div>
+            </div>
+            
+            <div class="step-card bg-light">
+                <div class="step-icon"><i class="fa-solid fa-seedling text-success"></i></div>
+                <div>
+                    <h3>Exemplo 1: Eixo de Tecnologia e Meio Ambiente</h3>
+                    <p><strong>Cenário:</strong> Faltam incentivos para a reciclagem nas escolas estaduais.</p>
+                    <p><strong>Problema de Pesquisa:</strong> <em>"Como a implementação de um sistema gamificado influencia a taxa de adesão à coleta seletiva de plásticos por alunos do ensino médio da Escola X?"</em></p>
+                </div>
+            </div>
+            
+            <div class="step-card bg-light">
+                <div class="step-icon"><i class="fa-solid fa-heart-pulse text-danger"></i></div>
+                <div>
+                    <h3>Exemplo 2: Eixo de Saúde (Enfermagem)</h3>
+                    <p><strong>Cenário:</strong> Excesso de erros na triagem hospitalar durante a madrugada.</p>
+                    <p><strong>Problema de Pesquisa:</strong> <em>"De que maneira a implantação de um protocolo visual de cores otimiza o tempo de resposta e reduz falhas na triagem de pacientes no setor de emergência do Hospital Y entre 00h e 06h?"</em></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Justificativa -->
+        <section id="justificativa" class="mod-section">
+            <div class="step-card">
+                <div class="step-icon"><i class="fa-solid fa-bullhorn"></i></div>
+                <div>
+                    <h3>O que é a Justificativa?</h3>
+                    <p>É o seu momento de <strong>"vender o peixe"</strong>. A justificativa explica o "porquê" aquele problema (que você definiu acima) merece ser estudado. Você deve convencer a banca, a escola e o leitor de que a sua pesquisa <em>não é perda de tempo</em>.</p>
+                    <p class="mt-2"><strong>Perguntas que a Justificativa deve responder:</strong><br>
+                    • Qual a relevância social, econômica ou acadêmica desse estudo?<br>
+                    • Quais os impactos negativos se esse problema não for resolvido?<br>
+                    • Quem se beneficia diretamente com os resultados?</p>
+                </div>
+            </div>
+            
+            <div class="step-card bg-light">
+                <div class="step-icon"><i class="fa-solid fa-seedling text-success"></i></div>
+                <div>
+                    <h3>Exemplo 1: Sustentabilidade Gamificada</h3>
+                    <p><em>"Este projeto é urgente pois o rápido acúmulo de plásticos descartáveis nas escolas gera severos impactos ambientais e eleva os custos públicos de limpeza. Ao validar um sistema gamificado, o estudo fornecerá uma ferramenta de longo prazo que educa e engaja jovens, transformando hábitos e podendo ser replicado em toda a rede estadual de ensino."</em></p>
+                </div>
+            </div>
+            
+            <div class="step-card bg-light">
+                <div class="step-icon"><i class="fa-solid fa-heart-pulse text-danger"></i></div>
+                <div>
+                    <h3>Exemplo 2: Triagem na Enfermagem</h3>
+                    <p><em>"A superlotação noturna nos hospitais eleva o estresse da equipe de enfermagem e aumenta as chances de agravamento de quadros por falhas na triagem. Implementar um protocolo visual de cores rápido beneficiará diretamente os pacientes, diminuindo o risco de morte na sala de espera, e respaldará tecnicamente os enfermeiros plantonistas em suas tomadas de decisão."</em></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Objetivo Geral -->
+        <section id="objetivo-geral" class="mod-section">
+            <div class="step-card">
+                <div class="step-icon"><i class="fa-solid fa-flag-checkered"></i></div>
+                <div>
+                    <h3>O que é o Objetivo Geral?</h3>
+                    <p>A meta primária. É a afirmação direta do que você pretende concluir com o trabalho. Ele conversa diretamente com o Problema de Pesquisa: <strong>se o problema é a pergunta, o objetivo geral é a ação para alcançar a resposta.</strong></p>
+                    <p class="mt-2"><strong>Regra de Ouro:</strong><br>
+                    Todo objetivo <em>obrigatoriamente</em> inicia com um <strong>verbo no infinitivo</strong> (Ex: Analisar, Desenvolver, Implementar, Compreender, Avaliar, Propor).</p>
+                </div>
+            </div>
+            
+            <div class="step-card bg-light">
+                <div class="step-icon"><i class="fa-solid fa-seedling text-success"></i></div>
+                <div>
+                    <h3>Exemplo 1: Sustentabilidade Gamificada</h3>
+                    <p><strong>Verbo:</strong> Avaliar</p>
+                    <p><em>"<strong>Avaliar</strong> a eficácia de um aplicativo gamificado de pontuação no aumento da adesão voluntária à coleta seletiva de plásticos por alunos do ensino médio da Escola X."</em></p>
+                </div>
+            </div>
+            
+            <div class="step-card bg-light">
+                <div class="step-icon"><i class="fa-solid fa-heart-pulse text-danger"></i></div>
+                <div>
+                    <h3>Exemplo 2: Triagem na Enfermagem</h3>
+                    <p><strong>Verbo:</strong> Propor</p>
+                    <p><em>"<strong>Propor</strong> um fluxo atualizado de triagem de Manchester utilizando adesivos de cores, com o fim de reduzir atrasos no primeiro atendimento médico do Hospital Y no turno da madrugada."</em></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Objetivo Específico -->
+        <section id="objetivo-especifico" class="mod-section">
+            <div class="step-card">
+                <div class="step-icon"><i class="fa-solid fa-list-ol"></i></div>
+                <div>
+                    <h3>O que são Objetivos Específicos?</h3>
+                    <p>Se o Objetivo Geral é o "topo da montanha", os Objetivos Específicos são <strong>os degraus da escada</strong>. Eles representam todas as fases metodológicas menores (passo a passo) que precisam ser obrigatoriamente cumpridas para você conseguir atingir o Objetivo Geral.</p>
+                    <p class="mt-2"><strong>Dicas Valiosas:</strong><br>
+                    • Recomendamos listar de 3 a 5 objetivos específicos.<br>
+                    • Siga uma ordem cronológica lógica (ex: primeiro você <em>compreende</em> a teoria, depois <em>desenvolve</em> a ação e por último <em>avalia</em> o resultado).<br>
+                    • Também devem começar com verbos no infinitivo!</p>
+                </div>
+            </div>
+            
+            <div class="step-card bg-light">
+                <div class="step-icon"><i class="fa-solid fa-seedling text-success"></i></div>
+                <div>
+                    <h3>Exemplo 1: Sustentabilidade Gamificada</h3>
+                    <ul class="fancy-list" style="margin-top: 10px;">
+                        <li style="padding: 10px; margin-bottom: 10px;"><strong>1. Mapear</strong> o nível de conhecimento prévio e envolvimento dos alunos com a coleta seletiva através de um questionário.</li>
+                        <li style="padding: 10px; margin-bottom: 10px;"><strong>2. Desenvolver</strong> o protótipo funcional de um aplicativo que gera pontuação escolar por cada quilo de plástico entregue.</li>
+                        <li style="padding: 10px; margin-bottom: 10px;"><strong>3. Comparar</strong> de forma empírica o volume pesado de lixo reciclável antes e após os 30 dias de uso do aplicativo.</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="step-card bg-light">
+                <div class="step-icon"><i class="fa-solid fa-heart-pulse text-danger"></i></div>
+                <div>
+                    <h3>Exemplo 2: Triagem na Enfermagem</h3>
+                    <ul class="fancy-list" style="margin-top: 10px;">
+                        <li style="padding: 10px; margin-bottom: 10px;"><strong>1. Identificar</strong> os principais gargalos e falhas comuns registrados no setor de emergência do Hospital Y.</li>
+                        <li style="padding: 10px; margin-bottom: 10px;"><strong>2. Elaborar</strong> painéis e pulseiras visuais utilizando a lógica padronizada de cores de risco (Vermelho, Laranja, Amarelo, etc).</li>
+                        <li style="padding: 10px; margin-bottom: 10px;"><strong>3. Capacitar</strong> a equipe técnica de enfermagem do turno da noite para a utilização rápida do novo protocolo visual.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Referencial Teórico -->
+        <section id="referencial" class="mod-section">
+            <div class="step-card">
+                <div class="step-icon"><i class="fa-solid fa-book-open-reader"></i></div>
+                <div>
+                    <h3>O que é o Referencial Teórico?</h3>
+                    <p>O Referencial (ou Marco / Fundamentação) Teórico é o momento de mostrar <strong>quem já falou sobre isso antes de você</strong>. A ciência verdadeira exige embasamento. É a revisão dos livros, artigos científicos e legislações que sustentam que a sua pesquisa faz sentido. <em>Nada sai do nada!</em></p>
+                    <p class="mt-2"><strong>Como Estruturar:</strong><br>
+                    Transforme os principais termos do seu título e problema em pequenos "capítulos" ou focos de pesquisa. Para cada "foco", cite autores famosos usando as regras da ABNT.</p>
+                </div>
+            </div>
+            
+            <div class="step-card bg-light">
+                <div class="step-icon"><i class="fa-solid fa-seedling text-success"></i></div>
+                <div>
+                    <h3>Exemplo 1: Sustentabilidade Gamificada</h3>
+                    <p>Para este tema, seu Referencial Teórico precisaria obrigatoriamente debater sobre:</p>
+                    <p class="mt-2"><strong>1. O que é Gamificação na Educação?</strong> (Busque e cite teóricos como Karl Kapp ou Jane McGonigal, apresentando o poder dos jogos no cérebro).</p>
+                    <p><strong>2. Os Desafios da Educação Ambiental no Brasil</strong> (Cite dados do Ministério do Meio Ambiente, PNUMA, e as dificuldades reais de coleta em massa).</p>
+                    <p><strong>3. O impacto dos Plásticos</strong> (Traga artigos sobre biologia mostrando como os microplásticos afetam a natureza).</p>
+                </div>
+            </div>
+            
+            <div class="step-card bg-light">
+                <div class="step-icon"><i class="fa-solid fa-heart-pulse text-danger"></i></div>
+                <div>
+                    <h3>Exemplo 2: Triagem na Enfermagem</h3>
+                    <p>A fundamentação do seu grupo necessitará focar em:</p>
+                    <p class="mt-2"><strong>1. Protocolo de Manchester e Triagens Globais</strong> (Cite a origem deste protocolo, e os manuais do Ministério da Saúde sobre gestão de riscos).</p>
+                    <p><strong>2. A Fisiologia do Trabalho e Estresse Noturno</strong> (Busque artigos médicos sobre como a privação de luz no turno da madrugada aumenta o erro humano).</p>
+                    <p><strong>3. Legislação Profissional (COFEN)</strong> (Mostre as resoluções sobre o que o Técnico em Enfermagem pode ou não realizar nos setores de emergência).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- MODELOS PRÁTICOS -->
+        
+        <!-- Modelo de Artigo -->
+        <section id="modelo-artigo" class="mod-section">
+            <div class="step-card">
+                <div class="step-icon"><i class="fa-regular fa-file-word"></i></div>
+                <div>
+                    <h3>1. Pesquisa Técnica-Científica / Artigo Científico</h3>
+                    <p>Ideal para alinhamento teórico, revisões de literatura ou apresentação de dados sobre um fenômeno de estudo.</p>
+                </div>
+            </div>
+            <div class="step-card">
+                <div class="step-icon"><i class="fa-solid fa-list-check"></i></div>
+                <div>
+                    <h3>Estrutura Básica do Artigo</h3>
+                    <ul class="fancy-list" style="margin-top: 10px;">
+                        <li style="padding: 10px; margin-bottom: 10px;"><strong>A) Resumo e Abstract:</strong> Apresentação breve do que se trata o estudo em português e inglês.</li>
+                        <li style="padding: 10px; margin-bottom: 10px;"><strong>B) Introdução:</strong> Contextualização do tema, apresentação do Problema e dos Objetivos.</li>
+                        <li style="padding: 10px; margin-bottom: 10px;"><strong>C) Metodologia:</strong> "Como" você fez a pesquisa (ex: Pesquisa bibliográfica exploratória).</li>
+                        <li style="padding: 10px; margin-bottom: 10px;"><strong>D) Resultados e Discussões:</strong> Exposição dos dados levantados debatendo as informações.</li>
+                        <li style="padding: 10px; margin-bottom: 10px;"><strong>E) Considerações Finais:</strong> Conclusão a que se chegou.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <a href="#" class="btn btn-primary"><i class="fa-solid fa-download"></i> Baixar Modelo em Word (DOCX)</a>
+            </div>
+        </section>
+
+        <!-- Modelo de Tecnologia -->
+        <section id="modelo-tecnologia" class="mod-section">
+            <div class="step-card">
+                <div class="step-icon"><i class="fa-solid fa-code"></i></div>
+                <div>
+                    <h3>2. Desenvolvimento de Tecnologia, Processos ou Protótipos</h3>
+                    <p>Focado totalmente na construção de uma solução palpável, como um aplicativo, um equipamento ou um manual operacional inovador.</p>
+                </div>
+            </div>
+            <div class="step-card">
+                <div class="step-icon"><i class="fa-solid fa-cubes"></i></div>
+                <div>
+                    <h3>Estrutura Básica de Tecnologia</h3>
+                    <ul class="fancy-list" style="margin-top: 10px;">
+                        <li style="padding: 10px; margin-bottom: 10px;"><strong>A) Escopo do Projeto:</strong> Detalhamento do que será construído e as necessidades de mercado que ele supre.</li>
+                        <li style="padding: 10px; margin-bottom: 10px;"><strong>B) Manual de Requisitos:</strong> Quais as peças, linguagens de programação, ou insumos necessários para a criação.</li>
+                        <li style="padding: 10px; margin-bottom: 10px;"><strong>C) Prototipagem:</strong> Apresentação de wireframes, plantas, mockups ou design da solução em estágio Alpha/Beta.</li>
+                        <li style="padding: 10px; margin-bottom: 10px;"><strong>D) Testes e Homologação:</strong> Relatório evidenciando que a tecnologia foi testada (testes de estresse, usabilidade) e funciona.</li>
+                        <li style="padding: 10px; margin-bottom: 10px;"><strong>E) Licenciamento / Patente:</strong> Informações de restrições de uso ou cópia (EULA, Registro no INPI).</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <a href="#" class="btn btn-primary"><i class="fa-solid fa-download"></i> Baixar Modelo Técnico (PDF)</a>
+            </div>
+        </section>
+
+        <!-- Modelo de Negocios -->
+        <section id="modelo-negocios" class="mod-section">
+            <div class="step-card">
+                <div class="step-icon"><i class="fa-solid fa-store"></i></div>
+                <div>
+                    <h3>3. Plano de Negócios / EVTEC</h3>
+                    <p>O melhor modelo para quem quer empreender. Avalia matematicamente, mercadologicamente e tecnicamente se uma ideia "dá dinheiro".</p>
+                </div>
+            </div>
+            <div class="step-card">
+                <div class="step-icon"><i class="fa-solid fa-chart-line"></i></div>
+                <div>
+                    <h3>Estrutura Básica de Negócios</h3>
+                    <ul class="fancy-list" style="margin-top: 10px;">
+                        <li style="padding: 10px; margin-bottom: 10px;"><strong>A) Sumário Executivo:</strong> Resumo da empresa, dados dos empreendedores e declaração de missão e visão.</li>
+                        <li style="padding: 10px; margin-bottom: 10px;"><strong>B) Análise de Mercado:</strong> Estudo dos concorrentes, do público-alvo e dos fornecedores.</li>
+                        <li style="padding: 10px; margin-bottom: 10px;"><strong>C) Plano de Marketing:</strong> Estratégias de divulgação, precificação e posicionamento da marca.</li>
+                        <li style="padding: 10px; margin-bottom: 10px;"><strong>D) Plano Operacional:</strong> Como a empresa vai funcionar no dia a dia? Qual a necessidade de funcionários e lay-out?</li>
+                        <li style="padding: 10px; margin-bottom: 10px;"><strong>E) Plano Financeiro (EVTEC):</strong> Cálculo de Investimento Inicial, Custos Fixos e Variáveis, Demonstrativo de Resultados (DRE), Rentabilidade e Prazo de Retorno (Payback).</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <a href="#" class="btn btn-primary"><i class="fa-solid fa-download"></i> Baixar Planilha EVTEC (Excel)</a>
+            </div>
+        </section>
+
+        <div id="not-found" class="mod-section text-center" style="padding: 100px 0;">
+            <h3><i class="fa-solid fa-triangle-exclamation text-danger"></i> Modalidade não encontrada.</h3>
+            <p>Por favor, retorne à página inicial e selecione uma modalidade válida.</p>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 - Guia do TCC para Cursos Técnicos</p>
+        <div class="developer-info">
+            <p>Desenvolvido por <span class="dev-name">Alan Ricardo</span> <i class="fa-solid fa-code" style="color: var(--primary); margin-left: 5px;"></i></p>
+            <div class="social-links">
+                <a href="#" class="social-icon no-decoration" target="_blank" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                <a href="#" class="social-icon no-decoration" target="_blank" title="GitHub"><i class="fa-brands fa-github"></i></a>
+                <a href="#" class="social-icon no-decoration" target="_blank" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="social-icon no-decoration" target="_blank" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const modalitiesData = {
+            /* Modalidades originais */
+            'pesquisa': { title: 'Pesquisa Técnica-Científica', desc: 'Siga rigorosamente as 5 etapas cruciais para a defesa científica do seu trabalho.' },
+            'tecnologia': { title: 'Desenvolvimento de Tecnologia', desc: 'Saiba como transformar sua ideia inovadora em uma patente tangível.' },
+            'artigo': { title: 'Artigos Científicos', desc: 'Seu foco é argumentação, revisão da literatura e métodos precisos.' },
+            'monografia': { title: 'Monografia', desc: 'Mergulhe fundo sob um único tema em um documento lógico e embasado.' },
+            'relatorio': { title: 'Relatório com Ficha Técnica', desc: 'Organize dados técnicos com padronização e rigor.' },
+            'prototipo': { title: 'Protótipos com Manual Técnico', desc: 'Faça acontecer: o modelo testável junto do seu guia de usabilidade.' },
+            'maquete': { title: 'Maquete com Memorial Descritivo', desc: 'Escale ideias visualmente, aliando a estrutura 3D aos detalhes precisos.' },
+            'negocios': { title: 'Plano de Negócios', desc: 'Valide, estruture e venda a ideia de um negócio (novo ou existente).' },
+            'evtec': { title: 'EVTEC', desc: 'Cruze tecnologia e dinheiro para provar a viabilidade do seu empreendimento.' },
+            
+            /* Elementos do Projeto */
+            'problema': { title: 'Problema de Pesquisa', desc: 'Qual é a inquietação que move o seu trabalho?' },
+            'justificativa': { title: 'Justificativa', desc: 'Descubra como convencer o leitor de que sua ideia vale a pena.' },
+            'objetivo-geral': { title: 'Objetivo Geral', desc: 'Onde você quer chegar ao final dessa jornada?' },
+            'objetivo-especifico': { title: 'Objetivos Específicos', desc: 'O passo a passo para alcançar sua grande meta.' },
+            'referencial': { title: 'Referencial Teórico', desc: 'O alicerce da sua pesquisa! Em quem você está se baseando?' },
+            
+            /* Modelos Práticos */
+            'modelo-artigo': { title: 'Modelo de Artigo Científico / Pesquisa', desc: 'A anatomia de um paper acadêmico de sucesso.' },
+            'modelo-tecnologia': { title: 'Modelo de Tecnologia / Protótipo', desc: 'Construa, documente e valide o seu produto tecnológico.' },
+            'modelo-negocios': { title: 'Modelo de Plano de Negócios / EVTEC', desc: 'Transforme a sua ideia milionária em um plano tangível.' }
+        };
+
+        function loadModality() {
+            const hash = window.location.hash.substring(1);
+            
+            // Hide all sections
+            document.querySelectorAll('.mod-section').forEach(sec => sec.classList.remove('active'));
+
+            const targetSection = document.getElementById(hash);
+            const data = modalitiesData[hash];
+
+            if (targetSection && data) {
+                targetSection.classList.add('active');
+                document.getElementById('mod-title').innerText = data.title;
+                document.getElementById('mod-desc').innerText = data.desc;
+            } else {
+                document.getElementById('not-found').classList.add('active');
+                document.getElementById('mod-title').innerText = 'Ops!';
+                document.getElementById('mod-desc').innerText = 'Página não encontrada.';
+            }
+        }
+
+        window.addEventListener('hashchange', loadModality);
+        window.addEventListener('DOMContentLoaded', loadModality);
+    </script>
+</body>
+</html>
