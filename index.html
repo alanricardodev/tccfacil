@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
-    
+
     <!-- Firebase App (the core Firebase SDK) -->
     <script type="module" src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js"></script>
     <script type="module" src="https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js"></script>
@@ -55,7 +55,8 @@
                 </div>
                 <p class="law-text"><i class="fa-solid fa-book-bookmark"></i> Instituído pela Portaria Nº 3704/2017 como
                     norma da Rede da Educação Profissional do Estado da Bahia.</p>
-                <button id="btnOpenAuth" class="btn btn-primary btn-open-auth">Acessar Plataforma <i class="fa-solid fa-arrow-right-to-bracket"></i></button>
+                <button id="btnOpenAuth" class="btn btn-primary btn-open-auth">Acessar Plataforma <i
+                        class="fa-solid fa-arrow-right-to-bracket"></i></button>
             </div>
             <div class="hero-image">
                 <div class="floating-illustration">
@@ -198,7 +199,8 @@
                 <a href="projeto.html#justificativa" class="elemento-card glass interactive no-decoration">
                     <div class="elemento-icon"><i class="fa-solid fa-balance-scale"></i></div>
                     <h3>Justificativa</h3>
-                    <p>O "porquÃª" do seu trabalho. Ã‰ aqui que vocÃª vende a ideia, convencendo o leitor da importÃ¢ncia e
+                    <p>O "porquÃª" do seu trabalho. Ã‰ aqui que vocÃª vende a ideia, convencendo o leitor da
+                        importÃ¢ncia e
                         relevÃ¢ncia do seu tema para a sociedade.</p>
                 </a>
                 <a href="projeto.html#objetivo-geral" class="elemento-card glass interactive no-decoration">
@@ -219,7 +221,8 @@
                         style="background: linear-gradient(135deg, var(--primary), var(--tertiary));"><i
                             class="fa-solid fa-book-journal-whills"></i></div>
                     <h3>Referencial TeÃ³rico</h3>
-                    <p>A base teÃ³rica e cientÃ­fica do seu trabalho. Ã‰ o embasamento feito atravÃ©s do que outros autores,
+                    <p>A base teÃ³rica e cientÃ­fica do seu trabalho. Ã‰ o embasamento feito atravÃ©s do que outros
+                        autores,
                         livros e artigos jÃ¡ estudaram sobre o seu tema. Nada sai do nada!</p>
                 </a>
             </div>
@@ -252,7 +255,8 @@
                             <i class="fa-solid fa-ban text-danger"></i>
                             <div>
                                 <strong>ReprovaÃ§Ã£o</strong>
-                                <p>Ocorre se não entregar nos prazos ou faltar Ã  apresentaÃ§Ã£o sem justificativa legal.
+                                <p>Ocorre se não entregar nos prazos ou faltar Ã  apresentaÃ§Ã£o sem justificativa
+                                    legal.
                                 </p>
                             </div>
                         </li>
@@ -287,7 +291,8 @@
         <div class="container">
             <div class="section-header text-center">
                 <h2>Modelos PrÃ¡ticos de Pesquisa ðŸ“‚</h2>
-                <p>Precisa de inspiraÃ§Ã£o? Acesse modelos reais de diferentes tipos de pesquisa para entender na prÃ¡tica
+                <p>Precisa de inspiraÃ§Ã£o? Acesse modelos reais de diferentes tipos de pesquisa para entender na
+                    prÃ¡tica
                     como a estrutura funciona e ter um ponto de partida para o seu!</p>
             </div>
 
@@ -362,7 +367,7 @@
                 <h2 id="modalTitle">Entrar na Plataforma</h2>
                 <p id="modalSubtitle">Faça login para acessar suas turmas e equipes.</p>
             </div>
-            
+
             <form id="authForm" class="auth-form">
                 <div class="input-group" id="nameGroup" style="display: none;">
                     <i class="fa-solid fa-user"></i>
@@ -376,7 +381,7 @@
                     <i class="fa-solid fa-lock"></i>
                     <input type="password" id="passwordInput" placeholder="Sua Senha" required>
                 </div>
-                
+
                 <div class="input-group" id="roleGroup" style="display: none;">
                     <i class="fa-solid fa-id-badge"></i>
                     <select id="roleInput">
@@ -384,16 +389,18 @@
                         <option value="professor">Sou Professor</option>
                     </select>
                 </div>
-                
+
                 <button type="submit" id="mainAuthBtn" class="btn btn-primary w-100 mt-4">Entrar</button>
 
                 <div style="text-align: center; margin: 15px 0; color: var(--text-light); font-size: 0.9rem;">OU</div>
-                
-                <button type="button" id="btnGoogleAuth" class="btn w-100" style="background: white; color: #333; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" style="width: 20px;">
+
+                <button type="button" id="btnGoogleAuth" class="btn w-100"
+                    style="background: white; color: #333; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google"
+                        style="width: 20px;">
                     <span id="googleBtnText">Entrar com Google</span>
                 </button>
-                
+
                 <p class="mt-4 text-center auth-switch">
                     <span id="switchText">Ainda não tem conta?</span>
                     <a href="#" id="authSwitchBtn">Criar nova conta</a>
@@ -406,206 +413,206 @@
     <!-- Scripts -->
     <script src="script.js"></script>
     <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyAtws25Kse-YsiEGOpxyztCa7a4q305T5I",
-  authDomain: "projetotcc-37266.firebaseapp.com",
-  projectId: "projetotcc-37266",
-  storageBucket: "projetotcc-37266.firebasestorage.app",
-  messagingSenderId: "11620412356",
-  appId: "1:11620412356:web:aee78b6248dfa3b4e69291",
-  measurementId: "G-ZHVTMBSPX0"
-};
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAtws25Kse-YsiEGOpxyztCa7a4q305T5I",
+            authDomain: "projetotcc-37266.firebaseapp.com",
+            projectId: "projetotcc-37266",
+            storageBucket: "projetotcc-37266.firebasestorage.app",
+            messagingSenderId: "11620412356",
+            appId: "1:11620412356:web:aee78b6248dfa3b4e69291",
+            measurementId: "G-ZHVTMBSPX0"
+        };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-// Authentication UI Logic (index.html)
-let isLoginMode = true;
+        // Authentication UI Logic (index.html)
+        let isLoginMode = true;
 
-const authModal = document.getElementById('authModal');
-const authButtons = document.querySelectorAll('.btn-open-auth');
-const closeAuthModal = document.getElementById('closeAuthModal');
-const authSwitchBtn = document.getElementById('authSwitchBtn');
+        const authModal = document.getElementById('authModal');
+        const authButtons = document.querySelectorAll('.btn-open-auth');
+        const closeAuthModal = document.getElementById('closeAuthModal');
+        const authSwitchBtn = document.getElementById('authSwitchBtn');
 
-// Modal Toggles
-if(authButtons.length > 0) {
-    authButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            authModal.classList.add('active');
-        });
-    });
-}
-if(closeAuthModal) {
-    closeAuthModal.addEventListener('click', () => {
-        authModal.classList.remove('active');
-    });
-}
-
-// Switch between Login and Register
-if(authSwitchBtn) {
-    authSwitchBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        isLoginMode = !isLoginMode;
-        
-        const modalTitle = document.getElementById('modalTitle');
-        const modalSubtitle = document.getElementById('modalSubtitle');
-        const nameGroup = document.getElementById('nameGroup');
-        const roleGroup = document.getElementById('roleGroup');
-        const mainAuthBtn = document.getElementById('mainAuthBtn');
-        const switchText = document.getElementById('switchText');
-        const authErrorMsg = document.getElementById('authErrorMsg');
-        
-        authErrorMsg.style.display = 'none';
-
-        if(isLoginMode) {
-            modalTitle.innerText = "Entrar na Plataforma";
-            modalSubtitle.innerText = "Faça login para acessar suas turmas e equipes.";
-            nameGroup.style.display = "none";
-            roleGroup.style.display = "none";
-            mainAuthBtn.innerText = "Entrar";
-            switchText.innerText = "Ainda não tem conta?";
-            authSwitchBtn.innerText = "Criar nova conta";
-            document.getElementById('googleBtnText').innerText = "Entrar com Google";
-            document.getElementById('nameInput').removeAttribute('required');
-        } else {
-            modalTitle.innerText = "Criar Conta";
-            modalSubtitle.innerText = "Junte-se à plataforma de gestão de TCC.";
-            nameGroup.style.display = "flex";
-            roleGroup.style.display = "flex";
-            mainAuthBtn.innerText = "Cadastrar";
-            switchText.innerText = "Já possui uma conta?";
-            authSwitchBtn.innerText = "Fazer login";
-            document.getElementById('googleBtnText').innerText = "Cadastrar com Google";
-            document.getElementById('nameInput').setAttribute('required', 'true');
-        }
-    });
-}
-
-// Handle Auth Form Submission
-const authForm = document.getElementById('authForm');
-if(authForm) {
-    authForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const mainAuthBtn = document.getElementById('mainAuthBtn');
-        const authErrorMsg = document.getElementById('authErrorMsg');
-        
-        const email = document.getElementById('emailInput').value;
-        const password = document.getElementById('passwordInput').value;
-        
-        mainAuthBtn.disabled = true;
-        mainAuthBtn.innerText = "Processando...";
-        authErrorMsg.style.display = 'none';
-
-        try {
-            if(isLoginMode) {
-                // LOGIN
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                // Auth Observer will handle redirect
-            } else {
-                // REGISTER
-                const name = document.getElementById('nameInput').value;
-                const role = document.getElementById('roleInput').value;
-                
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-                
-                // Save additional data string into Firestore
-                await setDoc(doc(db, "users", user.uid), {
-                    uid: user.uid,
-                    name: name,
-                    email: email,
-                    role: role,
-                    createdAt: new Date().toISOString()
+        // Modal Toggles
+        if (authButtons.length > 0) {
+            authButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    authModal.classList.add('active');
                 });
-            }
-        } catch (error) {
-            console.error(error);
-            authErrorMsg.style.display = 'block';
-            if(error.code === 'auth/email-already-in-use') {
-                authErrorMsg.innerText = "Este E-mail já está cadastrado.";
-            } else if(error.code === 'auth/invalid-credential') {
-                authErrorMsg.innerText = "E-mail ou senha incorretos.";
-            } else if(error.code === 'auth/weak-password') {
-                authErrorMsg.innerText = "A senha deve ter pelo menos 6 caracteres.";
-            } else {
-                authErrorMsg.innerText = "Erro ao autenticar: " + error.message;
-            }
-            mainAuthBtn.disabled = false;
-            mainAuthBtn.innerText = isLoginMode ? "Entrar" : "Cadastrar";
+            });
         }
-    });
-}
+        if (closeAuthModal) {
+            closeAuthModal.addEventListener('click', () => {
+                authModal.classList.remove('active');
+            });
+        }
 
-// Handle Google Auth
-const btnGoogleAuth = document.getElementById('btnGoogleAuth');
-if(btnGoogleAuth) {
-    btnGoogleAuth.addEventListener('click', async () => {
-        const authErrorMsg = document.getElementById('authErrorMsg');
-        authErrorMsg.style.display = 'none';
-        
-        const provider = new GoogleAuthProvider();
-        try {
-            const result = await signInWithPopup(auth, provider);
-            const user = result.user;
-            
-            // Check if user exists in Firestore
-            const docRef = doc(db, "users", user.uid);
-            const docSnap = await getDoc(docRef);
-            
-            if (!docSnap.exists()) {
-                // If it's a new user, we need to save them. 
-                // Since Google doesn't ask for a 'role', we assume 'aluno' by default
-                let selectedRole = "aluno";
-                if(!isLoginMode) {
-                    selectedRole = document.getElementById('roleInput').value;
+        // Switch between Login and Register
+        if (authSwitchBtn) {
+            authSwitchBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                isLoginMode = !isLoginMode;
+
+                const modalTitle = document.getElementById('modalTitle');
+                const modalSubtitle = document.getElementById('modalSubtitle');
+                const nameGroup = document.getElementById('nameGroup');
+                const roleGroup = document.getElementById('roleGroup');
+                const mainAuthBtn = document.getElementById('mainAuthBtn');
+                const switchText = document.getElementById('switchText');
+                const authErrorMsg = document.getElementById('authErrorMsg');
+
+                authErrorMsg.style.display = 'none';
+
+                if (isLoginMode) {
+                    modalTitle.innerText = "Entrar na Plataforma";
+                    modalSubtitle.innerText = "Faça login para acessar suas turmas e equipes.";
+                    nameGroup.style.display = "none";
+                    roleGroup.style.display = "none";
+                    mainAuthBtn.innerText = "Entrar";
+                    switchText.innerText = "Ainda não tem conta?";
+                    authSwitchBtn.innerText = "Criar nova conta";
+                    document.getElementById('googleBtnText').innerText = "Entrar com Google";
+                    document.getElementById('nameInput').removeAttribute('required');
+                } else {
+                    modalTitle.innerText = "Criar Conta";
+                    modalSubtitle.innerText = "Junte-se à plataforma de gestão de TCC.";
+                    nameGroup.style.display = "flex";
+                    roleGroup.style.display = "flex";
+                    mainAuthBtn.innerText = "Cadastrar";
+                    switchText.innerText = "Já possui uma conta?";
+                    authSwitchBtn.innerText = "Fazer login";
+                    document.getElementById('googleBtnText').innerText = "Cadastrar com Google";
+                    document.getElementById('nameInput').setAttribute('required', 'true');
                 }
-                
-                await setDoc(doc(db, "users", user.uid), {
-                    uid: user.uid,
-                    name: user.displayName || "Usuário Google",
-                    email: user.email,
-                    role: selectedRole,
-                    createdAt: new Date().toISOString()
-                });
-            }
-            // Auth observer will redirect
-        } catch(error) {
-            console.error(error);
-            authErrorMsg.style.display = 'block';
-            if (window.location.protocol === 'file:') {
-                authErrorMsg.innerHTML = "O Google Auth bloqueia conexões locais diretas (<strong>file://</strong>). <br>Para testar, você precisa rodar o site por um servidor local (ex: <strong>Live Server</strong> no VSCode).";
-            } else {
-                authErrorMsg.innerText = "Erro: " + error.message;
-            }
+            });
         }
-    });
-}
 
-// Global Auth State Observer
-onAuthStateChanged(auth, async (user) => {
-    const currentPath = window.location.pathname;
-    
-    if (user) {
-        // Logged In
-        console.log("User logged in:", user.uid);
-        if (currentPath.includes('index.html') || currentPath === '/' || currentPath.endsWith('ProjetoTCC/')) {
-            window.location.href = 'dashboard.html';
+        // Handle Auth Form Submission
+        const authForm = document.getElementById('authForm');
+        if (authForm) {
+            authForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const mainAuthBtn = document.getElementById('mainAuthBtn');
+                const authErrorMsg = document.getElementById('authErrorMsg');
+
+                const email = document.getElementById('emailInput').value;
+                const password = document.getElementById('passwordInput').value;
+
+                mainAuthBtn.disabled = true;
+                mainAuthBtn.innerText = "Processando...";
+                authErrorMsg.style.display = 'none';
+
+                try {
+                    if (isLoginMode) {
+                        // LOGIN
+                        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                        // Auth Observer will handle redirect
+                    } else {
+                        // REGISTER
+                        const name = document.getElementById('nameInput').value;
+                        const role = document.getElementById('roleInput').value;
+
+                        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                        const user = userCredential.user;
+
+                        // Save additional data string into Firestore
+                        await setDoc(doc(db, "users", user.uid), {
+                            uid: user.uid,
+                            name: name,
+                            email: email,
+                            role: role,
+                            createdAt: new Date().toISOString()
+                        });
+                    }
+                } catch (error) {
+                    console.error(error);
+                    authErrorMsg.style.display = 'block';
+                    if (error.code === 'auth/email-already-in-use') {
+                        authErrorMsg.innerText = "Este E-mail já está cadastrado.";
+                    } else if (error.code === 'auth/invalid-credential') {
+                        authErrorMsg.innerText = "E-mail ou senha incorretos.";
+                    } else if (error.code === 'auth/weak-password') {
+                        authErrorMsg.innerText = "A senha deve ter pelo menos 6 caracteres.";
+                    } else {
+                        authErrorMsg.innerText = "Erro ao autenticar: " + error.message;
+                    }
+                    mainAuthBtn.disabled = false;
+                    mainAuthBtn.innerText = isLoginMode ? "Entrar" : "Cadastrar";
+                }
+            });
         }
-    } else {
-        // Not Logged In
-        console.log("No user logged in.");
-        if (currentPath.includes('dashboard.html')) {
-            window.location.href = 'index.html';
+
+        // Handle Google Auth
+        const btnGoogleAuth = document.getElementById('btnGoogleAuth');
+        if (btnGoogleAuth) {
+            btnGoogleAuth.addEventListener('click', async () => {
+                const authErrorMsg = document.getElementById('authErrorMsg');
+                authErrorMsg.style.display = 'none';
+
+                const provider = new GoogleAuthProvider();
+                try {
+                    const result = await signInWithPopup(auth, provider);
+                    const user = result.user;
+
+                    // Check if user exists in Firestore
+                    const docRef = doc(db, "users", user.uid);
+                    const docSnap = await getDoc(docRef);
+
+                    if (!docSnap.exists()) {
+                        // If it's a new user, we need to save them. 
+                        // Since Google doesn't ask for a 'role', we assume 'aluno' by default
+                        let selectedRole = "aluno";
+                        if (!isLoginMode) {
+                            selectedRole = document.getElementById('roleInput').value;
+                        }
+
+                        await setDoc(doc(db, "users", user.uid), {
+                            uid: user.uid,
+                            name: user.displayName || "Usuário Google",
+                            email: user.email,
+                            role: selectedRole,
+                            createdAt: new Date().toISOString()
+                        });
+                    }
+                    // Auth observer will redirect
+                } catch (error) {
+                    console.error(error);
+                    authErrorMsg.style.display = 'block';
+                    if (window.location.protocol === 'file:') {
+                        authErrorMsg.innerHTML = "O Google Auth bloqueia conexões locais diretas (<strong>file://</strong>). <br>Para testar, você precisa rodar o site por um servidor local (ex: <strong>Live Server</strong> no VSCode).";
+                    } else {
+                        authErrorMsg.innerText = "Erro: " + error.message;
+                    }
+                }
+            });
         }
-    }
-});
+
+        // Global Auth State Observer
+        onAuthStateChanged(auth, async (user) => {
+            const currentPath = window.location.pathname;
+
+            if (user) {
+                // Logged In
+                console.log("User logged in:", user.uid);
+                if (currentPath.includes('index.html') || currentPath === '/' || currentPath.endsWith('ProjetoTCC/')) {
+                    window.location.href = 'dashboard.html';
+                }
+            } else {
+                // Not Logged In
+                console.log("No user logged in.");
+                if (currentPath.includes('dashboard.html')) {
+                    window.location.href = 'index.html';
+                }
+            }
+        });
 
     </script>
 </body>
