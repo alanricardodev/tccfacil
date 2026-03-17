@@ -380,6 +380,11 @@
                         <option value="professor">Sou Professor</option>
                     </select>
                 </div>
+                <!-- Master code (only visible when Professor selected) -->
+                <div class="input-group" id="masterCodeGroup" style="display: none;">
+                    <i class="fa-solid fa-key"></i>
+                    <input type="password" id="masterCodeInput" placeholder="Código de Professor" autocomplete="off">
+                </div>
 
                 <button type="submit" id="mainAuthBtn" class="btn btn-primary w-100 mt-4">Entrar</button>
 
@@ -398,6 +403,40 @@
                 </p>
                 <div id="authErrorMsg" class="error-msg" style="display: none;">Erro ao autenticar.</div>
             </form>
+        </div>
+    </div>
+
+    <!-- Google Role Modal (for new Google users) -->
+    <div id="googleRoleModal" style="
+        display:none; position:fixed; inset:0; z-index:10000;
+        background:rgba(0,0,0,0.6); backdrop-filter:blur(6px);
+        align-items:center; justify-content:center;">
+        <div class="modal-content glass" style="max-width:420px; width:90%; padding:35px; text-align:center;">
+            <h2 style="margin-bottom:8px;">Bem-vindo! 🎓</h2>
+            <p style="color:var(--text-light); margin-bottom:25px;">Qual é o seu papel na plataforma?</p>
+
+            <div style="display:flex; gap:15px; margin-bottom:20px;">
+                <button id="gRoleAluno" class="btn btn-primary" style="flex:1; padding:18px; font-size:1rem;">
+                    <i class="fa-solid fa-user-graduate"
+                        style="display:block; font-size:1.8rem; margin-bottom:8px;"></i>Sou Aluno
+                </button>
+                <button id="gRoleProf" class="btn"
+                    style="flex:1; padding:18px; font-size:1rem; background:var(--tertiary); color:white;">
+                    <i class="fa-solid fa-chalkboard-user"
+                        style="display:block; font-size:1.8rem; margin-bottom:8px;"></i>Sou Professor
+                </button>
+            </div>
+
+            <div id="gPendingNote"
+                style="display:none; background:#fff8e1; border-radius:12px; padding:12px 15px; margin-bottom:15px; font-size:0.85rem; color:#7c5e0e; text-align:left;">
+                <i class="fa-solid fa-clock"></i> Sua conta será criada com status <strong>Pendente</strong>.
+                Após o cadastro, aguarde o administrador <strong>ativar sua conta</strong> para ter acesso completo.
+            </div>
+
+            <button id="gRoleConfirm" class="btn btn-primary w-100" style="display:none;">
+                Confirmar e Entrar →
+            </button>
+            <p id="gRoleError" style="color:var(--secondary); font-size:0.85rem; margin-top:10px; display:none;"></p>
         </div>
     </div>
 
@@ -421,6 +460,9 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // ====== MASTER CODE (change this to your preferred code!) ======
+        const MASTER_CODE_PROFESSOR = "TCC2026PROF";
+
         // Save user profile to Firestore (non-blocking - doesn't delay navigation)
         function saveUserProfile(user, role = "aluno") {
             const docRef = doc(db, "users", user.uid);
@@ -440,21 +482,67 @@
         // Handle Google Redirect Result on page load
         getRedirectResult(auth).then(async (result) => {
             if (!result) return;
-            saveUserProfile(result.user, "aluno");
-            window.location.href = 'dashboard.html';
+            const docSnap = await getDoc(doc(db, "users", result.user.uid)).catch(() => null);
+            if (docSnap && docSnap.exists()) {
+                window.location.href = 'dashboard.html';
+            } else {
+                showGoogleRoleModal(result.user);
+            }
         }).catch((error) => {
             console.error("Redirect error:", error);
         });
 
-        // Auth State Observer - redirect when logged in
+        // Auth State Observer — redirect when logged in
+        // Use a flag to avoid double-redirect race conditions
+        let redirecting = false;
         onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // If we're on the landing/login page, go to dashboard
-                if (!window.location.pathname.includes('dashboard')) {
-                    window.location.href = 'dashboard.html';
-                }
+            if (user && !redirecting) {
+                redirecting = true;
+                window.location.href = 'dashboard.html';
             }
         });
+
+        function showGoogleRoleModal(googleUser) {
+            const modal = document.getElementById('googleRoleModal');
+            modal.style.display = 'flex';
+            let selectedRole = null;
+
+            document.getElementById('gRoleAluno').addEventListener('click', () => {
+                selectedRole = 'aluno';
+                document.getElementById('gRoleAluno').style.outline = '3px solid var(--primary)';
+                document.getElementById('gRoleProf').style.outline = 'none';
+                document.getElementById('gPendingNote').style.display = 'none';
+                document.getElementById('gRoleConfirm').style.display = 'block';
+            });
+
+            document.getElementById('gRoleProf').addEventListener('click', () => {
+                selectedRole = 'professor';
+                document.getElementById('gRoleProf').style.outline = '3px solid var(--tertiary)';
+                document.getElementById('gRoleAluno').style.outline = 'none';
+                document.getElementById('gPendingNote').style.display = 'block';
+                document.getElementById('gRoleConfirm').style.display = 'block';
+            });
+
+            document.getElementById('gRoleConfirm').addEventListener('click', async () => {
+                const errEl = document.getElementById('gRoleError');
+                errEl.style.display = 'none';
+                if (!selectedRole) {
+                    errEl.innerText = 'Selecione seu papel antes de confirmar.';
+                    errEl.style.display = 'block';
+                    return;
+                }
+                const userData = {
+                    uid: googleUser.uid,
+                    name: googleUser.displayName || googleUser.email.split('@')[0],
+                    email: googleUser.email,
+                    role: selectedRole,
+                    status: selectedRole === 'professor' ? 'pendente' : 'ativo',
+                    createdAt: new Date().toISOString()
+                };
+                await setDoc(doc(db, "users", googleUser.uid), userData);
+                window.location.href = 'dashboard.html';
+            });
+        }
 
         // === UI Logic ===
         let isLoginMode = true;
@@ -471,6 +559,7 @@
             isLoginMode = !isLoginMode;
             document.getElementById('nameGroup').style.display = isLoginMode ? 'none' : 'flex';
             document.getElementById('roleGroup').style.display = isLoginMode ? 'none' : 'flex';
+            document.getElementById('masterCodeGroup').style.display = 'none'; // reset
             document.getElementById('modalTitle').innerText = isLoginMode ? 'Entrar na Plataforma' : 'Criar Conta';
             document.getElementById('modalSubtitle').innerText = isLoginMode ? 'Faça login para acessar suas turmas e equipes.' : 'Junte-se à plataforma de gestão de TCC.';
             document.getElementById('mainAuthBtn').innerText = isLoginMode ? 'Entrar' : 'Cadastrar';
@@ -482,6 +571,15 @@
                 document.getElementById('nameInput').removeAttribute('required');
             } else {
                 document.getElementById('nameInput').setAttribute('required', 'true');
+            }
+        });
+
+        // Show/hide master code field based on role selection
+        document.getElementById('roleInput').addEventListener('change', function () {
+            const masterCodeGroup = document.getElementById('masterCodeGroup');
+            masterCodeGroup.style.display = this.value === 'professor' ? 'flex' : 'none';
+            if (this.value !== 'professor') {
+                document.getElementById('masterCodeInput').value = '';
             }
         });
 
@@ -500,14 +598,13 @@
             try {
                 if (isLoginMode) {
                     await signInWithEmailAndPassword(auth, email, password);
-                    // onAuthStateChanged will redirect
                 } else {
                     const name = document.getElementById('nameInput').value.trim();
                     const role = document.getElementById('roleInput').value;
                     const cred = await createUserWithEmailAndPassword(auth, email, password);
-                    // Save profile in background, then redirect immediately
                     setDoc(doc(db, "users", cred.user.uid), {
                         uid: cred.user.uid, name, email, role,
+                        status: role === 'professor' ? 'pendente' : 'ativo',
                         createdAt: new Date().toISOString()
                     }).catch(err => console.warn("Erro ao salvar perfil:", err));
                     window.location.href = 'dashboard.html';
@@ -523,7 +620,8 @@
                     'auth/user-not-found': 'Nenhuma conta encontrada com este e-mail.',
                     'auth/wrong-password': 'Senha incorreta. Tente novamente.',
                     'auth/operation-not-allowed': 'Método de login não ativado no Firebase Console.',
-                    'auth/too-many-requests': 'Muitas tentativas. Aguarde alguns minutos e tente novamente.'
+                    'auth/too-many-requests': 'Muitas tentativas. Aguarde alguns minutos e tente novamente.',
+                    'app/invalid-master-code': error.message
                 };
                 errMsg.innerText = msgs[error.code] || ('Erro: ' + error.message);
                 btn.disabled = false;

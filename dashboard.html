@@ -314,11 +314,23 @@
 
         <!-- ===== FÓRUM DA EQUIPE ===== -->
         <div id="view-forum-equipe" class="view-container">
-            <div class="forum-container">
-                <div class="chat-box" id="equipeChat"></div>
-                <div style="display:flex;gap:10px">
-                    <input type="text" id="equipeChatInput" placeholder="Mensagem para a equipe..." style="flex:1;padding:10px;border-radius:12px;border:1px solid #eee;font-family:'Inter',sans-serif">
-                    <button class="btn btn-primary" id="btnSendEquipeChat"><i class="fa-solid fa-paper-plane"></i></button>
+            <div style="display: flex; gap: 20px; max-width: 1000px; flex-wrap: wrap;">
+                <div class="forum-container" style="flex: 1; min-width: 300px; max-width: 100%; margin: 0;">
+                    <div style="margin-bottom: 12px; font-weight: bold; color: var(--primary);"><i class="fa-solid fa-comments"></i> Chat da Equipe</div>
+                    <div class="chat-box" id="equipeChat"></div>
+                    <div style="display:flex;gap:10px">
+                        <input type="text" id="equipeChatInput" placeholder="Mensagem para a equipe..." style="flex:1;padding:10px;border-radius:12px;border:1px solid #eee;font-family:'Inter',sans-serif">
+                        <button class="btn btn-primary" id="btnSendEquipeChat"><i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
+                </div>
+                <div style="width: 320px; flex-shrink: 0; min-width: 250px;">
+                    <div style="margin-bottom: 12px; font-weight: bold; color: var(--tertiary); display:flex; justify-content:space-between; align-items:center;">
+                        <span><i class="fa-brands fa-google-drive"></i> Projetos e Docs</span>
+                        <button class="btn" style="background:var(--tertiary); color:white; padding:4px 10px; font-size:0.8rem; border-radius:8px;" id="btnAddDocEquipe" onclick="window.promptDocEquipe()"><i class="fa-solid fa-plus"></i> Adicionar</button>
+                    </div>
+                    <div id="equipeDocsList" style="background: white; border-radius: 14px; padding: 15px; border: 1px solid #eee; min-height: 200px; display:flex; flex-direction:column; gap:10px; max-height: 380px; overflow-y:auto;">
+                        <div class="empty-state" style="padding: 20px 10px"><i class="fa-solid fa-folder-open"></i>Nenhum projeto postado.</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -484,6 +496,7 @@ async function loadAlunoHome() {
         document.getElementById('nav-equipe').style.display = 'flex';
         document.getElementById('nav-forum-equipe').style.display = 'flex';
         loadEquipeChat();
+        window.loadEquipeDocs();
         document.getElementById('alunoCreateEquipeArea').style.display = 'none';
     }
 
@@ -580,6 +593,79 @@ document.getElementById('btnSendEquipeChat')?.addEventListener('click', async ()
     await addDoc(collection(db,'mensagens'), { equipeId: ME._equipe.id, autorId: ME.uid, autorName: ME.name, texto: txt, timestamp: Date.now() });
 });
 document.getElementById('equipeChatInput')?.addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('btnSendEquipeChat').click(); });
+
+// ── EQUIPE DOCS ──
+window.loadEquipeDocs = function() {
+    if (!ME._equipe) return;
+    const docsList = document.getElementById('equipeDocsList');
+    if (!docsList) return;
+    const q = query(collection(db,'equipes_docs'), where('equipeId','==',ME._equipe.id), orderBy('timestamp','desc'));
+    onSnapshot(q, snap => {
+        if (snap.empty) {
+            docsList.innerHTML = '<div class="empty-state" style="padding: 20px 10px"><i class="fa-solid fa-folder-open"></i>Nenhum projeto postado.</div>';
+            return;
+        }
+        let html = '';
+        snap.forEach(d => {
+            const docData = d.data();
+            let icon = 'fa-file-lines';
+            let color = '#4b6584';
+            if (docData.url.includes('docs.google.com/document')) { icon = 'fa-file-word'; color = '#3867d6'; }
+            else if (docData.url.includes('docs.google.com/spreadsheet')) { icon = 'fa-file-excel'; color = '#20bf6b'; }
+            else if (docData.url.includes('docs.google.com/presentation')) { icon = 'fa-file-powerpoint'; color = '#f7b731'; }
+            else if (docData.url.includes('figma.com')) { icon = 'fa-figma'; color = '#eb3b5a'; }
+            else if (docData.url.includes('drive.google.com')) { icon = 'fa-google-drive'; color = '#15a362'; }
+            
+            html += `<div style="display:flex; align-items:flex-start; gap:10px; padding:10px; background:#f8f9fa; border-radius:10px; border:1px solid #eee;">
+                <div style="width:36px; height:36px; border-radius:8px; background:rgba(0,0,0,0.05); display:flex; align-items:center; justify-content:center; color:${color}; font-size:1.2rem; flex-shrink:0;">
+                    <i class="${icon.startsWith('fa-') && icon !== 'fa-figma' ? 'fa-solid' : 'fa-brands'} ${icon}"></i>
+                </div>
+                <div style="flex:1; overflow:hidden;">
+                    <strong style="display:block; font-size:0.85rem; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${docData.title}">${docData.title}</strong>
+                    <span style="font-size:0.7rem; color:var(--text-light); display:block; margin-bottom:6px;">Por ${docData.addedBy}</span>
+                    <a href="${docData.url}" target="_blank" class="btn" style="display:inline-block; font-size:0.75rem; padding:4px 10px; background:white; border:1px solid #ddd; border-radius:6px; color:#333; text-decoration:none;"><i class="fa-solid fa-arrow-up-right-from-square" style="color:${color}"></i> Abrir Link</a>
+                </div>
+                ${(ME.uid === docData.autorId || ME.role === 'professor' || ME.role === 'admin') ? `<button onclick="window.deleteDocEquipe('${d.id}')" style="background:none; border:none; color:#ff7675; cursor:pointer; padding:4px; margin-top:2px;" title="Remover"><i class="fa-solid fa-trash"></i></button>` : ''}
+            </div>`;
+        });
+        docsList.innerHTML = html;
+    });
+};
+
+window.promptDocEquipe = async function() {
+    if (!ME._equipe) return;
+    let url = prompt('Cole aqui o link do Projeto (Google Docs, Planilha, Figma, etc):');
+    if (!url) return;
+    url = url.trim();
+    if (!url.startsWith('http')) {
+        url = 'https://' + url;
+    }
+    const title = prompt('Qual o nome deste documento? (Ex: Escopo do Projeto)');
+    if (!title) return;
+    
+    await addDoc(collection(db,'equipes_docs'), { 
+        equipeId: ME._equipe.id, 
+        autorId: ME.uid, 
+        addedBy: ME.name, 
+        url: url, 
+        title: title.trim(), 
+        timestamp: Date.now() 
+    });
+    
+    await addDoc(collection(db,'mensagens'), { 
+        equipeId: ME._equipe.id, 
+        autorId: ME.uid, 
+        autorName: ME.name, 
+        texto: `📁 Adicionou um novo projeto/documento: <a href="${url}" target="_blank" style="color:var(--primary);font-weight:bold">${title.trim()}</a>`, 
+        timestamp: Date.now() 
+    });
+};
+
+window.deleteDocEquipe = async function(id) {
+    if(confirm('Tem certeza que deseja remover este documento da equipe? (O arquivo original externo não será apagado)')) {
+        await deleteDoc(doc(db, 'equipes_docs', id));
+    }
+};
 
 // ── FORUM GERAL ──
 function loadForumGeral() {
