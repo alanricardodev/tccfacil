@@ -480,8 +480,10 @@
         }
 
         // Handle Google Redirect Result on page load
+        let handlingGoogleAuth = false;
         getRedirectResult(auth).then(async (result) => {
             if (!result) return;
+            handlingGoogleAuth = true;
             const docSnap = await getDoc(doc(db, "users", result.user.uid)).catch(() => null);
             if (docSnap && docSnap.exists()) {
                 window.location.href = 'dashboard.html';
@@ -496,9 +498,22 @@
         // Use a flag to avoid double-redirect race conditions
         let redirecting = false;
         onAuthStateChanged(auth, (user) => {
-            if (user && !redirecting) {
-                redirecting = true;
-                window.location.href = 'dashboard.html';
+            if (user && !redirecting && !handlingGoogleAuth) {
+                // To avoid redirecting mid-modal, check if we're dealing with a brand new google auth user
+                getDoc(doc(db, "users", user.uid)).then(docSnap => {
+                    if (docSnap.exists() && !handlingGoogleAuth) {
+                        redirecting = true;
+                        window.location.href = 'dashboard.html';
+                    } else if (!docSnap.exists() && !handlingGoogleAuth) {
+                        handlingGoogleAuth = true;
+                        showGoogleRoleModal(user);
+                    }
+                }).catch(e => {
+                    if (!handlingGoogleAuth) {
+                        redirecting = true;
+                        window.location.href = 'dashboard.html';
+                    }
+                });
             }
         });
 
@@ -531,6 +546,9 @@
                     errEl.style.display = 'block';
                     return;
                 }
+                document.getElementById('gRoleConfirm').innerText = 'Processando...';
+                document.getElementById('gRoleConfirm').disabled = true;
+
                 const userData = {
                     uid: googleUser.uid,
                     name: googleUser.displayName || googleUser.email.split('@')[0],
@@ -539,8 +557,16 @@
                     status: selectedRole === 'professor' ? 'pendente' : 'ativo',
                     createdAt: new Date().toISOString()
                 };
-                await setDoc(doc(db, "users", googleUser.uid), userData);
-                window.location.href = 'dashboard.html';
+                try {
+                    await setDoc(doc(db, "users", googleUser.uid), userData);
+                    window.location.href = 'dashboard.html';
+                } catch (e) {
+                    console.error("Erro ao criar user", e);
+                    errEl.innerText = 'Erro ao finalizar o cadastro. Tente novamente.';
+                    errEl.style.display = 'block';
+                    document.getElementById('gRoleConfirm').innerText = 'Confirmar e Entrar →';
+                    document.getElementById('gRoleConfirm').disabled = false;
+                }
             });
         }
 
