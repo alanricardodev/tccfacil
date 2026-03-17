@@ -405,8 +405,8 @@
     <script src="script.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAtws25Kse-YsiEGOpxyztCa7a4q305T5I",
@@ -414,225 +414,145 @@
             projectId: "projetotcc-37266",
             storageBucket: "projetotcc-37266.firebasestorage.app",
             messagingSenderId: "11620412356",
-            appId: "1:11620412356:web:aee78b6248dfa3b4e69291",
-            measurementId: "G-ZHVTMBSPX0"
+            appId: "1:11620412356:web:aee78b6248dfa3b4e69291"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Enable offline persistence so the app works even with brief network hiccups
-        enableIndexedDbPersistence(db).catch((err) => {
-            if (err.code === 'failed-precondition') {
-                console.warn('Persistência indisponível: múltiplas abas abertas');
-            } else if (err.code === 'unimplemented') {
-                console.warn('Persistência não suportada neste navegador');
-            }
-        });
-
-        // Helper: retry getDoc up to N times if offline
-        async function getDocWithRetry(ref, retries = 4, delay = 1500) {
-            for (let i = 0; i < retries; i++) {
-                try {
-                    return await getDoc(ref);
-                } catch (e) {
-                    if (i === retries - 1) throw e;
-                    await new Promise(res => setTimeout(res, delay));
+        // Save user profile to Firestore (non-blocking - doesn't delay navigation)
+        function saveUserProfile(user, role = "aluno") {
+            const docRef = doc(db, "users", user.uid);
+            getDoc(docRef).then(snap => {
+                if (!snap.exists()) {
+                    setDoc(docRef, {
+                        uid: user.uid,
+                        name: user.displayName || user.email.split('@')[0],
+                        email: user.email,
+                        role: role,
+                        createdAt: new Date().toISOString()
+                    }).catch(err => console.warn("Erro ao salvar perfil:", err));
                 }
-            }
+            }).catch(err => console.warn("Erro ao verificar perfil:", err));
         }
 
-        // Handle Google Redirect Result (fires when user returns from Google login)
+        // Handle Google Redirect Result on page load
         getRedirectResult(auth).then(async (result) => {
-            if (!result) return; // No redirect result, first load
-            const user = result.user;
-            const docRef = doc(db, "users", user.uid);
-            const docSnap = await getDocWithRetry(docRef);
-            if (!docSnap.exists()) {
-                await setDoc(doc(db, "users", user.uid), {
-                    uid: user.uid,
-                    name: user.displayName || "Usuário Google",
-                    email: user.email,
-                    role: "aluno",
-                    createdAt: new Date().toISOString()
-                });
-            }
+            if (!result) return;
+            saveUserProfile(result.user, "aluno");
+            window.location.href = 'dashboard.html';
         }).catch((error) => {
             console.error("Redirect error:", error);
         });
 
-
-        // Authentication UI Logic
-        let isLoginMode = true;
-
-        const authModal = document.getElementById('authModal');
-        const authButtons = document.querySelectorAll('.btn-open-auth');
-        const closeAuthModal = document.getElementById('closeAuthModal');
-        const authSwitchBtn = document.getElementById('authSwitchBtn');
-
-        // Modal Toggles
-        if (authButtons.length > 0) {
-            authButtons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    authModal.classList.add('active');
-                });
-            });
-        }
-        if (closeAuthModal) {
-            closeAuthModal.addEventListener('click', () => {
-                authModal.classList.remove('active');
-            });
-        }
-
-        // Switch between Login and Register
-        if (authSwitchBtn) {
-            authSwitchBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                isLoginMode = !isLoginMode;
-
-                const modalTitle = document.getElementById('modalTitle');
-                const modalSubtitle = document.getElementById('modalSubtitle');
-                const nameGroup = document.getElementById('nameGroup');
-                const roleGroup = document.getElementById('roleGroup');
-                const mainAuthBtn = document.getElementById('mainAuthBtn');
-                const switchText = document.getElementById('switchText');
-                const authErrorMsg = document.getElementById('authErrorMsg');
-
-                authErrorMsg.style.display = 'none';
-
-                if (isLoginMode) {
-                    modalTitle.innerText = "Entrar na Plataforma";
-                    modalSubtitle.innerText = "Faça login para acessar suas turmas e equipes.";
-                    nameGroup.style.display = "none";
-                    roleGroup.style.display = "none";
-                    mainAuthBtn.innerText = "Entrar";
-                    switchText.innerText = "Ainda não tem conta?";
-                    authSwitchBtn.innerText = "Criar nova conta";
-                    document.getElementById('googleBtnText').innerText = "Entrar com Google";
-                    document.getElementById('nameInput').removeAttribute('required');
-                } else {
-                    modalTitle.innerText = "Criar Conta";
-                    modalSubtitle.innerText = "Junte-se à plataforma de gestão de TCC.";
-                    nameGroup.style.display = "flex";
-                    roleGroup.style.display = "flex";
-                    mainAuthBtn.innerText = "Cadastrar";
-                    switchText.innerText = "Já possui uma conta?";
-                    authSwitchBtn.innerText = "Fazer login";
-                    document.getElementById('googleBtnText').innerText = "Cadastrar com Google";
-                    document.getElementById('nameInput').setAttribute('required', 'true');
-                }
-            });
-        }
-
-        // Handle Auth Form Submission
-        const authForm = document.getElementById('authForm');
-        if (authForm) {
-            authForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const mainAuthBtn = document.getElementById('mainAuthBtn');
-                const authErrorMsg = document.getElementById('authErrorMsg');
-
-                const email = document.getElementById('emailInput').value;
-                const password = document.getElementById('passwordInput').value;
-
-                mainAuthBtn.disabled = true;
-                mainAuthBtn.innerText = "Processando...";
-                authErrorMsg.style.display = 'none';
-
-                try {
-                    if (isLoginMode) {
-                        await signInWithEmailAndPassword(auth, email, password);
-                    } else {
-                        const name = document.getElementById('nameInput').value;
-                        const role = document.getElementById('roleInput').value;
-
-                        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                        const user = userCredential.user;
-
-                        await setDoc(doc(db, "users", user.uid), {
-                            uid: user.uid,
-                            name: name,
-                            email: email,
-                            role: role,
-                            createdAt: new Date().toISOString()
-                        });
-                    }
-                } catch (error) {
-                    console.error(error);
-                    authErrorMsg.style.display = 'block';
-                    if (error.code === 'auth/email-already-in-use') {
-                        authErrorMsg.innerText = "Este E-mail já está cadastrado.";
-                    } else if (error.code === 'auth/invalid-credential') {
-                        authErrorMsg.innerText = "E-mail ou senha incorretos.";
-                    } else if (error.code === 'auth/weak-password') {
-                        authErrorMsg.innerText = "A senha deve ter pelo menos 6 caracteres.";
-                    } else {
-                        authErrorMsg.innerText = "Erro ao autenticar: " + error.message;
-                    }
-                    mainAuthBtn.disabled = false;
-                    mainAuthBtn.innerText = isLoginMode ? "Entrar" : "Cadastrar";
-                }
-            });
-        }
-
-        // Handle Google Auth
-        const btnGoogleAuth = document.getElementById('btnGoogleAuth');
-        if (btnGoogleAuth) {
-            btnGoogleAuth.addEventListener('click', async () => {
-                const authErrorMsg = document.getElementById('authErrorMsg');
-                const googleBtnText = btnGoogleAuth.querySelector('#googleBtnText');
-                authErrorMsg.style.display = 'none';
-                btnGoogleAuth.disabled = true;
-                googleBtnText.innerText = 'Abrindo popup...';
-
-                // Safety: re-enable button after 30 seconds if nothing happens
-                const resetBtn = () => {
-                    btnGoogleAuth.disabled = false;
-                    googleBtnText.innerText = 'Entrar com Google';
-                };
-                const safetyTimer = setTimeout(resetBtn, 30000);
-
-                const provider = new GoogleAuthProvider();
-                try {
-                    if (window.location.protocol === 'file:') {
-                        clearTimeout(safetyTimer);
-                        resetBtn();
-                        authErrorMsg.style.display = 'block';
-                        authErrorMsg.innerHTML = "Google Auth não funciona com arquivos locais <strong>(file://)</strong>. <br>Use o <strong>Live Server</strong> no VSCode.";
-                        return;
-                    }
-
-                    googleBtnText.innerText = 'Redirecionando...';
-                    // signInWithRedirect navigates to Google - result handled by getRedirectResult above
-                    await signInWithRedirect(auth, provider);
-                } catch (error) {
-                    clearTimeout(safetyTimer);
-                    resetBtn();
-                    console.error(error);
-                    authErrorMsg.style.display = 'block';
-                    authErrorMsg.innerText = "Erro: " + (error.message || error.code);
-                }
-            });
-        }
-
-        // Global Auth State Observer
-        onAuthStateChanged(auth, async (user) => {
-            const currentPath = window.location.pathname;
-
+        // Auth State Observer - redirect when logged in
+        onAuthStateChanged(auth, (user) => {
             if (user) {
-                console.log("User logged in:", user.uid);
-                if (currentPath.includes('index.html') || currentPath === '/' || currentPath.endsWith('ProjetoTCC/')) {
+                // If we're on the landing/login page, go to dashboard
+                if (!window.location.pathname.includes('dashboard')) {
                     window.location.href = 'dashboard.html';
-                }
-            } else {
-                console.log("No user logged in.");
-                if (currentPath.includes('dashboard.html')) {
-                    window.location.href = 'index.html';
                 }
             }
         });
-    </script>
-</body>
 
-</html>
+        // === UI Logic ===
+        let isLoginMode = true;
+
+        document.querySelectorAll('.btn-open-auth').forEach(btn => {
+            btn.addEventListener('click', () => document.getElementById('authModal').classList.add('active'));
+        });
+        document.getElementById('closeAuthModal').addEventListener('click', () => {
+            document.getElementById('authModal').classList.remove('active');
+        });
+
+        document.getElementById('authSwitchBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            isLoginMode = !isLoginMode;
+            document.getElementById('nameGroup').style.display = isLoginMode ? 'none' : 'flex';
+            document.getElementById('roleGroup').style.display = isLoginMode ? 'none' : 'flex';
+            document.getElementById('modalTitle').innerText = isLoginMode ? 'Entrar na Plataforma' : 'Criar Conta';
+            document.getElementById('modalSubtitle').innerText = isLoginMode ? 'Faça login para acessar suas turmas e equipes.' : 'Junte-se à plataforma de gestão de TCC.';
+            document.getElementById('mainAuthBtn').innerText = isLoginMode ? 'Entrar' : 'Cadastrar';
+            document.getElementById('switchText').innerText = isLoginMode ? 'Ainda não tem conta?' : 'Já possui uma conta?';
+            document.getElementById('authSwitchBtn').innerText = isLoginMode ? 'Criar nova conta' : 'Fazer login';
+            document.getElementById('googleBtnText').innerText = isLoginMode ? 'Entrar com Google' : 'Cadastrar com Google';
+            document.getElementById('authErrorMsg').style.display = 'none';
+            if (isLoginMode) {
+                document.getElementById('nameInput').removeAttribute('required');
+            } else {
+                document.getElementById('nameInput').setAttribute('required', 'true');
+            }
+        });
+
+        // Email/Password Auth
+        document.getElementById('authForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('mainAuthBtn');
+            const errMsg = document.getElementById('authErrorMsg');
+            const email = document.getElementById('emailInput').value.trim();
+            const password = document.getElementById('passwordInput').value;
+
+            btn.disabled = true;
+            btn.innerText = 'Processando...';
+            errMsg.style.display = 'none';
+
+            try {
+                if (isLoginMode) {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    // onAuthStateChanged will redirect
+                } else {
+                    const name = document.getElementById('nameInput').value.trim();
+                    const role = document.getElementById('roleInput').value;
+                    const cred = await createUserWithEmailAndPassword(auth, email, password);
+                    // Save profile in background, then redirect immediately
+                    setDoc(doc(db, "users", cred.user.uid), {
+                        uid: cred.user.uid, name, email, role,
+                        createdAt: new Date().toISOString()
+                    }).catch(err => console.warn("Erro ao salvar perfil:", err));
+                    window.location.href = 'dashboard.html';
+                }
+            } catch (error) {
+                console.error(error);
+                errMsg.style.display = 'block';
+                const msgs = {
+                    'auth/email-already-in-use': 'Este e-mail já está cadastrado. Tente fazer login.',
+                    'auth/invalid-email': 'E-mail inválido. Verifique o formato: nome@dominio.com',
+                    'auth/invalid-credential': 'E-mail ou senha incorretos.',
+                    'auth/weak-password': 'A senha deve ter pelo menos 6 caracteres.',
+                    'auth/user-not-found': 'Nenhuma conta encontrada com este e-mail.',
+                    'auth/wrong-password': 'Senha incorreta. Tente novamente.',
+                    'auth/operation-not-allowed': 'Método de login não ativado no Firebase Console.',
+                    'auth/too-many-requests': 'Muitas tentativas. Aguarde alguns minutos e tente novamente.'
+                };
+                errMsg.innerText = msgs[error.code] || ('Erro: ' + error.message);
+                btn.disabled = false;
+                btn.innerText = isLoginMode ? 'Entrar' : 'Cadastrar';
+            }
+        });
+
+        // Google Auth (via redirect - more reliable than popup)
+        document.getElementById('btnGoogleAuth').addEventListener('click', async () => {
+            const errMsg = document.getElementById('authErrorMsg');
+            const googleBtnText = document.getElementById('googleBtnText');
+            errMsg.style.display = 'none';
+
+            if (window.location.protocol === 'file:') {
+                errMsg.style.display = 'block';
+                errMsg.innerHTML = "Google Auth não funciona com <strong>file://</strong>. Use o <strong>Live Server</strong> no VSCode.";
+                return;
+            }
+
+            googleBtnText.innerText = 'Redirecionando para o Google...';
+            document.getElementById('btnGoogleAuth').disabled = true;
+
+            try {
+                await signInWithRedirect(auth, new GoogleAuthProvider());
+            } catch (error) {
+                document.getElementById('btnGoogleAuth').disabled = false;
+                googleBtnText.innerText = 'Entrar com Google';
+                errMsg.style.display = 'block';
+                errMsg.innerText = 'Erro: ' + (error.message || error.code);
+            }
+        });
+    </script>
