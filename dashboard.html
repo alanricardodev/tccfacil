@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard TCC | Plataforma Integrada</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Firebase -->
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js"></script>
+
+    <style>
+        body {
+            background-color: #f0f2f5;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, var(--primary), #4834d4);
+            color: white;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            border-radius: 0 30px 30px 0;
+            box-shadow: 5px 0 20px rgba(0,0,0,0.1);
+        }
+        .sidebar-brand {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 900;
+            font-size: 1.5rem;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .sidebar-brand i { font-size: 2rem; color: var(--accent); }
+        
+        .nav-item {
+            padding: 15px 20px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.7);
+        }
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .user-profile {
+            margin-top: auto;
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .user-avatar {
+            width: 45px; height: 45px;
+            background: var(--tertiary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        .user-info p { margin: 0; font-size: 0.9rem;}
+        .user-info .role-badge { 
+            font-size: 0.75rem; 
+            background: var(--accent); 
+            color: #333; 
+            padding: 2px 8px; 
+            border-radius: 10px; 
+            font-weight: bold;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+        .top-header h1 {
+            color: var(--text-main);
+            font-size: 2.2rem;
+        }
+        .btn-logout {
+            background: white;
+            color: var(--secondary);
+            border: 2px solid rgba(255, 118, 117, 0.2);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-logout:hover {
+            background: var(--secondary);
+            color: white;
+        }
+
+        /* View Containers */
+        .view-container { display: none; animation: fadeIn 0.4s ease; }
+        .view-container.active { display: block; }
+
+        /* Dashboard Cards Grid */
+        .dash-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        .dash-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+        .dash-card:hover { transform: translateY(-5px); }
+        .dash-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .dash-card-header h3 { font-size: 1.3rem; color: var(--primary); }
+        .dash-card-header .badge { margin: 0; }
+        
+        /* Loading Overlay */
+        .loader-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: white;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Nunito', sans-serif;
+            color: var(--primary);
+        }
+        .spinner {
+            width: 50px; height: 50px;
+            border: 5px solid rgba(108, 92, 231, 0.2);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Screen -->
+    <div id="loader" class="loader-overlay">
+        <div class="spinner"></div>
+        <h2>Autenticando...</h2>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <i class="fa-solid fa-graduation-cap"></i> Plataforma TCC
+        </div>
+
+        <nav>
+            <div class="nav-item active" id="nav-home">
+                <i class="fa-solid fa-house"></i> Início
+            </div>
+            
+            <!-- Aluno Only -->
+            <div class="nav-item" id="nav-equipes" style="display:none;">
+                <i class="fa-solid fa-users"></i> Minha Equipe
+            </div>
+            
+            <!-- Professor Only -->
+            <div class="nav-item" id="nav-turmas" style="display:none;">
+                <i class="fa-solid fa-chalkboard-user"></i> Gerenciar Turmas
+            </div>
+        </nav>
+
+        <div class="user-profile">
+            <div class="user-avatar" id="userInitial">U</div>
+            <div class="user-info">
+                <p><strong id="userName">Carregando...</strong></p>
+                <span class="role-badge" id="userRole">...</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="main-content">
+        <div class="top-header">
+            <h1 id="pageTitle">Resumo</h1>
+            <button id="btnLogout" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
+        </div>
+
+        <!-- 1. Visão Inicial (Home) -->
+        <div id="view-home" class="view-container active">
+            
+            <!-- Painel Aluno -->
+            <div id="panel-aluno" style="display:none;">
+                
+                <!-- Secao: Entrar em Turma (Aparece se nao tiver turma) -->
+                <div id="aluno-join-section">
+                    <div class="note-box glass mb-4" style="background: white;">
+                        <i class="fa-solid fa-hand-wave icon-info" style="color: var(--primary);"></i>
+                        <div>
+                            <h3>Bem-vindo ao Workspace de TCC!</h3>
+                            <p>Para começar, você precisa se vincular a uma Turma. Peça o <strong>Código da Turma</strong> ao seu professor.</p>
+                        </div>
+                    </div>
+
+                    <div class="dash-card" style="max-width: 500px;">
+                        <h3><i class="fa-solid fa-key text-tertiary"></i> Entrar em uma Turma</h3>
+                        <div class="input-group" style="display:flex; gap:10px; margin-top:15px;">
+                            <input type="text" id="turmaCodeInput" placeholder="Ex: TABCDE" style="flex:1; padding: 10px; border-radius: 10px; border: 1px solid #ccc;">
+                            <button id="btnJoinTurma" class="btn btn-primary" style="padding: 10px 20px;">Entrar</button>
+                        </div>
+                        <p id="joinTurmaMsg" class="mt-2 text-danger" style="display:none; font-size:0.9rem;"></p>
+                    </div>
+                </div>
+
+                <!-- Secao: Minha Turma (Aparece se ja estiver em uma turma) -->
+                <div id="aluno-turma-section" style="display:none;">
+                    <div class="dash-header mb-4" style="display:flex; justify-content:space-between; align-items:center;">
+                        <h2>Minha Turma: <span id="alunoTurmaName" class="highlight">...</span></h2>
+                        <span class="badge" style="background:var(--tertiary); color:white;" id="alunoTurmaCode">...</span>
+                    </div>
+
+                    <!-- Minha Equipe Alert -->
+                    <div id="minhaEquipeBanner" class="note-box glass mb-4" style="background: linear-gradient(135deg, var(--tertiary), #81E4DA); color: white; display:none;">
+                        <i class="fa-solid fa-users icon-info" style="color: white;"></i>
+                        <div>
+                            <h3>Minha Equipe: <strong id="minhaEquipeNome">...</strong></h3>
+                            <p>Tema: <span id="minhaEquipeTema">...</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Botão Criar Equipe -->
+                    <div id="alunoCreateEquipeArea" class="mb-4">
+                        <button id="btnNovaEquipe" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Formar Nova Equipe</button>
+                    </div>
+
+                    <h3>Equipes Formadas nesta Turma</h3>
+                    <div class="dash-grid mt-4" id="equipesListAluno">
+                        <p class="text-light">Nenhuma equipe formada ainda.</p>
+                    </div>
+                </div>
+
+                <!-- Secao: Chat da Equipe (Aparece apenas quando tem equipe) -->
+                <div id="aluno-equipe-chat" style="display:none; margin-top: 50px;">
+                    <h3><i class="fa-solid fa-comments text-primary"></i> Espaço de Discussão (Chat da Equipe)</h3>
+                    <div class="dash-card mt-2" style="padding:0; overflow:hidden;">
+                        <div id="chatMessages" style="height: 300px; overflow-y: auto; padding: 20px; background: #fafafa;">
+                            <!-- Mensagens -->
+                        </div>
+                        <div style="padding: 15px; border-top: 1px solid #eee; display:flex; gap:10px; background:white;">
+                            <input type="text" id="chatInput" placeholder="Digite uma mensagem ou link material..." style="flex:1; padding: 10px; border-radius: 10px; border: 1px solid #ccc;">
+                            <button id="btnSendChat" class="btn btn-primary" style="padding: 10px 20px;"><i class="fa-solid fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Painel Professor -->
+            <div id="panel-prof" style="display:none;">
+                <div class="dash-header mb-4" style="display:flex; justify-content:space-between; align-items:center;">
+                    <h2>Suas Turmas Ativas</h2>
+                    <button id="btnCreateTurma" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Nova Turma</button>
+                </div>
+
+                <div class="dash-grid" id="turmasListProf">
+                    <!-- Turmas populated by JS -->
+                    <p class="text-light">Buscando turmas...</p>
+                </div>
+                
+                <!-- Área para ver detalhes de uma turma -->
+                <div id="profTurmaDetalhe" style="display:none; margin-top:50px; border-top: 2px dashed #ccc; padding-top: 40px;">
+                    <div class="dash-header mb-4" style="display:flex; justify-content:space-between; align-items:center;">
+                        <h2>Turma: <span id="profTurmaViewName" class="highlight">...</span></h2>
+                        <button id="btnProfCloseTurma" class="btn" style="background:#eee; color:#333;"><i class="fa-solid fa-times"></i> Fechar Detalhes</button>
+                    </div>
+                    <h3>Equipes Formadas</h3>
+                    <div class="dash-grid mt-4" id="equipesListProf">
+                        <p class="text-light">Nenhuma equipe formada.</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, updateDoc, arrayUnion, collection, query, where, getDocs, addDoc, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAtws25Kse-YsiEGOpxyztCa7a4q305T5I",
+  authDomain: "projetotcc-37266.firebaseapp.com",
+  projectId: "projetotcc-37266",
+  storageBucket: "projetotcc-37266.firebasestorage.app",
+  messagingSenderId: "11620412356",
+  appId: "1:11620412356:web:aee78b6248dfa3b4e69291",
+  measurementId: "G-ZHVTMBSPX0"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// DOM Elements
+const loader = document.getElementById('loader');
+const userName = document.getElementById('userName');
+const userRole = document.getElementById('userRole');
+const userInitial = document.getElementById('userInitial');
+const btnLogout = document.getElementById('btnLogout');
+
+let currentUserData = null;
+let currentTurmaData = null;
+let currentEquipeData = null;
+
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        try {
+            const docRef = doc(db, "users", user.uid);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                currentUserData = docSnap.data();
+                setupDashboard(currentUserData);
+            } else {
+                currentUserData = { uid: user.uid, name: "Convidado", role: "aluno" };
+                setupDashboard(currentUserData);
+            }
+        } catch (e) {
+            console.error("Erro ao buscar user:", e);
+        }
+    } else {
+        window.location.href = 'index.html';
+    }
+});
+
+function setupDashboard(data) {
+    loader.style.display = 'none';
+    userName.innerText = data.name;
+    userRole.innerText = data.role === 'professor' ? 'Professor(a)' : 'Aluno(a)';
+    userInitial.innerText = data.name.charAt(0).toUpperCase();
+
+    if(data.role === 'professor') {
+        document.getElementById('panel-prof').style.display = 'block';
+        document.getElementById('nav-turmas').style.display = 'flex';
+        loadTurmasProf(data.uid);
+    } else {
+        document.getElementById('panel-aluno').style.display = 'block';
+        loadAlunoStatus(data.uid);
+    }
+}
+
+if(btnLogout) {
+    btnLogout.addEventListener('click', () => {
+        signOut(auth).then(() => window.location.href = 'index.html');
+    });
+}
+
+/** 
+ * =====================
+ * PROFESSOR LOGIC
+ * =====================
+ */
+async function loadTurmasProf(profId) {
+    const list = document.getElementById('turmasListProf');
+    list.innerHTML = '<p class="text-light">Buscando...</p>';
+    try {
+        const q = query(collection(db, "turmas"), where("professorId", "==", profId));
+        const snapshots = await getDocs(q);
+        
+        if(snapshots.empty) {
+            list.innerHTML = `<div class="note-box glass" style="grid-column: 1/-1;"><p>Você não possui turmas cadastradas ainda.</p></div>`;
+            return;
+        }
+
+        let html = '';
+        snapshots.forEach((doc) => {
+            const t = doc.data();
+            html += `
+                <div class="dash-card">
+                    <div class="dash-card-header">
+                        <h3>${t.nome}</h3>
+                        <span class="badge" style="background:var(--tertiary); color:white;">${t.codigo}</span>
+                    </div>
+                    <p class="text-light"><i class="fa-solid fa-users"></i> ${t.alunosIds ? t.alunosIds.length : 0} Alunos vinculados</p>
+                    <button class="btn btn-primary w-100 btn-view-turma" data-id="${doc.id}" data-name="${t.nome}">Ver Turma</button>
+                </div>
+            `;
+        });
+        list.innerHTML = html;
+
+        document.querySelectorAll('.btn-view-turma').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const turmaId = e.target.getAttribute('data-id');
+                const turmaName = e.target.getAttribute('data-name');
+                openProfTurmaDetalhe(turmaId, turmaName);
+            });
+        });
+
+    } catch(e) {
+        list.innerHTML = '<p class="text-danger">Erro ao carregar turmas.</p>';
+    }
+}
+
+const btnCreateTurma = document.getElementById('btnCreateTurma');
+if(btnCreateTurma) {
+    btnCreateTurma.addEventListener('click', async () => {
+        const turmaName = prompt("Nome da Nova Turma (ex: ADS 2026):");
+        if(turmaName && currentUserData) {
+            const code = "T" + Math.random().toString(36).substr(2, 5).toUpperCase();
+            try {
+                await addDoc(collection(db, "turmas"), {
+                    nome: turmaName, codigo: code, professorId: currentUserData.uid, alunosIds: [], createdAt: new Date().toISOString()
+                });
+                alert("Turma criada! Código: " + code);
+                loadTurmasProf(currentUserData.uid);
+            } catch(e) { alert("Erro ao criar turma."); }
+        }
+    });
+}
+
+async function openProfTurmaDetalhe(turmaId, turmaName) {
+    document.getElementById('profTurmaDetalhe').style.display = 'block';
+    document.getElementById('profTurmaViewName').innerText = turmaName;
+    const list = document.getElementById('equipesListProf');
+    list.innerHTML = '<p>Buscando equipes...</p>';
+
+    const q = query(collection(db, "equipes"), where("turmaId", "==", turmaId));
+    const snapshots = await getDocs(q);
+
+    if(snapshots.empty) {
+        list.innerHTML = '<p class="text-light">Nenhuma equipe formada nesta turma ainda.</p>';
+        return;
+    }
+
+    let html = '';
+    snapshots.forEach((doc) => {
+        const eq = doc.data();
+        html += `
+            <div class="dash-card">
+                <h3 style="color:var(--primary); margin-bottom:5px;">Equipe: ${eq.nome}</h3>
+                <p><strong>Tema:</strong> ${eq.tema}</p>
+                <p class="text-light" style="font-size:0.9rem;">${eq.integrantesIds.length} integrantes(s)</p>
+            </div>
+        `;
+    });
+    list.innerHTML = html;
+}
+
+const btnProfCloseTurma = document.getElementById('btnProfCloseTurma');
+if(btnProfCloseTurma) {
+    btnProfCloseTurma.addEventListener('click', () => {
+        document.getElementById('profTurmaDetalhe').style.display = 'none';
+    });
+}
+
+
+/** 
+ * =====================
+ * ALUNO LOGIC
+ * =====================
+ */
+async function loadAlunoStatus(alunoId) {
+    // 1. Checar se o aluno está em alguma turma
+    const qTurma = query(collection(db, "turmas"), where("alunosIds", "array-contains", alunoId));
+    const turmasSnap = await getDocs(qTurma);
+
+    if(turmasSnap.empty) {
+        // Não está em nenhuma turma
+        document.getElementById('aluno-join-section').style.display = 'block';
+        document.getElementById('aluno-turma-section').style.display = 'none';
+    } else {
+        // Aluno está numa turma
+        document.getElementById('aluno-join-section').style.display = 'none';
+        document.getElementById('aluno-turma-section').style.display = 'block';
+        
+        let turmaDoc = turmasSnap.docs[0]; // Considera a 1ª turma
+        currentTurmaData = { id: turmaDoc.id, ...turmaDoc.data() };
+        
+        document.getElementById('alunoTurmaName').innerText = currentTurmaData.nome;
+        document.getElementById('alunoTurmaCode').innerText = currentTurmaData.codigo;
+
+        checkAlunoEquipe(alunoId, currentTurmaData.id);
+    }
+}
+
+const btnJoinTurma = document.getElementById('btnJoinTurma');
+if(btnJoinTurma) {
+    btnJoinTurma.addEventListener('click', async () => {
+        const code = document.getElementById('turmaCodeInput').value.trim().toUpperCase();
+        const msg = document.getElementById('joinTurmaMsg');
+        if(!code) return;
+        
+        msg.style.display = 'block';
+        msg.innerText = 'Buscando...';
+        msg.className = 'mt-2 text-primary';
+
+        try {
+            const q = query(collection(db, "turmas"), where("codigo", "==", code));
+            const snaps = await getDocs(q);
+            if(snaps.empty) {
+                msg.innerText = 'Turma não encontrada. Verifique o código.';
+                msg.className = 'mt-2 text-danger';
+            } else {
+                const turmaDoc = snaps.docs[0];
+                await updateDoc(doc(db, "turmas", turmaDoc.id), {
+                    alunosIds: arrayUnion(currentUserData.uid)
+                });
+                msg.innerText = 'Você entrou na turma com sucesso!';
+                msg.className = 'mt-2 text-success';
+                setTimeout(() => loadAlunoStatus(currentUserData.uid), 1500);
+            }
+        } catch(e) {
+            msg.innerText = 'Erro ao processar.';
+            msg.className = 'mt-2 text-danger';
+        }
+    });
+}
+
+async function checkAlunoEquipe(alunoId, turmaId) {
+    // Checar se o aluno está em alguma equipe desta turma
+    const q = query(collection(db, "equipes"), where("integrantesIds", "array-contains", alunoId), where("turmaId", "==", turmaId));
+    const eqSnaps = await getDocs(q);
+
+    if(!eqSnaps.empty) {
+        // Já possui uma equipe
+        currentEquipeData = { id: eqSnaps.docs[0].id, ...eqSnaps.docs[0].data() };
+        
+        document.getElementById('minhaEquipeBanner').style.display = 'flex';
+        document.getElementById('minhaEquipeNome').innerText = currentEquipeData.nome;
+        document.getElementById('minhaEquipeTema').innerText = currentEquipeData.tema;
+        document.getElementById('alunoCreateEquipeArea').style.display = 'none';
+
+        document.getElementById('aluno-equipe-chat').style.display = 'block';
+        loadChat(currentEquipeData.id);
+        
+        document.getElementById('equipesListAluno').innerHTML = '<p class="text-light">Você já está em uma equipe.</p>';
+    } else {
+        // Não possui equipe, pode criar ou ver disponíveis
+        loadEquipesDisponiveis(turmaId);
+    }
+}
+
+const btnNovaEquipe = document.getElementById('btnNovaEquipe');
+if(btnNovaEquipe) {
+    btnNovaEquipe.addEventListener('click', async () => {
+        const nomeEq = prompt("Qual será o nome da sua Equipe?");
+        if(!nomeEq) return;
+        const temaEq = prompt("Qual o TEMA do TCC? (Pode ser alterado depois)");
+        
+        if(nomeEq && temaEq && currentUserData) {
+            try {
+                await addDoc(collection(db, "equipes"), {
+                    turmaId: currentTurmaData.id,
+                    nome: nomeEq,
+                    tema: temaEq,
+                    integrantesIds: [currentUserData.uid]
+                });
+                alert("Equipe formada!");
+                checkAlunoEquipe(currentUserData.uid, currentTurmaData.id);
+            } catch(e) { alert("Erro ao cadastrar equipe."); }
+        }
+    });
+}
+
+async function loadEquipesDisponiveis(turmaId) {
+    const list = document.getElementById('equipesListAluno');
+    list.innerHTML = '<p>Buscando...</p>';
+    const q = query(collection(db, "equipes"), where("turmaId", "==", turmaId));
+    const snaps = await getDocs(q);
+
+    if(snaps.empty) {
+        list.innerHTML = '<p class="text-light">Nenhuma equipe formada nesta turma ainda. Seja o primeiro!</p>';
+        return;
+    }
+
+    let html = '';
+    snaps.forEach((doc) => {
+        const eq = doc.data();
+        html += `
+            <div class="dash-card">
+                <div class="dash-card-header">
+                    <h3>${eq.nome}</h3>
+                    <span class="badge">${eq.integrantesIds.length}/5 Integrantes</span>
+                </div>
+                <p><strong>Tema:</strong> ${eq.tema}</p>
+                <button class="btn btn-primary w-100 btn-join-eq" data-id="${doc.id}" style="padding: 5px;">Solicitar Entrada</button>
+            </div>
+        `;
+    });
+    list.innerHTML = html;
+
+    document.querySelectorAll('.btn-join-eq').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            const eqId = e.target.getAttribute('data-id');
+            const confirmJoin = confirm("Deseja entrar nesta equipe?");
+            if(confirmJoin) {
+                await updateDoc(doc(db, "equipes", eqId), {
+                    integrantesIds: arrayUnion(currentUserData.uid)
+                });
+                alert("Você entrou na equipe!");
+                checkAlunoEquipe(currentUserData.uid, currentTurmaData.id);
+            }
+        });
+    });
+}
+
+// Chat System (Realtime Listening)
+let chatUnsubscribe = null;
+
+function loadChat(equipeId) {
+    const chatBox = document.getElementById('chatMessages');
+    const q = query(collection(db, "mensagens"), where("equipeId", "==", equipeId), orderBy("timestamp", "asc"));
+    
+    // Listen for realtime updates
+    chatUnsubscribe = onSnapshot(q, (snapshot) => {
+        chatBox.innerHTML = '';
+        if(snapshot.empty) {
+            chatBox.innerHTML = '<p class="text-center text-light" style="margin-top:20px;">Nenhuma mensagem enviada. Compartilhe o primeiro link de pesquisa!</p>';
+            return;
+        }
+
+        snapshot.forEach((doc) => {
+            const msg = doc.data();
+            const isMe = msg.autorId === currentUserData.uid;
+            chatBox.innerHTML += `
+                <div style="margin-bottom: 15px; text-align: ${isMe ? 'right' : 'left'};">
+                    <span style="font-size: 0.8rem; color:#888;">${msg.autorName}</span>
+                    <div style="display:inline-block; padding: 10px 15px; border-radius:15px; background: ${isMe ? 'var(--primary)' : 'white'}; color: ${isMe ? 'white' : '#333'}; border: ${isMe ? 'none' : '1px solid #ccc'}; max-width:80%;">
+                        ${msg.texto}
+                    </div>
+                </div>
+            `;
+        });
+        chatBox.scrollTop = chatBox.scrollHeight;
+    });
+}
+
+const btnSendChat = document.getElementById('btnSendChat');
+if(btnSendChat) {
+    btnSendChat.addEventListener('click', async () => {
+        const input = document.getElementById('chatInput');
+        const text = input.value.trim();
+        if(text && currentEquipeData) {
+            try {
+                await addDoc(collection(db, "mensagens"), {
+                    equipeId: currentEquipeData.id,
+                    autorId: currentUserData.uid,
+                    autorName: currentUserData.name,
+                    texto: text,
+                    timestamp: new Date().getTime()
+                });
+                input.value = '';
+            } catch(e) { console.error("Erro msg", e); }
+        }
+    });
+}
+
+    </script>
+</body>
+</html>

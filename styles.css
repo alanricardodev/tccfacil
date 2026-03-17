@@ -587,6 +587,35 @@ footer {
 .elemento-card h3 { margin-bottom: 12px; font-size: 1.3rem; }
 .elemento-card p { font-size: 0.95rem; color: var(--text-light); }
 
+/* Login Badge */
+.login-badge {
+  position: absolute;
+  top: 30px;
+  right: 40px;
+  background: white;
+  padding: 10px 25px;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  color: var(--primary);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+.login-badge i {
+  font-size: 1.2rem;
+}
+.login-badge:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(108, 92, 231, 0.2);
+  background: var(--primary);
+  color: white;
+}
+
 /* Media Queries */
 @media (max-width: 992px) {
   .hero-content {
@@ -607,4 +636,92 @@ footer {
   .hero-cards {
     flex-direction: column;
   }
+}
+
+/* Auth Modal Styles */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(5px);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+  animation: fadeInModal 0.3s ease;
+}
+.modal-overlay.active {
+  display: flex;
+}
+@keyframes fadeInModal {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.modal-content {
+  width: 90%;
+  max-width: 450px;
+  position: relative;
+  padding: 40px;
+}
+.close-modal {
+  position: absolute;
+  top: 15px; right: 20px;
+  font-size: 2rem;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: color 0.3s;
+}
+.close-modal:hover { color: var(--secondary); }
+
+.modal-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+.modal-header h2 { font-size: 2rem; color: var(--primary); }
+
+.auth-form .input-group {
+  position: relative;
+  margin-bottom: 20px;
+}
+.auth-form .input-group i {
+  position: absolute;
+  left: 15px; top: 15px;
+  color: var(--text-light);
+}
+.auth-form input, .auth-form select {
+  width: 100%;
+  padding: 15px 15px 15px 45px;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  background: rgba(255,255,255,0.7);
+  outline: none;
+  transition: border-color 0.3s, background 0.3s;
+}
+.auth-form input:focus, .auth-form select:focus {
+  border-color: var(--primary);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1);
+}
+
+.w-100 { width: 100%; }
+.auth-switch { font-size: 0.95rem; }
+.auth-switch a {
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: none;
+  margin-left: 5px;
+}
+.auth-switch a:hover { text-decoration: underline; }
+.error-msg {
+  color: white;
+  background: var(--secondary);
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 20px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
 }

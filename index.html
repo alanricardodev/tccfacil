@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Desvendando o TCC | Guia Interativo</title>
     <meta name="description"
-        content="Um guia passo a passo, lúdico e profissional, para entender o que é o TCC, suas modalidades e regras.">
+        content="Um guia passo a passo, lÃºdico e profissional, para entender o que Ã© o TCC, suas modalidades e regras.">
     <!-- Google Fonts -->
     <link
         href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Inter:wght@400;500;600&display=swap"
@@ -15,9 +15,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
+    
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js"></script>
 </head>
 
 <body>
+    <!-- Login Badge -->
+    <div class="login-badge btn-open-auth" title="Entrar na Plataforma">
+        <i class="fa-solid fa-user-circle"></i>
+        <span>Login</span>
+    </div>
+
     <!-- Background Animated Shapes -->
     <div class="bg-shape shape-1"></div>
     <div class="bg-shape shape-2"></div>
@@ -44,8 +55,7 @@
                 </div>
                 <p class="law-text"><i class="fa-solid fa-book-bookmark"></i> Instituído pela Portaria Nº 3704/2017 como
                     norma da Rede da Educação Profissional do Estado da Bahia.</p>
-                <a href="#modalidades" class="btn btn-primary">Descobrir Modalidades <i
-                        class="fa-solid fa-arrow-down"></i></a>
+                <button id="btnOpenAuth" class="btn btn-primary btn-open-auth">Acessar Plataforma <i class="fa-solid fa-arrow-right-to-bracket"></i></button>
             </div>
             <div class="hero-image">
                 <div class="floating-illustration">
@@ -63,63 +73,63 @@
             <div class="section-header text-center">
                 <h2>Modalidades de TCC</h2>
                 <p>O aluno deve selecionar a modalidade levando em conta a especificidade do seu curso e o eixo
-                    tecnológico. <strong>Tudo nas normas da ABNT!</strong></p>
+                    tecnolÃ³gico. <strong>Tudo nas normas da ABNT!</strong></p>
             </div>
 
             <div class="grid cards-grid">
                 <!-- Card 1 -->
                 <a href="projeto.html#pesquisa" class="card glass interactive no-decoration">
                     <div class="card-icon"><i class="fa-solid fa-microscope"></i></div>
-                    <h3>Pesquisa Técnica-Científica</h3>
-                    <p>Envolve 5 etapas: preparatória, projeto, execução, redação e divulgação.</p>
+                    <h3>Pesquisa TÃ©cnica-CientÃ­fica</h3>
+                    <p>Envolve 5 etapas: preparatÃ³ria, projeto, execuÃ§Ã£o, redaÃ§Ã£o e divulgaÃ§Ã£o.</p>
                 </a>
                 <!-- Card 2 -->
                 <a href="projeto.html#tecnologia" class="card glass interactive no-decoration">
                     <div class="card-icon"><i class="fa-solid fa-rocket"></i></div>
                     <h3>Desenvolvimento de Tecnologia</h3>
-                    <p>Inovação em práticas, produtos ou serviços. Pode resultar em patente!</p>
+                    <p>InovaÃ§Ã£o em prÃ¡ticas, produtos ou serviÃ§os. Pode resultar em patente!</p>
                 </a>
                 <!-- Card 3 -->
                 <a href="projeto.html#artigo" class="card glass interactive no-decoration">
                     <div class="card-icon"><i class="fa-solid fa-file-lines"></i></div>
-                    <h3>Artigos Científicos</h3>
-                    <p>Apresenta ideias e métodos. Podem ser temas originais ou de revisão.</p>
+                    <h3>Artigos CientÃ­ficos</h3>
+                    <p>Apresenta ideias e mÃ©todos. Podem ser temas originais ou de revisÃ£o.</p>
                 </a>
                 <!-- Card 4 -->
                 <a href="projeto.html#monografia" class="card glass interactive no-decoration">
                     <div class="card-icon"><i class="fa-solid fa-book-open"></i></div>
                     <h3>Monografia</h3>
-                    <p>Focado em um único tema com estrutura lógica. Exige pesquisa detalhada.</p>
+                    <p>Focado em um Ãºnico tema com estrutura lÃ³gica. Exige pesquisa detalhada.</p>
                 </a>
                 <!-- Card 5 -->
                 <a href="projeto.html#relatorio" class="card glass interactive no-decoration">
                     <div class="card-icon"><i class="fa-solid fa-clipboard-list"></i></div>
-                    <h3>Relatório com Ficha Técnica</h3>
-                    <p>Apresentação concisa e padronizada sobre um projeto ou produto.</p>
+                    <h3>RelatÃ³rio com Ficha TÃ©cnica</h3>
+                    <p>ApresentaÃ§Ã£o concisa e padronizada sobre um projeto ou produto.</p>
                 </a>
                 <!-- Card 6 -->
                 <a href="projeto.html#prototipo" class="card glass interactive no-decoration">
                     <div class="card-icon"><i class="fa-solid fa-cubes"></i></div>
-                    <h3>Protótipos com Manual</h3>
-                    <p>Modelo em escala, acompanhado de instruções de funcionamento.</p>
+                    <h3>ProtÃ³tipos com Manual</h3>
+                    <p>Modelo em escala, acompanhado de instruÃ§Ãµes de funcionamento.</p>
                 </a>
                 <!-- Card 7 -->
                 <a href="projeto.html#maquete" class="card glass interactive no-decoration">
                     <div class="card-icon"><i class="fa-solid fa-city"></i></div>
                     <h3>Maquete com Memorial</h3>
-                    <p>Representação 3D com documento descrevendo materiais e procedimentos.</p>
+                    <p>RepresentaÃ§Ã£o 3D com documento descrevendo materiais e procedimentos.</p>
                 </a>
                 <!-- Card 8 -->
                 <a href="projeto.html#negocios" class="card glass interactive no-decoration">
                     <div class="card-icon"><i class="fa-solid fa-chart-line"></i></div>
-                    <h3>Plano de Negócios</h3>
-                    <p>Especifica um negócio novo/existente com pesquisa e viabilidade.</p>
+                    <h3>Plano de NegÃ³cios</h3>
+                    <p>Especifica um negÃ³cio novo/existente com pesquisa e viabilidade.</p>
                 </a>
                 <!-- Card 9 -->
                 <a href="projeto.html#evtec" class="card glass interactive no-decoration">
                     <div class="card-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
                     <h3>EVTEC</h3>
-                    <p>Estudo de viabilidade tecnológica, econômica e financeira de um negócio.</p>
+                    <p>Estudo de viabilidade tecnolÃ³gica, econÃ´mica e financeira de um negÃ³cio.</p>
                 </a>
             </div>
         </div>
@@ -128,8 +138,8 @@
     <section id="fases" class="section bg-light">
         <div class="container">
             <div class="section-header text-center">
-                <h2>Guia de Elaboração e Fases</h2>
-                <p>O TCC é construído durante todo o curso. Veja as 4 fases obrigatórias!</p>
+                <h2>Guia de ElaboraÃ§Ã£o e Fases</h2>
+                <p>O TCC Ã© construÃ­do durante todo o curso. Veja as 4 fases obrigatÃ³rias!</p>
             </div>
 
             <div class="timeline">
@@ -137,7 +147,7 @@
                     <div class="step-number">1</div>
                     <div class="step-content">
                         <h3>Pesquisa</h3>
-                        <p>O início de tudo. Levante os dados e referências que vão embasar o seu trabalho.</p>
+                        <p>O inÃ­cio de tudo. Levante os dados e referÃªncias que vÃ£o embasar o seu trabalho.</p>
                     </div>
                 </div>
                 <div class="timeline-item glass" style="--delay: 2">
@@ -151,22 +161,22 @@
                     <div class="step-number">3</div>
                     <div class="step-content">
                         <h3>Desenvolvimento</h3>
-                        <p>A mão na massa! Produção do material, protótipos, redação ou testes.</p>
+                        <p>A mÃ£o na massa! ProduÃ§Ã£o do material, protÃ³tipos, redaÃ§Ã£o ou testes.</p>
                     </div>
                 </div>
                 <div class="timeline-item glass" style="--delay: 4">
                     <div class="step-number">4</div>
                     <div class="step-content">
-                        <h3>Apresentação</h3>
-                        <p>Mostre ao mundo (e à banca) o incrível resultado do seu estudo.</p>
+                        <h3>ApresentaÃ§Ã£o</h3>
+                        <p>Mostre ao mundo (e Ã  banca) o incrÃ­vel resultado do seu estudo.</p>
                     </div>
                 </div>
             </div>
 
             <div class="note-box glass mt-4">
                 <i class="fa-solid fa-info-circle icon-info"></i>
-                <p><strong>Nota importante:</strong> A disciplina de <em>Metodologia do Trabalho Científico</em> é
-                    ministrada logo no 1º Série/Módulo I para preparar o aluno para esta jornada!</p>
+                <p><strong>Nota importante:</strong> A disciplina de <em>Metodologia do Trabalho CientÃ­fico</em> Ã©
+                    ministrada logo no 1Âº SÃ©rie/MÃ³dulo I para preparar o aluno para esta jornada!</p>
             </div>
         </div>
     </section>
@@ -174,8 +184,8 @@
     <section id="elementos" class="section">
         <div class="container">
             <div class="section-header text-center">
-                <h2>Elementos do Projeto 🧩</h2>
-                <p>Todo TCC precisa de uma base sólida. Conheça as partes essenciais que sustentam a sua pesquisa!</p>
+                <h2>Elementos do Projeto ðŸ§©</h2>
+                <p>Todo TCC precisa de uma base sÃ³lida. ConheÃ§a as partes essenciais que sustentam a sua pesquisa!</p>
             </div>
 
             <div class="elementos-grid">
@@ -188,29 +198,29 @@
                 <a href="projeto.html#justificativa" class="elemento-card glass interactive no-decoration">
                     <div class="elemento-icon"><i class="fa-solid fa-balance-scale"></i></div>
                     <h3>Justificativa</h3>
-                    <p>O "porquê" do seu trabalho. É aqui que você vende a ideia, convencendo o leitor da importância e
-                        relevância do seu tema para a sociedade.</p>
+                    <p>O "porquÃª" do seu trabalho. Ã‰ aqui que vocÃª vende a ideia, convencendo o leitor da importÃ¢ncia e
+                        relevÃ¢ncia do seu tema para a sociedade.</p>
                 </a>
                 <a href="projeto.html#objetivo-geral" class="elemento-card glass interactive no-decoration">
                     <div class="elemento-icon"><i class="fa-solid fa-flag-checkered"></i></div>
                     <h3>Objetivo Geral</h3>
-                    <p>Aonde você quer chegar! A meta principal do projeto escrita sempre com um verbo no infinitivo
+                    <p>Aonde vocÃª quer chegar! A meta principal do projeto escrita sempre com um verbo no infinitivo
                         (ex: Analisar, Desenvolver, Propor).</p>
                 </a>
                 <a href="projeto.html#objetivo-especifico" class="elemento-card glass interactive no-decoration">
                     <div class="elemento-icon"><i class="fa-solid fa-list-check"></i></div>
-                    <h3>Objetivos Específicos</h3>
-                    <p>O passo a passo (metas menores) que você precisa cumprir para conseguir atingir o seu Objetivo
-                        Geral. Como pequenas missões!</p>
+                    <h3>Objetivos EspecÃ­ficos</h3>
+                    <p>O passo a passo (metas menores) que vocÃª precisa cumprir para conseguir atingir o seu Objetivo
+                        Geral. Como pequenas missÃµes!</p>
                 </a>
                 <a href="projeto.html#referencial" class="elemento-card glass interactive no-decoration"
                     style="grid-column: 1 / -1; max-width: 800px; margin: 0 auto; width: 100%;">
                     <div class="elemento-icon"
                         style="background: linear-gradient(135deg, var(--primary), var(--tertiary));"><i
                             class="fa-solid fa-book-journal-whills"></i></div>
-                    <h3>Referencial Teórico</h3>
-                    <p>A base teórica e científica do seu trabalho. É o embasamento feito através do que outros autores,
-                        livros e artigos já estudaram sobre o seu tema. Nada sai do nada!</p>
+                    <h3>Referencial TeÃ³rico</h3>
+                    <p>A base teÃ³rica e cientÃ­fica do seu trabalho. Ã‰ o embasamento feito atravÃ©s do que outros autores,
+                        livros e artigos jÃ¡ estudaram sobre o seu tema. Nada sai do nada!</p>
                 </a>
             </div>
         </div>
@@ -220,50 +230,50 @@
         <div class="container">
             <div class="grid rules-layout">
                 <div class="rules-text">
-                    <h2>Regras Gerais & Avaliação ⚖️</h2>
-                    <p>Tudo o que você precisa saber para não ter surpresas indesejáveis.</p>
+                    <h2>Regras Gerais & AvaliaÃ§Ã£o âš–ï¸</h2>
+                    <p>Tudo o que vocÃª precisa saber para não ter surpresas indesejÃ¡veis.</p>
 
                     <ul class="fancy-list">
                         <li>
                             <i class="fa-solid fa-users"></i>
                             <div>
                                 <strong>Equipes</strong>
-                                <p>Pode ser feito em grupos de até <strong>05 alunos</strong>.</p>
+                                <p>Pode ser feito em grupos de atÃ© <strong>05 alunos</strong>.</p>
                             </div>
                         </li>
                         <li>
                             <i class="fa-solid fa-hourglass-end"></i>
                             <div>
                                 <strong>Prazo Limite</strong>
-                                <p>Até 5 anos para concluir o curso técnico após o início.</p>
+                                <p>AtÃ© 5 anos para concluir o curso tÃ©cnico apÃ³s o inÃ­cio.</p>
                             </div>
                         </li>
                         <li>
                             <i class="fa-solid fa-ban text-danger"></i>
                             <div>
-                                <strong>Reprovação</strong>
-                                <p>Ocorre se não entregar nos prazos ou faltar à apresentação sem justificativa legal.
+                                <strong>ReprovaÃ§Ã£o</strong>
+                                <p>Ocorre se não entregar nos prazos ou faltar Ã  apresentaÃ§Ã£o sem justificativa legal.
                                 </p>
                             </div>
                         </li>
                         <li>
                             <i class="fa-solid fa-chalkboard-user text-success"></i>
                             <div>
-                                <strong>Apresentação Oral</strong>
-                                <p>Seção pública perante banca. Tempo máximo: <strong>30 minutos</strong>.</p>
+                                <strong>ApresentaÃ§Ã£o Oral</strong>
+                                <p>SeÃ§Ã£o pÃºblica perante banca. Tempo mÃ¡ximo: <strong>30 minutos</strong>.</p>
                             </div>
                         </li>
                     </ul>
                 </div>
 
                 <div class="banca-box glass">
-                    <h3>O que a Banca avalia? 🧐</h3>
+                    <h3>O que a Banca avalia? ðŸ§</h3>
                     <div class="criteria-tags">
                         <span class="tag">Postura Pessoal</span>
-                        <span class="tag">Adequação aos Objetivos</span>
-                        <span class="tag">Domínio do Assunto</span>
-                        <span class="tag">Sequência Lógica</span>
-                        <span class="tag">Vocabulário Utilizado</span>
+                        <span class="tag">AdequaÃ§Ã£o aos Objetivos</span>
+                        <span class="tag">DomÃ­nio do Assunto</span>
+                        <span class="tag">SequÃªncia LÃ³gica</span>
+                        <span class="tag">VocabulÃ¡rio Utilizado</span>
                     </div>
                     <div class="banca-illustration">
                         <i class="fa-solid fa-clipboard-check"></i>
@@ -276,8 +286,8 @@
     <section id="modelos" class="section bg-light">
         <div class="container">
             <div class="section-header text-center">
-                <h2>Modelos Práticos de Pesquisa 📂</h2>
-                <p>Precisa de inspiração? Acesse modelos reais de diferentes tipos de pesquisa para entender na prática
+                <h2>Modelos PrÃ¡ticos de Pesquisa ðŸ“‚</h2>
+                <p>Precisa de inspiraÃ§Ã£o? Acesse modelos reais de diferentes tipos de pesquisa para entender na prÃ¡tica
                     como a estrutura funciona e ter um ponto de partida para o seu!</p>
             </div>
 
@@ -285,17 +295,17 @@
                 <a href="projeto.html#modelo-artigo" class="card glass interactive no-decoration text-center">
                     <div class="card-icon" style="margin: 0 auto 20px;"><i class="fa-regular fa-file-word"></i></div>
                     <h3>Modelo de Artigo</h3>
-                    <p>Estrutura padrão de Introdução, Revisão, Método e Conclusão.</p>
+                    <p>Estrutura padrÃ£o de IntroduÃ§Ã£o, RevisÃ£o, MÃ©todo e ConclusÃ£o.</p>
                 </a>
                 <a href="projeto.html#modelo-tecnologia" class="card glass interactive no-decoration text-center">
                     <div class="card-icon" style="margin: 0 auto 20px;"><i class="fa-solid fa-code"></i></div>
                     <h3>Modelo de Tecnologia</h3>
-                    <p>Como documentar a criação de um software ou produto inovador.</p>
+                    <p>Como documentar a criaÃ§Ã£o de um software ou produto inovador.</p>
                 </a>
                 <a href="projeto.html#modelo-negocios" class="card glass interactive no-decoration text-center">
                     <div class="card-icon" style="margin: 0 auto 20px;"><i class="fa-solid fa-chart-line"></i></div>
-                    <h3>Modelo de Negócios</h3>
-                    <p>Exemplo prático de viabilidade técnica e financeira.</p>
+                    <h3>Modelo de NegÃ³cios</h3>
+                    <p>Exemplo prÃ¡tico de viabilidade tÃ©cnica e financeira.</p>
                 </a>
             </div>
         </div>
@@ -304,30 +314,30 @@
     <section id="exemplos" class="section examples-section">
         <div class="container text-center">
             <div class="section-header">
-                <h2>Exemplos de Produtos TCC 🎨</h2>
-                <p>O TCC não precisa ser só texto! Dependendo do seu curso, veja o que pode ser criado:</p>
+                <h2>Exemplos de Produtos TCC ðŸŽ¨</h2>
+                <p>O TCC não precisa ser sÃ³ texto! Dependendo do seu curso, veja o que pode ser criado:</p>
             </div>
 
             <div class="examples-carousel">
-                <div class="example-pill"><i class="fa-solid fa-vial"></i> Novas técnicas ou procedimentos</div>
+                <div class="example-pill"><i class="fa-solid fa-vial"></i> Novas tÃ©cnicas ou procedimentos</div>
                 <div class="example-pill"><i class="fa-solid fa-mobile-screen"></i> Softwares e Aplicativos</div>
-                <div class="example-pill"><i class="fa-solid fa-music"></i> Apresentações Musicais</div>
-                <div class="example-pill"><i class="fa-solid fa-palette"></i> Artes, Dança e Teatro</div>
-                <div class="example-pill"><i class="fa-solid fa-briefcase"></i> Modelagem de Negócios</div>
-                <div class="example-pill"><i class="fa-solid fa-utensils"></i> Pratos e Cardápios</div>
-                <div class="example-pill"><i class="fa-solid fa-video"></i> Áudios e Vídeos</div>
-                <div class="example-pill"><i class="fa-solid fa-folder-open"></i> Portfólios Profissionais</div>
+                <div class="example-pill"><i class="fa-solid fa-music"></i> ApresentaÃ§Ãµes Musicais</div>
+                <div class="example-pill"><i class="fa-solid fa-palette"></i> Artes, DanÃ§a e Teatro</div>
+                <div class="example-pill"><i class="fa-solid fa-briefcase"></i> Modelagem de NegÃ³cios</div>
+                <div class="example-pill"><i class="fa-solid fa-utensils"></i> Pratos e CardÃ¡pios</div>
+                <div class="example-pill"><i class="fa-solid fa-video"></i> Ãudios e VÃ­deos</div>
+                <div class="example-pill"><i class="fa-solid fa-folder-open"></i> PortfÃ³lios Profissionais</div>
             </div>
 
             <div class="cta-bottom mt-5">
-                <h3>Pronto para começar sua jornada?</h3>
+                <h3>Pronto para comeÃ§ar sua jornada?</h3>
                 <p>Escolha sua modalidade, junte sua equipe e transforme ideias em realidade!</p>
             </div>
         </div>
     </section>
 
     <footer>
-        <p>&copy; 2026 - Guia do TCC para Cursos Técnicos </p>
+        <p>&copy; 2026 - Guia do TCC para Cursos TÃ©cnicos | Design LÃºdico & Profissional</p>
         <div class="developer-info">
             <p>Desenvolvido por <span class="dev-name">Alan Ricardo</span> <i class="fa-solid fa-code"
                     style="color: var(--primary); margin-left: 5px;"></i></p>
@@ -336,15 +346,268 @@
                         class="fa-brands fa-linkedin-in"></i></a>
                 <a href="#" class="social-icon no-decoration" target="_blank" title="GitHub"><i
                         class="fa-brands fa-github"></i></a>
-                <a href="https://www.instagram.com/a.l.a.n.r.i.c.a.r.d.o?igsh=dWF6MTJlMXczbjlv" class="social-icon no-decoration" target="_blank" title="Instagram"><i
+                <a href="#" class="social-icon no-decoration" target="_blank" title="Instagram"><i
                         class="fa-brands fa-instagram"></i></a>
-                <a href="https://wa.me/qr/6B3CMJB6ZPDMP1" class="social-icon no-decoration" target="_blank" title="WhatsApp"><i
+                <a href="#" class="social-icon no-decoration" target="_blank" title="WhatsApp"><i
                         class="fa-brands fa-whatsapp"></i></a>
             </div>
         </div>
     </footer>
 
+    <!-- Auth Modal Overlay -->
+    <div id="authModal" class="modal-overlay">
+        <div class="modal-content glass">
+            <span class="close-modal" id="closeAuthModal">&times;</span>
+            <div class="modal-header">
+                <h2 id="modalTitle">Entrar na Plataforma</h2>
+                <p id="modalSubtitle">Faça login para acessar suas turmas e equipes.</p>
+            </div>
+            
+            <form id="authForm" class="auth-form">
+                <div class="input-group" id="nameGroup" style="display: none;">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="nameInput" placeholder="Seu Nome Completo">
+                </div>
+                <div class="input-group">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" id="emailInput" placeholder="Seu E-mail" required>
+                </div>
+                <div class="input-group">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="passwordInput" placeholder="Sua Senha" required>
+                </div>
+                
+                <div class="input-group" id="roleGroup" style="display: none;">
+                    <i class="fa-solid fa-id-badge"></i>
+                    <select id="roleInput">
+                        <option value="aluno" selected>Sou Aluno</option>
+                        <option value="professor">Sou Professor</option>
+                    </select>
+                </div>
+                
+                <button type="submit" id="mainAuthBtn" class="btn btn-primary w-100 mt-4">Entrar</button>
+
+                <div style="text-align: center; margin: 15px 0; color: var(--text-light); font-size: 0.9rem;">OU</div>
+                
+                <button type="button" id="btnGoogleAuth" class="btn w-100" style="background: white; color: #333; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" style="width: 20px;">
+                    <span id="googleBtnText">Entrar com Google</span>
+                </button>
+                
+                <p class="mt-4 text-center auth-switch">
+                    <span id="switchText">Ainda não tem conta?</span>
+                    <a href="#" id="authSwitchBtn">Criar nova conta</a>
+                </p>
+                <div id="authErrorMsg" class="error-msg" style="display: none;">Erro ao autenticar.</div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script src="script.js"></script>
+    <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyAtws25Kse-YsiEGOpxyztCa7a4q305T5I",
+  authDomain: "projetotcc-37266.firebaseapp.com",
+  projectId: "projetotcc-37266",
+  storageBucket: "projetotcc-37266.firebasestorage.app",
+  messagingSenderId: "11620412356",
+  appId: "1:11620412356:web:aee78b6248dfa3b4e69291",
+  measurementId: "G-ZHVTMBSPX0"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Authentication UI Logic (index.html)
+let isLoginMode = true;
+
+const authModal = document.getElementById('authModal');
+const authButtons = document.querySelectorAll('.btn-open-auth');
+const closeAuthModal = document.getElementById('closeAuthModal');
+const authSwitchBtn = document.getElementById('authSwitchBtn');
+
+// Modal Toggles
+if(authButtons.length > 0) {
+    authButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            authModal.classList.add('active');
+        });
+    });
+}
+if(closeAuthModal) {
+    closeAuthModal.addEventListener('click', () => {
+        authModal.classList.remove('active');
+    });
+}
+
+// Switch between Login and Register
+if(authSwitchBtn) {
+    authSwitchBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        isLoginMode = !isLoginMode;
+        
+        const modalTitle = document.getElementById('modalTitle');
+        const modalSubtitle = document.getElementById('modalSubtitle');
+        const nameGroup = document.getElementById('nameGroup');
+        const roleGroup = document.getElementById('roleGroup');
+        const mainAuthBtn = document.getElementById('mainAuthBtn');
+        const switchText = document.getElementById('switchText');
+        const authErrorMsg = document.getElementById('authErrorMsg');
+        
+        authErrorMsg.style.display = 'none';
+
+        if(isLoginMode) {
+            modalTitle.innerText = "Entrar na Plataforma";
+            modalSubtitle.innerText = "Faça login para acessar suas turmas e equipes.";
+            nameGroup.style.display = "none";
+            roleGroup.style.display = "none";
+            mainAuthBtn.innerText = "Entrar";
+            switchText.innerText = "Ainda não tem conta?";
+            authSwitchBtn.innerText = "Criar nova conta";
+            document.getElementById('googleBtnText').innerText = "Entrar com Google";
+            document.getElementById('nameInput').removeAttribute('required');
+        } else {
+            modalTitle.innerText = "Criar Conta";
+            modalSubtitle.innerText = "Junte-se à plataforma de gestão de TCC.";
+            nameGroup.style.display = "flex";
+            roleGroup.style.display = "flex";
+            mainAuthBtn.innerText = "Cadastrar";
+            switchText.innerText = "Já possui uma conta?";
+            authSwitchBtn.innerText = "Fazer login";
+            document.getElementById('googleBtnText').innerText = "Cadastrar com Google";
+            document.getElementById('nameInput').setAttribute('required', 'true');
+        }
+    });
+}
+
+// Handle Auth Form Submission
+const authForm = document.getElementById('authForm');
+if(authForm) {
+    authForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const mainAuthBtn = document.getElementById('mainAuthBtn');
+        const authErrorMsg = document.getElementById('authErrorMsg');
+        
+        const email = document.getElementById('emailInput').value;
+        const password = document.getElementById('passwordInput').value;
+        
+        mainAuthBtn.disabled = true;
+        mainAuthBtn.innerText = "Processando...";
+        authErrorMsg.style.display = 'none';
+
+        try {
+            if(isLoginMode) {
+                // LOGIN
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                // Auth Observer will handle redirect
+            } else {
+                // REGISTER
+                const name = document.getElementById('nameInput').value;
+                const role = document.getElementById('roleInput').value;
+                
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                // Save additional data string into Firestore
+                await setDoc(doc(db, "users", user.uid), {
+                    uid: user.uid,
+                    name: name,
+                    email: email,
+                    role: role,
+                    createdAt: new Date().toISOString()
+                });
+            }
+        } catch (error) {
+            console.error(error);
+            authErrorMsg.style.display = 'block';
+            if(error.code === 'auth/email-already-in-use') {
+                authErrorMsg.innerText = "Este E-mail já está cadastrado.";
+            } else if(error.code === 'auth/invalid-credential') {
+                authErrorMsg.innerText = "E-mail ou senha incorretos.";
+            } else if(error.code === 'auth/weak-password') {
+                authErrorMsg.innerText = "A senha deve ter pelo menos 6 caracteres.";
+            } else {
+                authErrorMsg.innerText = "Erro ao autenticar: " + error.message;
+            }
+            mainAuthBtn.disabled = false;
+            mainAuthBtn.innerText = isLoginMode ? "Entrar" : "Cadastrar";
+        }
+    });
+}
+
+// Handle Google Auth
+const btnGoogleAuth = document.getElementById('btnGoogleAuth');
+if(btnGoogleAuth) {
+    btnGoogleAuth.addEventListener('click', async () => {
+        const authErrorMsg = document.getElementById('authErrorMsg');
+        authErrorMsg.style.display = 'none';
+        
+        const provider = new GoogleAuthProvider();
+        try {
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+            
+            // Check if user exists in Firestore
+            const docRef = doc(db, "users", user.uid);
+            const docSnap = await getDoc(docRef);
+            
+            if (!docSnap.exists()) {
+                // If it's a new user, we need to save them. 
+                // Since Google doesn't ask for a 'role', we assume 'aluno' by default
+                let selectedRole = "aluno";
+                if(!isLoginMode) {
+                    selectedRole = document.getElementById('roleInput').value;
+                }
+                
+                await setDoc(doc(db, "users", user.uid), {
+                    uid: user.uid,
+                    name: user.displayName || "Usuário Google",
+                    email: user.email,
+                    role: selectedRole,
+                    createdAt: new Date().toISOString()
+                });
+            }
+            // Auth observer will redirect
+        } catch(error) {
+            console.error(error);
+            authErrorMsg.style.display = 'block';
+            if (window.location.protocol === 'file:') {
+                authErrorMsg.innerHTML = "O Google Auth bloqueia conexões locais diretas (<strong>file://</strong>). <br>Para testar, você precisa rodar o site por um servidor local (ex: <strong>Live Server</strong> no VSCode).";
+            } else {
+                authErrorMsg.innerText = "Erro: " + error.message;
+            }
+        }
+    });
+}
+
+// Global Auth State Observer
+onAuthStateChanged(auth, async (user) => {
+    const currentPath = window.location.pathname;
+    
+    if (user) {
+        // Logged In
+        console.log("User logged in:", user.uid);
+        if (currentPath.includes('index.html') || currentPath === '/' || currentPath.endsWith('ProjetoTCC/')) {
+            window.location.href = 'dashboard.html';
+        }
+    } else {
+        // Not Logged In
+        console.log("No user logged in.");
+        if (currentPath.includes('dashboard.html')) {
+            window.location.href = 'index.html';
+        }
+    }
+});
+
+    </script>
 </body>
 
 </html>
