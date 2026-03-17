@@ -405,7 +405,7 @@
     <script src="script.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -442,6 +442,26 @@
                 }
             }
         }
+
+        // Handle Google Redirect Result (fires when user returns from Google login)
+        getRedirectResult(auth).then(async (result) => {
+            if (!result) return; // No redirect result, first load
+            const user = result.user;
+            const docRef = doc(db, "users", user.uid);
+            const docSnap = await getDocWithRetry(docRef);
+            if (!docSnap.exists()) {
+                await setDoc(doc(db, "users", user.uid), {
+                    uid: user.uid,
+                    name: user.displayName || "Usuário Google",
+                    email: user.email,
+                    role: "aluno",
+                    createdAt: new Date().toISOString()
+                });
+            }
+        }).catch((error) => {
+            console.error("Redirect error:", error);
+        });
+
 
         // Authentication UI Logic
         let isLoginMode = true;
@@ -561,44 +581,37 @@
         if (btnGoogleAuth) {
             btnGoogleAuth.addEventListener('click', async () => {
                 const authErrorMsg = document.getElementById('authErrorMsg');
+                const googleBtnText = btnGoogleAuth.querySelector('#googleBtnText');
                 authErrorMsg.style.display = 'none';
                 btnGoogleAuth.disabled = true;
-                btnGoogleAuth.querySelector('#googleBtnText').innerText = 'Aguarde...';
+                googleBtnText.innerText = 'Abrindo popup...';
+
+                // Safety: re-enable button after 30 seconds if nothing happens
+                const resetBtn = () => {
+                    btnGoogleAuth.disabled = false;
+                    googleBtnText.innerText = 'Entrar com Google';
+                };
+                const safetyTimer = setTimeout(resetBtn, 30000);
 
                 const provider = new GoogleAuthProvider();
                 try {
-                    const result = await signInWithPopup(auth, provider);
-                    const user = result.user;
-
-                    const docRef = doc(db, "users", user.uid);
-                    const docSnap = await getDocWithRetry(docRef);
-
-                    if (!docSnap.exists()) {
-                        let selectedRole = "aluno";
-                        if (!isLoginMode) {
-                            selectedRole = document.getElementById('roleInput').value;
-                        }
-
-                        await setDoc(doc(db, "users", user.uid), {
-                            uid: user.uid,
-                            name: user.displayName || "Usuário Google",
-                            email: user.email,
-                            role: selectedRole,
-                            createdAt: new Date().toISOString()
-                        });
-                    }
-                } catch (error) {
-                    console.error(error);
-                    btnGoogleAuth.disabled = false;
-                    btnGoogleAuth.querySelector('#googleBtnText').innerText = 'Entrar com Google';
-                    authErrorMsg.style.display = 'block';
                     if (window.location.protocol === 'file:') {
-                        authErrorMsg.innerHTML = "Google Auth não funciona com arquivos locais <strong>(file://)</strong>. <br>Use o <strong>Live Server</strong> no VSCode ou <strong>GitHub Pages</strong>.";
-                    } else if (error.message && error.message.includes('offline')) {
-                        authErrorMsg.innerHTML = "<strong>Banco de dados offline.</strong> Acesse o <a href='https://console.firebase.google.com/' target='_blank'>Firebase Console</a> e crie o <strong>Firestore Database</strong> em modo de teste.";
-                    } else {
-                        authErrorMsg.innerText = "Erro: " + error.message;
+                        clearTimeout(safetyTimer);
+                        resetBtn();
+                        authErrorMsg.style.display = 'block';
+                        authErrorMsg.innerHTML = "Google Auth não funciona com arquivos locais <strong>(file://)</strong>. <br>Use o <strong>Live Server</strong> no VSCode.";
+                        return;
                     }
+
+                    googleBtnText.innerText = 'Redirecionando...';
+                    // signInWithRedirect navigates to Google - result handled by getRedirectResult above
+                    await signInWithRedirect(auth, provider);
+                } catch (error) {
+                    clearTimeout(safetyTimer);
+                    resetBtn();
+                    console.error(error);
+                    authErrorMsg.style.display = 'block';
+                    authErrorMsg.innerText = "Erro: " + (error.message || error.code);
                 }
             });
         }
