@@ -147,6 +147,9 @@
             </div>
 
             <div class="nav-section" id="section-aluno" style="display:none">Minha Conta</div>
+            <div class="nav-item" id="nav-guia-tcc" style="display:none" onclick="switchView('guia-tcc','Guia do TCC','nav-guia-tcc')">
+                <i class="fa-solid fa-map-location-dot"></i> Guia do TCC
+            </div>
             <div class="nav-item" id="nav-minha-turma" style="display:none" onclick="switchView('minha-turma','Minha Turma','nav-minha-turma')">
                 <i class="fa-solid fa-users-rectangle"></i> Minha Turma
             </div>
@@ -265,6 +268,28 @@
             <div id="panel-admin" style="display:none">
                 <h2>Bem-vindo, Administrador!</h2>
                 <p style="color:var(--text-light);margin-bottom:20px">Use o <strong>Painel Admin</strong> no menu lateral para gerenciar professores.</p>
+            </div>
+        </div>
+
+        <!-- ===== GUIA DO TCC ===== -->
+        <div id="view-guia-tcc" class="view-container">
+            <div class="dash-card mb-4" style="margin-bottom:24px">
+                <h2 style="color:var(--primary); margin-bottom:15px"><i class="fa-solid fa-map-location-dot"></i> Guia Interativo de Desenvolvimento</h2>
+                <p style="color:var(--text-light); line-height:1.6; margin-bottom:20px">Selecione o tipo de TCC que você e sua equipe estão desenvolvendo para visualizar o passo a passo recomendado, focado em facilitar a entrega acadêmica.</p>
+                
+                <div style="display:flex; gap:15px; flex-wrap:wrap; margin-bottom:30px">
+                    <button class="btn btn-primary" onclick="renderGuiaTCC('sistema')" style="flex:1; min-width:200px; padding:15px; font-size:1rem"><i class="fa-solid fa-laptop-code"></i> Sistema / Software</button>
+                    <button class="btn btn-primary" onclick="renderGuiaTCC('artigo')" style="flex:1; min-width:200px; padding:15px; font-size:1rem; background:linear-gradient(135deg,#e84393,#fd79a8); border:none"><i class="fa-solid fa-file-lines"></i> Artigo Científico</button>
+                    <button class="btn btn-primary" onclick="renderGuiaTCC('monografia')" style="flex:1; min-width:200px; padding:15px; font-size:1rem; background:linear-gradient(135deg,#00b894,#55efc4); border:none"><i class="fa-solid fa-book"></i> Monografia Tradicional</button>
+                    <button class="btn btn-primary" onclick="renderGuiaTCC('negocios')" style="flex:1; min-width:200px; padding:15px; font-size:1rem; background:linear-gradient(135deg,#f39c12,#f1c40f); border:none"><i class="fa-solid fa-briefcase"></i> Plano de Negócios</button>
+                </div>
+
+                <div id="guiaContentArea" style="background:#f8f9fa; border:1px solid #eee; border-radius:16px; padding:25px; display:none;">
+                    <h3 id="guiaTitle" style="color:var(--text-main); margin-bottom:20px; font-size:1.4rem; border-bottom:2px solid #ddd; padding-bottom:10px">...</h3>
+                    <div id="guiaSteps" style="display:flex; flex-direction:column; gap:20px">
+                        <!-- Steps injected by JS -->
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -479,11 +504,6 @@ async function loadAlunoHome() {
         return;
     }
     document.getElementById('panel-aluno').style.display = 'block';
-    document.getElementById('nav-minha-turma').style.display = 'flex';
-    document.getElementById('nav-forum-turma').style.display = 'flex';
-
-    renderProgress(ME.tccStep || 0);
-
     // Check equipe
     const eqSnap = await getDocs(query(collection(db, 'equipes'), where('turmaId','==',turmaId), where('membros','array-contains',ME.uid)));
     if (!eqSnap.empty) {
@@ -493,11 +513,22 @@ async function loadAlunoHome() {
         banner.style.display = 'flex';
         document.getElementById('minhaEquipeNome').innerText = eq.nome;
         document.getElementById('minhaEquipeTema').innerText = eq.tema || 'Não definido';
+        
+        // Show proper navigation items for Aluno with Equipe
+        document.getElementById('nav-guia-tcc').style.display = 'flex';
+        document.getElementById('nav-minha-turma').style.display = 'flex';
+        document.getElementById('nav-forum-turma').style.display = 'flex';
         document.getElementById('nav-equipe').style.display = 'flex';
         document.getElementById('nav-forum-equipe').style.display = 'flex';
+        
         loadEquipeChat();
         window.loadEquipeDocs();
         document.getElementById('alunoCreateEquipeArea').style.display = 'none';
+    } else {
+        // Show proper navigation items for Aluno without Equipe
+        document.getElementById('nav-guia-tcc').style.display = 'flex';
+        document.getElementById('nav-minha-turma').style.display = 'flex';
+        document.getElementById('nav-forum-turma').style.display = 'flex';
     }
 
     loadEquipesList(turmaId);
@@ -584,6 +615,73 @@ function loadMinhaEquipeContent() {
             </div>`).join('')}
         </div>`;
 }
+
+// ── GUIA DO TCC INTERATIVO ──
+window.renderGuiaTCC = function(tipo) {
+    const contentArea = document.getElementById('guiaContentArea');
+    const titleEl = document.getElementById('guiaTitle');
+    const stepsEl = document.getElementById('guiaSteps');
+    
+    contentArea.style.display = 'block';
+
+    const guias = {
+        'sistema': {
+            title: '💻 Guia: Desenvolvimento de Sistema / Software',
+            steps: [
+                { icon: 'fa-lightbulb', title: '1. Levantamento de Requisitos e Escopo', desc: 'Defina o problema que será resolvido. Identifique os usuários (atores) e o que o sistema deve fazer (requisitos funcionais e não funcionais). Faça rascunhos de telas (Wireframes).' },
+                { icon: 'fa-sitemap', title: '2. Arquitetura e Modelagem', desc: 'Esboce a base de dados (Diagrama ER), escolha as tecnologias (Frontend, Backend, Banco) e diagrame o fluxo principal do usuário no sistema.' },
+                { icon: 'fa-code', title: '3. Desenvolvimento (Mão na Massa)', desc: 'Divida o trabalho em Sprints (entregas de 1 a 2 semanas). Comece pelo login/cadastro, banco de dados, e depois as telas principais. Use GitHub para versionar.' },
+                { icon: 'fa-bug', title: '4. Testes e Correções', desc: 'Peça para pessoas fora do grupo testarem. Corrija os bugs encontrados e ajuste a interface visual para ficar agradável.' },
+                { icon: 'fa-file-word', title: '5. Documentação Final', desc: 'Escreva o documento do TCC relatando a justificativa, as tecnologias escolhidas, os diagramas criados e os resultados dos testes. Faça o "print" das telas principais.' }
+            ]
+        },
+        'artigo': {
+            title: '📄 Guia: Artigo Científico',
+            steps: [
+                { icon: 'fa-magnifying-glass', title: '1. Problema de Pesquisa e Revisão', desc: 'Defina uma pergunta clara a ser respondida. Busque artigos semelhantes no Google Acadêmico e Scielo para formar sua fundamentação teórica.' },
+                { icon: 'fa-list-check', title: '2. Metodologia', desc: 'Defina como você vai responder à pergunta (Estudo de caso? Questionário? Análise de dados em laboratório?). Especifique os métodos.' },
+                { icon: 'fa-chart-pie', title: '3. Coleta e Análise de Dados', desc: 'Execute a metodologia (aplique os questionários ou rode as análises). Transforme os resultados em gráficos e tabelas explicativas.' },
+                { icon: 'fa-pen-clip', title: '4. Escrita: Discussão e Conclusão', desc: 'Compare seus resultados com os autores que você leu no passo 1. Escreva a conclusão dizendo se a pergunta inicial foi respondida.' },
+                { icon: 'fa-spell-check', title: '5. Formatação e Submissão', desc: 'Ajuste tudo nas normas da ABNT ou da revista específica. Revise a ortografia, o Resumo/Abstract e finalize as Referências Bibliográficas.' }
+            ]
+        },
+        'monografia': {
+            title: '📚 Guia: Monografia Tradicional',
+            steps: [
+                { icon: 'fa-crosshairs', title: '1. Projeto de Pesquisa', desc: 'Defina Tema, Justificativa, Objetivos (Geral e Específicos) e o Cronograma de execução.' },
+                { icon: 'fa-book-open', title: '2. Referencial Teórico', desc: 'A base da monografia. Leia livros, teses e escreva os capítulos conceituais que vão dar suporte para a sua pesquisa.' },
+                { icon: 'fa-flask', title: '3. Pesquisa de Campo / Metodologia', desc: 'Explique detalhadamente como a pesquisa foi feita. Colete os dados através de entrevistas, observações ou coletas de amostras.' },
+                { icon: 'fa-comments', title: '4. Análise dos Resultados', desc: 'Diferente do artigo, na monografia a análise é bem mais extensa e aprofundada. Descreva as descobertas em detalhes formatando em novos capítulos.' },
+                { icon: 'fa-layer-group', title: '5. Elementos Pré e Pós-textuais', desc: 'Hora de fazer Capa, Folha de Rosto, Sumário, Dedicatória, Agradecimentos, Resumo e anexos. Tudo na rigorosa norma ABNT.' }
+            ]
+        },
+        'negocios': {
+            title: '💼 Guia: Plano de Negócios / Startup',
+            steps: [
+                { icon: 'fa-people-group', title: '1. Ideação e Público-Alvo', desc: 'Defina a dor do mercado que a sua empresa/startup vai resolver. Utilize o Canvas (Business Model Canvas) para modelar a ideia inicial.' },
+                { icon: 'fa-store', title: '2. Análise de Mercado e Concorrentes', desc: 'Pesquise quem já faz isso (concorrentes diretos e indiretos). Defina o seu Diferencial Competitivo e analise os fornecedores.' },
+                { icon: 'fa-bullhorn', title: '3. Plano de Marketing', desc: 'Como o cliente vai te conhecer? Defina estratégias de atração, precificação (Pricing), canais de distribuição e comunicação.' },
+                { icon: 'fa-calculator', title: '4. Plano Operacional e Financeiro', desc: 'Calcule o investimento inicial necessário, projeção de fluxo de caixa, ponto de equilíbrio (Break-even) e os custos fixos/variáveis.' },
+                { icon: 'fa-rocket', title: '5. Resumo Executivo e Pitch', desc: 'O Resumo Executivo deve ser a última coisa a ser escrita, resumindo todo o plano. Prepare uma apresentação visual (Pitch Deck) impactante para a banca.' }
+            ]
+        }
+    };
+
+    const guia = guias[tipo];
+    titleEl.innerText = guia.title;
+    
+    stepsEl.innerHTML = guia.steps.map(step => `
+        <div style="background:white; padding:18px; border-radius:12px; border-left:4px solid var(--primary); box-shadow:0 2px 8px rgba(0,0,0,0.05); display:flex; gap:16px; align-items:flex-start;">
+            <div style="width:45px; height:45px; background:rgba(108,92,231,0.1); color:var(--primary); font-size:1.4rem; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <i class="fa-solid ${step.icon}"></i>
+            </div>
+            <div>
+                <h4 style="margin:0 0 6px; color:var(--text-main); font-size:1.1rem">${step.title}</h4>
+                <p style="margin:0; color:var(--text-light); font-size:0.9rem; line-height:1.5">${step.desc}</p>
+            </div>
+        </div>
+    `).join('');
+};
 
 window.renomearEquipe = async function() {
     if (!ME._equipe) return;
