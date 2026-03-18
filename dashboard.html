@@ -1635,7 +1635,7 @@ window.aprovarEtapa = async function(equipeId, turmaId, turmaNome) {
     if (atual >= TCC_STEPS.length - 1) { alert('Todas as etapas ja foram liberadas para esta equipe!'); return; }
     const proxima = atual + 1;
     if (!confirm('Aprovar e liberar a etapa "' + TCC_STEPS[proxima] + '" para esta equipe?')) return;
-    await updateDoc(docRef, { stepLiberado: proxima });
+    await updateDoc(docRef, { stepLiberado: proxima, feedbackDevolucao: null, feedbackDevolucaoEtapa: null });
     alert('Etapa "' + TCC_STEPS[proxima] + '" liberada com sucesso!');
     verTurma(turmaId, turmaNome);
 };
@@ -1646,9 +1646,18 @@ window.reverterEtapa = async function(equipeId, turmaId, turmaNome) {
     if (!snap.exists()) return;
     const atual   = snap.data().stepLiberado !== undefined ? snap.data().stepLiberado : 0;
     if (atual === 0) { alert('Ja esta na primeira etapa.'); return; }
+    
+    const motivo = prompt('Por qual motivo você está devolvendo o projeto? (Esse feedback será mostrado aos alunos para correção)');
+    if (motivo === null) return;
+    
     const anterior = atual - 1;
     if (!confirm('Reverter para a etapa "' + TCC_STEPS[anterior] + '"?')) return;
-    await updateDoc(docRef, { stepLiberado: anterior, tccStep: Math.min(snap.data().tccStep||0, anterior) });
+    await updateDoc(docRef, { 
+        stepLiberado: anterior, 
+        tccStep: Math.min(snap.data().tccStep||0, anterior),
+        feedbackDevolucao: motivo,
+        feedbackDevolucaoEtapa: anterior
+    });
     alert('Etapa revertida para "' + TCC_STEPS[anterior] + '".');
     verTurma(turmaId, turmaNome);
 };
@@ -1717,12 +1726,31 @@ window.abrirFormTcc = async function(stepIndex) {
         </div>`;
     }
 
+    if (eq.feedbackDevolucao && eq.feedbackDevolucaoEtapa === stepIndex) {
+        html += `<div style="background:#ff767520;border-left:4px solid #ff7675;padding:12px 16px;border-radius:8px;margin-bottom:20px">
+            <strong style="color:#d63031"><i class="fa-solid fa-triangle-exclamation"></i> Feedback de Devolução do Professor:</strong>
+            <p style="margin:8px 0 0;font-size:0.9rem;color:#333">${eq.feedbackDevolucao}</p>
+        </div>`;
+    }
+
     fields.forEach(f => {
         const val = stepData[f.id] || '';
         html += `<div style="display:flex;flex-direction:column;gap:6px">
             <label style="font-size:0.85rem;font-weight:700;color:var(--text-dark)">${f.label}</label>`;
         if (f.type === 'textarea') {
-            html += `<textarea id="${f.id}" rows="4" style="width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;font-family:'Inter',sans-serif" placeholder="${f.placeholder||''}">${val}</textarea>`;
+            html += `<div style="border:1px solid #ddd; border-radius:8px; overflow:hidden">
+                <div style="background:#f0f2f5; padding:5px; border-bottom:1px solid #ddd; display:flex; gap:5px; align-items:center; flex-wrap:wrap">
+                    <button type="button" class="btn" style="padding:2px 8px; font-size:0.8rem; background:#fff; border:1px solid #ccc; color:#333" onclick="document.execCommand('bold',false,null)" title="Negrito"><b>B</b></button>
+                    <button type="button" class="btn" style="padding:2px 8px; font-size:0.8rem; background:#fff; border:1px solid #ccc; color:#333" onclick="document.execCommand('italic',false,null)" title="Itálico"><i>I</i></button>
+                    <button type="button" class="btn" style="padding:2px 8px; font-size:0.8rem; background:#fff; border:1px solid #ccc; color:#333; text-decoration:underline" onclick="document.execCommand('underline',false,null)" title="Sublinhado">U</button>
+                    <div style="width:1px; height:20px; background:#ddd; margin:0 5px"></div>
+                    <label style="font-size:0.75rem; color:#555; cursor:pointer; display:flex; align-items:center; gap:5px" title="Cor da Letra">
+                        <i class="fa-solid fa-palette"></i> Cor:
+                        <input type="color" onchange="document.execCommand('foreColor', false, this.value)" style="width:24px; height:24px; padding:0; border:none; cursor:pointer; background:none">
+                    </label>
+                </div>
+                <div id="${f.id}" contenteditable="true" style="width:100%; min-height:100px; padding:10px; font-family:'Inter',sans-serif; font-size:0.9rem; background:#fff; outline:none; max-height:300px; overflow-y:auto; box-sizing:border-box" placeholder="${f.placeholder||''}">${val}</div>
+            </div>`;
         } else if (f.type === 'select') {
             html += `<select id="${f.id}" style="width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;font-family:'Inter',sans-serif">
                 <option value="">Selecione...</option>
@@ -1739,7 +1767,12 @@ window.abrirFormTcc = async function(stepIndex) {
     document.getElementById('btnSalvarTccForm').onclick = async () => {
         const newData = {};
         fields.forEach(f => {
-            newData[f.id] = document.getElementById(f.id).value;
+            const el = document.getElementById(f.id);
+            if (f.type === 'textarea') {
+                newData[f.id] = el.innerHTML;
+            } else {
+                newData[f.id] = el.value;
+            }
         });
         
         newData._lastEditedBy = ME.uid;
@@ -1768,14 +1801,20 @@ window.abrirFormTcc = async function(stepIndex) {
 
 window.gerarPdfAbnt = function(stepIndex) {
     const eq = ME._equipe;
-    if (!eq) return;
+    if (!eq) { alert('Sua equipe não foi encontrada. Recarregue a página.'); return; }
     const equipeData = eq.tccData || {};
     const stepData = equipeData[stepIndex] || {};
     const fields = TCC_FORMS[stepIndex];
-    if (!fields) return;
+    if (!fields) { alert('Formulário não encontrado para esta etapa.'); return; }
 
     // Create a hidden container for the PDF content
     const container = document.createElement('div');
+    // Fix layout for html2canvas
+    container.style.position = 'absolute';
+    container.style.left = '-9999px';
+    container.style.top = '0';
+    container.style.width = '794px'; // A4 width at 96PPI
+    container.style.boxSizing = 'border-box';
     // ABNT Margins applied as padding since html2pdf margin option can be tricky with page breaks
     container.style.padding = '3cm 2cm 2cm 3cm';
     container.style.fontFamily = '"Times New Roman", Times, serif';
