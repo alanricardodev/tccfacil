@@ -925,15 +925,31 @@ function loadEquipeChat() {
         chatBox.scrollTop = chatBox.scrollHeight;
     });
 }
-document.getElementById('btnSendEquipeChat')?.addEventListener('click', async () => {
+window.postEquipeChat = async function() {
     if (!ME._equipe) return;
     const input = document.getElementById('equipeChatInput');
     const txt = input.value.trim();
     if (!txt) return;
-    input.value = '';
-    await addDoc(collection(db,'mensagens'), { equipeId: ME._equipe.id, autorId: ME.uid, autorName: ME.name, texto: txt, timestamp: Date.now() });
-});
-document.getElementById('equipeChatInput')?.addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('btnSendEquipeChat').click(); });
+    
+    const btn = document.getElementById('btnSendEquipeChat');
+    btn.disabled = true;
+    
+    try {
+        await addDoc(collection(db,'mensagens'), { 
+            equipeId: ME._equipe.id, 
+            autorId: ME.uid, 
+            autorName: ME.name || 'Usuário', 
+            texto: txt, 
+            timestamp: Date.now() 
+        });
+        input.value = '';
+    } catch(err) {
+        alert('Erro: ' + err.message);
+    }
+    btn.disabled = false;
+};
+document.getElementById('btnSendEquipeChat')?.addEventListener('click', window.postEquipeChat);
+document.getElementById('equipeChatInput')?.addEventListener('keydown', e => { if(e.key==='Enter') window.postEquipeChat(); });
 
 // ── EQUIPE DOCS ──
 window.loadEquipeDocs = function() {
@@ -1013,25 +1029,70 @@ function loadForumGeral() {
     const q = query(collection(db,'forum_geral'), orderBy('timestamp','desc'));
     onSnapshot(q, snap => renderForumPosts(snap,'forumGeralList','forum_geral'));
 }
-document.getElementById('btnPostForumGeral')?.addEventListener('click', async () => {
-    const txt = document.getElementById('forumGeralInput').value.trim();
+window.postForumGeral = async function() {
+    const input = document.getElementById('forumGeralInput');
+    const txt = input.value.trim();
     if (!txt) return;
-    document.getElementById('forumGeralInput').value = '';
-    await addDoc(collection(db,'forum_geral'), { texto: txt, autorId: ME.uid, autorName: ME.name, timestamp: Date.now(), likes: 0, pinned: false });
-});
+    
+    const btn = document.getElementById('btnPostForumGeral');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    
+    try {
+        await addDoc(collection(db,'forum_geral'), { 
+            texto: txt, 
+            autorId: ME.uid, 
+            autorName: ME.name || 'Usuário', 
+            avatarUrl: ME.avatarUrl || null,
+            timestamp: Date.now(), 
+            likes: 0, 
+            pinned: false 
+        });
+        input.value = '';
+    } catch(err) {
+        console.error(err);
+        alert('Erro ao publicar: ' + err.message);
+    }
+    
+    btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Publicar';
+    btn.disabled = false;
+};
+document.getElementById('btnPostForumGeral')?.addEventListener('click', window.postForumGeral);
 
 // ── FORUM TURMA ──
 function loadForumTurma(turmaId) {
     const q = query(collection(db,'forum_turma'), where('turmaId','==',turmaId), orderBy('timestamp','desc'));
     onSnapshot(q, snap => renderForumPosts(snap,'forumTurmaList','forum_turma'));
 }
-document.getElementById('btnPostForumTurma')?.addEventListener('click', async () => {
+window.postForumTurma = async function() {
     if (!ME.turmaId) return;
-    const txt = document.getElementById('forumTurmaInput').value.trim();
+    const input = document.getElementById('forumTurmaInput');
+    const txt = input.value.trim();
     if (!txt) return;
-    document.getElementById('forumTurmaInput').value = '';
-    await addDoc(collection(db,'forum_turma'), { texto: txt, autorId: ME.uid, autorName: ME.name, turmaId: ME.turmaId, timestamp: Date.now(), likes: 0 });
-});
+    
+    const btn = document.getElementById('btnPostForumTurma');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    
+    try {
+        await addDoc(collection(db,'forum_turma'), { 
+            texto: txt, 
+            autorId: ME.uid, 
+            autorName: ME.name || 'Usuário', 
+            avatarUrl: ME.avatarUrl || null,
+            turmaId: ME.turmaId, 
+            timestamp: Date.now(), 
+            likes: 0 
+        });
+        input.value = '';
+    } catch(err) {
+        alert('Erro ao publicar: ' + err.message);
+    }
+    
+    btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Publicar';
+    btn.disabled = false;
+};
+document.getElementById('btnPostForumTurma')?.addEventListener('click', window.postForumTurma);
 
 // ── RENDER FORUM ──
 function renderForumPosts(snap, containerId, collectionName) {
@@ -1044,8 +1105,10 @@ function renderForumPosts(snap, containerId, collectionName) {
         html += `<div class="forum-post ${p.pinned?'pinned':''}">
             ${p.pinned ? '<small style="color:#b7950b;font-weight:700"><i class="fa-solid fa-thumbtack"></i> Fixado</small>' : ''}
             <div class="forum-post-header">
-                <div class="forum-avatar">${(p.autorName||'?').charAt(0).toUpperCase()}</div>
-                <div class="forum-meta"><strong>${p.autorName}</strong><span>${date}</span></div>
+                <div class="forum-avatar" style="overflow:hidden">
+                    ${p.avatarUrl ? `<img src="${p.avatarUrl}" style="width:100%;height:100%;object-fit:cover">` : (p.autorName||'?').charAt(0).toUpperCase()}
+                </div>
+                <div class="forum-meta"><strong>${p.autorName || 'Usuário'}</strong><span>${date}</span></div>
                 ${(ME.role==='admin'||ME.role==='professor') ? `<button class="btn" style="font-size:.75rem;padding:4px 10px;background:#eee;color:#555;margin-left:auto" onclick="pinPost('${collectionName}','${d.id}',${!p.pinned})">📌 ${p.pinned?'Desafixar':'Fixar'}</button>` : ''}
                 ${(ME.role==='admin') ? `<button class="btn" style="font-size:.75rem;padding:4px 10px;background:#ff7675;color:white;margin-left:5px" onclick="deletePost('${collectionName}','${d.id}')" title="Excluir Postagem"><i class="fa-solid fa-trash"></i></button>` : ''}
             </div>
