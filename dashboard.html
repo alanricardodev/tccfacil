@@ -150,6 +150,9 @@
             <div class="nav-item" id="nav-guia-tcc" style="display:none" onclick="switchView('guia-tcc','Guia do TCC','nav-guia-tcc')">
                 <i class="fa-solid fa-map-location-dot"></i> Guia do TCC
             </div>
+            <div class="nav-item" id="nav-ai" style="display:none" onclick="switchView('ai','ConfiaNoPai AI','nav-ai')">
+                <i class="fa-solid fa-robot"></i> ConfiaNoPai AI
+            </div>
             <div class="nav-item" id="nav-minha-turma" style="display:none" onclick="switchView('minha-turma','Minha Turma','nav-minha-turma')">
                 <i class="fa-solid fa-users-rectangle"></i> Minha Turma
             </div>
@@ -275,13 +278,15 @@
         <div id="view-guia-tcc" class="view-container">
             <div class="dash-card mb-4" style="margin-bottom:24px">
                 <h2 style="color:var(--primary); margin-bottom:15px"><i class="fa-solid fa-map-location-dot"></i> Guia Interativo de Desenvolvimento</h2>
-                <p style="color:var(--text-light); line-height:1.6; margin-bottom:20px">Selecione o tipo de TCC que você e sua equipe estão desenvolvendo para visualizar o passo a passo recomendado, focado em facilitar a entrega acadêmica.</p>
+                <p style="color:var(--text-light); line-height:1.6; margin-bottom:20px">Selecione o tipo de TCC que você e sua equipe estão desenvolvendo para visualizar o passo a passo recomendado, detalhado para facilitar a aprovação pela banca e orientar todo o processo.</p>
                 
-                <div style="display:flex; gap:15px; flex-wrap:wrap; margin-bottom:30px">
-                    <button class="btn btn-primary" onclick="renderGuiaTCC('sistema')" style="flex:1; min-width:200px; padding:15px; font-size:1rem"><i class="fa-solid fa-laptop-code"></i> Sistema / Software</button>
-                    <button class="btn btn-primary" onclick="renderGuiaTCC('artigo')" style="flex:1; min-width:200px; padding:15px; font-size:1rem; background:linear-gradient(135deg,#e84393,#fd79a8); border:none"><i class="fa-solid fa-file-lines"></i> Artigo Científico</button>
-                    <button class="btn btn-primary" onclick="renderGuiaTCC('monografia')" style="flex:1; min-width:200px; padding:15px; font-size:1rem; background:linear-gradient(135deg,#00b894,#55efc4); border:none"><i class="fa-solid fa-book"></i> Monografia Tradicional</button>
-                    <button class="btn btn-primary" onclick="renderGuiaTCC('negocios')" style="flex:1; min-width:200px; padding:15px; font-size:1rem; background:linear-gradient(135deg,#f39c12,#f1c40f); border:none"><i class="fa-solid fa-briefcase"></i> Plano de Negócios</button>
+                <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:15px; margin-bottom:30px">
+                    <button class="btn btn-primary" onclick="renderGuiaTCC('sistema')" style="padding:15px; font-size:1rem; text-align:left"><i class="fa-solid fa-laptop-code"></i> Sistema / Software</button>
+                    <button class="btn btn-primary" onclick="renderGuiaTCC('artigo')" style="padding:15px; font-size:1rem; background:linear-gradient(135deg,#e84393,#fd79a8); border:none; text-align:left"><i class="fa-solid fa-file-lines"></i> Artigo Científico</button>
+                    <button class="btn btn-primary" onclick="renderGuiaTCC('monografia')" style="padding:15px; font-size:1rem; background:linear-gradient(135deg,#00b894,#55efc4); border:none; text-align:left"><i class="fa-solid fa-book"></i> Monografia Tradicional</button>
+                    <button class="btn btn-primary" onclick="renderGuiaTCC('negocios')" style="padding:15px; font-size:1rem; background:linear-gradient(135deg,#f39c12,#f1c40f); border:none; text-align:left"><i class="fa-solid fa-briefcase"></i> Plano de Negócios</button>
+                    <button class="btn btn-primary" onclick="renderGuiaTCC('revisao')" style="padding:15px; font-size:1rem; background:linear-gradient(135deg,#3498db,#2980b9); border:none; text-align:left"><i class="fa-solid fa-magnifying-glass-plus"></i> Revisão Sistemática</button>
+                    <button class="btn btn-primary" onclick="renderGuiaTCC('projeto')" style="padding:15px; font-size:1rem; background:linear-gradient(135deg,#8e44ad,#9b59b6); border:none; text-align:left"><i class="fa-solid fa-ruler-combined"></i> Projeto Específico/Social</button>
                 </div>
 
                 <div id="guiaContentArea" style="background:#f8f9fa; border:1px solid #eee; border-radius:16px; padding:25px; display:none;">
@@ -289,6 +294,35 @@
                     <div id="guiaSteps" style="display:flex; flex-direction:column; gap:20px">
                         <!-- Steps injected by JS -->
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== CONFIA NO PAI AI ===== -->
+        <div id="view-ai" class="view-container">
+            <div class="dash-card mb-4" style="margin-bottom:24px; display:flex; flex-direction:column; height: 75vh;">
+                <h2 style="color:var(--primary); margin-bottom:5px"><i class="fa-solid fa-robot" style="margin-right:8px"></i> ConfiaNoPai AI</h2>
+                <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:15px">
+                    <p style="color:var(--text-light); line-height:1.6; margin:0; font-size: 0.9rem; max-width:80%">
+                        Seu assistente virtual acadêmico inteligente alimentado pela IA do Google. Pergunte sobre metodologias, regras da ABNT, cronogramas ou qualquer dúvida sobre o desenvolvimento do seu TCC.
+                    </p>
+                    <button class="btn" onclick="configurarChaveIA()" style="background:#eee; color:#555; padding:6px 14px; font-size:.8rem; border-radius:10px" title="Configurar Chave API"><i class="fa-solid fa-key"></i> API Key</button>
+                </div>
+                
+                <div id="aiChatBox" style="flex:1; overflow-y:auto; background:#f8f9fa; border:1px solid #eee; border-radius:16px; padding:20px; display:flex; flex-direction:column; gap:20px; margin-bottom:15px; scroll-behavior: smooth;">
+                    <!-- Fallback message -->
+                    <div style="display:flex; gap:12px; align-items:flex-start">
+                        <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#6c5ce7);color:white;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0"><i class="fa-solid fa-bolt"></i></div>
+                        <div style="background:white;padding:12px 18px;border-radius:0 16px 16px 16px;box-shadow:0 2px 8px rgba(0,0,0,0.05);color:var(--text-main);font-size:0.95rem;line-height:1.6;max-width:85%">
+                            Olá! Eu sou o <strong>ConfiaNoPai AI</strong>. Sou treinado para te auxiliar na sua jornada do TCC. Em que fase você está? Posso te ajudar a organizar ideias, metodologias e tirar dúvidas da banca. Digite abaixo ou ative seu microfone!
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:10px; align-items:center; background:white; padding:10px; border-radius:16px; border:1px solid #ddd; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+                    <button class="btn" id="btnMicAI" style="background:#f0f2f5; color:#555; width:45px; height:45px; border-radius:50%; padding:0; flex-shrink:0; transition:all 0.3s; font-size:1.1rem; border:1px solid #ddd" title="Falar por Voz"><i class="fa-solid fa-microphone"></i></button>
+                    <input type="text" id="inputAI" placeholder="Digite sua mensagem para o ConfiaNoPai AI..." style="flex:1; border:none; background:transparent; font-family:'Inter',sans-serif; font-size:1rem; outline:none; padding:10px;">
+                    <button class="btn btn-primary" id="btnSendAI" style="border-radius:12px; padding:10px 22px; font-size:1rem"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
         </div>
@@ -516,6 +550,7 @@ async function loadAlunoHome() {
         
         // Show proper navigation items for Aluno with Equipe
         document.getElementById('nav-guia-tcc').style.display = 'flex';
+        document.getElementById('nav-ai').style.display = 'flex';
         document.getElementById('nav-minha-turma').style.display = 'flex';
         document.getElementById('nav-forum-turma').style.display = 'flex';
         document.getElementById('nav-equipe').style.display = 'flex';
@@ -527,6 +562,7 @@ async function loadAlunoHome() {
     } else {
         // Show proper navigation items for Aluno without Equipe
         document.getElementById('nav-guia-tcc').style.display = 'flex';
+        document.getElementById('nav-ai').style.display = 'flex';
         document.getElementById('nav-minha-turma').style.display = 'flex';
         document.getElementById('nav-forum-turma').style.display = 'flex';
     }
@@ -626,43 +662,63 @@ window.renderGuiaTCC = function(tipo) {
 
     const guias = {
         'sistema': {
-            title: '💻 Guia: Desenvolvimento de Sistema / Software',
+            title: '💻 Guia: Desenvolvimento de Sistema / Software Público/Empresarial',
             steps: [
-                { icon: 'fa-lightbulb', title: '1. Levantamento de Requisitos e Escopo', desc: 'Defina o problema que será resolvido. Identifique os usuários (atores) e o que o sistema deve fazer (requisitos funcionais e não funcionais). Faça rascunhos de telas (Wireframes).' },
-                { icon: 'fa-sitemap', title: '2. Arquitetura e Modelagem', desc: 'Esboce a base de dados (Diagrama ER), escolha as tecnologias (Frontend, Backend, Banco) e diagrame o fluxo principal do usuário no sistema.' },
-                { icon: 'fa-code', title: '3. Desenvolvimento (Mão na Massa)', desc: 'Divida o trabalho em Sprints (entregas de 1 a 2 semanas). Comece pelo login/cadastro, banco de dados, e depois as telas principais. Use GitHub para versionar.' },
-                { icon: 'fa-bug', title: '4. Testes e Correções', desc: 'Peça para pessoas fora do grupo testarem. Corrija os bugs encontrados e ajuste a interface visual para ficar agradável.' },
-                { icon: 'fa-file-word', title: '5. Documentação Final', desc: 'Escreva o documento do TCC relatando a justificativa, as tecnologias escolhidas, os diagramas criados e os resultados dos testes. Faça o "print" das telas principais.' }
+                { icon: 'fa-lightbulb', title: '1. Levantamento de Requisitos e Escopo (Wireframe)', desc: '<ul><li>Identifique a "dor" que o sistema resolve. Por que esse sistema é necessário?</li><li>Classifique os <strong>Requisitos Funcionais</strong> (o que fará) e <strong>Não Funcionais</strong> (desempenho, segurança).</li><li>Crie protótipos visuais (Wireframes) das telas principais usando o Figma ou Balsamiq.</li></ul>' },
+                { icon: 'fa-sitemap', title: '2. Arquitetura, UML e Modelagem do Banco', desc: '<ul><li>Construa Diagramas UML: <strong>Caso de Uso</strong> e <strong>Diagrama de Classes</strong>.</li><li>Construa o Diagrama Entidade-Relacionamento (MER).</li><li>Escolha sua Stack (ex: Node/React, Python/Django, Firebase) e documente o motivo dessa escolha.</li></ul>' },
+                { icon: 'fa-code', title: '3. Desenvolvimento Mão na Massa (Sprints)', desc: '<ul><li>Evite o "Efeito Cachoeira". Desenvolva as funcionalidades essenciais primeiro (MVP).</li><li>Trabalhem com Sprints de 15 dias monitorando entregas.</li><li>Usem Git/GitHub para versionar o código e não perder o progresso.</li></ul>' },
+                { icon: 'fa-bug', title: '4. Testes, Deploy e Correções', desc: '<ul><li>Realize testes em diferentes dispositivos (mobile/desktop).</li><li>Coloque a aplicação no ar ("Deploy") gratuitamente via Vercel, Netlify ou Heroku.</li><li>Entregue para um grupo de controle tentar quebrar e valide as correções.</li></ul>' },
+                { icon: 'fa-file-word', title: '5. Documentação Oficial do TCC', desc: '<ul><li>Sistematize as etapas! Capítulos abordando Introdução, Problema, Tecnologias, Metodologia (ágil), Análise de Resultados (UML) e Conclusão.</li><li>Cole os "prints" definitivos da plataforma.</li></ul>' }
             ]
         },
         'artigo': {
             title: '📄 Guia: Artigo Científico',
             steps: [
-                { icon: 'fa-magnifying-glass', title: '1. Problema de Pesquisa e Revisão', desc: 'Defina uma pergunta clara a ser respondida. Busque artigos semelhantes no Google Acadêmico e Scielo para formar sua fundamentação teórica.' },
-                { icon: 'fa-list-check', title: '2. Metodologia', desc: 'Defina como você vai responder à pergunta (Estudo de caso? Questionário? Análise de dados em laboratório?). Especifique os métodos.' },
-                { icon: 'fa-chart-pie', title: '3. Coleta e Análise de Dados', desc: 'Execute a metodologia (aplique os questionários ou rode as análises). Transforme os resultados em gráficos e tabelas explicativas.' },
-                { icon: 'fa-pen-clip', title: '4. Escrita: Discussão e Conclusão', desc: 'Compare seus resultados com os autores que você leu no passo 1. Escreva a conclusão dizendo se a pergunta inicial foi respondida.' },
-                { icon: 'fa-spell-check', title: '5. Formatação e Submissão', desc: 'Ajuste tudo nas normas da ABNT ou da revista específica. Revise a ortografia, o Resumo/Abstract e finalize as Referências Bibliográficas.' }
+                { icon: 'fa-magnifying-glass', title: '1. Encontrando a Pergunta de Partida', desc: '<ul><li>Nenhum artigo nasce sem um problema. Crie uma pergunta que não tenha resposta óbvia.</li><li>Faça uma base temporal. Reúna artigos dos últimos 5 anos filtrando em bases como Google Scholar, Scopus ou IEEE.</li></ul>' },
+                { icon: 'fa-list-check', title: '2. Definição Severa do Método', desc: '<ul><li>Qual é a natureza (Qualitativa, Quantitativa, Mista)?</li><li>Como rodará? Será estudo de caso, pesquisa-ação, ou experimental? Especifique os instrumentos e as amostras.</li></ul>' },
+                { icon: 'fa-chart-pie', title: '3. Coleta Bruta e Aplicação Prática', desc: '<ul><li>Aplicação do questionário (ex: Google Forms) ou processamento dos dados em laboratório/algoritmo.</li><li>Mapeie estatísticas em gráficos bem visíveis antes de analisá-los textualmente.</li></ul>' },
+                { icon: 'fa-pen-clip', title: '4. Redação: "Resultados e Discussão"', desc: '<ul><li>Essa é a alma do artigo. Apresente os gráficos recém-coletados e ao lado DIScuta confrontando o que os autores dos outros artigos dizem.</li><li>Mostre onde sua tese vence as anteriores ou acrescenta valor.</li></ul>' },
+                { icon: 'fa-spell-check', title: '5. Fechamento e Envio (Normatização)', desc: '<ul><li>Submeta a folha de estilo da SBC, IEEE ou normas ABNT específicas para revistas.</li><li>Dedique 1-2 dias inteiros à revisão bibliográfica minuciosa garantindo que todas citações estão listadas.</li></ul>' }
             ]
         },
         'monografia': {
-            title: '📚 Guia: Monografia Tradicional',
+            title: '📚 Guia: Monografia Tradicional Completa',
             steps: [
-                { icon: 'fa-crosshairs', title: '1. Projeto de Pesquisa', desc: 'Defina Tema, Justificativa, Objetivos (Geral e Específicos) e o Cronograma de execução.' },
-                { icon: 'fa-book-open', title: '2. Referencial Teórico', desc: 'A base da monografia. Leia livros, teses e escreva os capítulos conceituais que vão dar suporte para a sua pesquisa.' },
-                { icon: 'fa-flask', title: '3. Pesquisa de Campo / Metodologia', desc: 'Explique detalhadamente como a pesquisa foi feita. Colete os dados através de entrevistas, observações ou coletas de amostras.' },
-                { icon: 'fa-comments', title: '4. Análise dos Resultados', desc: 'Diferente do artigo, na monografia a análise é bem mais extensa e aprofundada. Descreva as descobertas em detalhes formatando em novos capítulos.' },
-                { icon: 'fa-layer-group', title: '5. Elementos Pré e Pós-textuais', desc: 'Hora de fazer Capa, Folha de Rosto, Sumário, Dedicatória, Agradecimentos, Resumo e anexos. Tudo na rigorosa norma ABNT.' }
+                { icon: 'fa-crosshairs', title: '1. O Projeto de Pesquisa Essencial', desc: '<ul><li>Escreva o esqueleto: Tema, Delimitação do Tema, Justificativa (Importância social/acadêmica), Problema e Hipóteses.</li><li>Estabeleça o Objetivo Geral (macro) e 3 Objetivos Específicos (etapas da pesquisa).</li></ul>' },
+                { icon: 'fa-book-open', title: '2. Arquitetando o Referencial Teórico', desc: '<ul><li>A Monografia exige muita base literária. Divida em dois ou três capítulos unicamente dedicados a explicar os conceitos fundamentais aos leitores.</li><li>Fichamento de livros físicos e e-books especializados no assunto.</li></ul>' },
+                { icon: 'fa-flask', title: '3. Operacionalizando a Metodologia e a Pesquisa', desc: '<ul><li>Escreva um longo capítulo sobre como a pesquisa técnica foi realizada. Passo a passo detalhado.</li><li>Faça a coleta de solo/dados/entrevistas como explicitado.</li></ul>' },
+                { icon: 'fa-comments', title: '4. Exposição Aprofundada dos Resultados', desc: '<ul><li>Relate as descobertas. Sem pressa, crie seções discursivas interpretando a raiz sociológica ou técnica daquele fenômeno encontrado.</li></ul>' },
+                { icon: 'fa-layer-group', title: '5. Arremate Textual (Pré e Pós)', desc: '<ul><li>Monte o "Sanduíche" ABNT: Capa dura, Folha de aprovação, Dedicatória, Resumo/Abstract, Listas (Figuras, Tabelas, Abreviações), Sumário automático e as Referências bibliográficas completas.</li></ul>' }
             ]
         },
         'negocios': {
-            title: '💼 Guia: Plano de Negócios / Startup',
+            title: '💼 Guia: Documento de Plano de Negócios / Startup',
             steps: [
-                { icon: 'fa-people-group', title: '1. Ideação e Público-Alvo', desc: 'Defina a dor do mercado que a sua empresa/startup vai resolver. Utilize o Canvas (Business Model Canvas) para modelar a ideia inicial.' },
-                { icon: 'fa-store', title: '2. Análise de Mercado e Concorrentes', desc: 'Pesquise quem já faz isso (concorrentes diretos e indiretos). Defina o seu Diferencial Competitivo e analise os fornecedores.' },
-                { icon: 'fa-bullhorn', title: '3. Plano de Marketing', desc: 'Como o cliente vai te conhecer? Defina estratégias de atração, precificação (Pricing), canais de distribuição e comunicação.' },
-                { icon: 'fa-calculator', title: '4. Plano Operacional e Financeiro', desc: 'Calcule o investimento inicial necessário, projeção de fluxo de caixa, ponto de equilíbrio (Break-even) e os custos fixos/variáveis.' },
-                { icon: 'fa-rocket', title: '5. Resumo Executivo e Pitch', desc: 'O Resumo Executivo deve ser a última coisa a ser escrita, resumindo todo o plano. Prepare uma apresentação visual (Pitch Deck) impactante para a banca.' }
+                { icon: 'fa-people-group', title: '1. Modelagem Básica de Conceito', desc: '<ul><li>Aplique o <strong>Business Model Canvas</strong> desenhando os 9 blocos principais.</li><li>Identifique suas "Persona" (clientes finais ficitícios) com precisão sociodemográfica.</li></ul>' },
+                { icon: 'fa-store', title: '2. Análise Ampla de Mercado e Swot', desc: '<ul><li>Avalie Matriz SWOT (Forças, Fraquezas, Oportunidades, Ameaças).</li><li>Análise da concorrência mapeando preços, defeitos e qualidade dos adversários no setor.</li></ul>' },
+                { icon: 'fa-bullhorn', title: '3. Estratégia Comercial (Marketing Plan)', desc: '<ul><li>Desenvolva o composto de marketing 4Ps (Produto, Preço, Praça e Promoção).</li><li>Estime o funil de aquisição de clientes (CAC x LTV) e redes sociais a focar.</li></ul>' },
+                { icon: 'fa-calculator', title: '4. Arcabouço Financeiro (Planilha Pesada)', desc: '<ul><li>Mapeie os custos pré-operacionais, despesas operacionais mensais e folha salarial.</li><li>Descubra o Payback (quando o negócio "se paga") pontuando Margem de Lucro Bruto e Líquido.</li></ul>' },
+                { icon: 'fa-rocket', title: '5. Pitch e Resumo Final Executivo', desc: '<ul><li>O Resumo Executivo resume as partes vitais em 2 páginas fáceis que convencem um investidor leigo.</li><li>Para a banca, você trará um Pitch Deck focado não em notas, mas em provar que a empresa lucra de fato.</li></ul>' }
+            ]
+        },
+        'revisao': {
+            title: '🔍 Guia: Revisão Sistemática de Literatura',
+            steps: [
+                { icon: 'fa-filter', title: '1. Equação de Busca e Bases de Dados', desc: '<ul><li>Crie as Strings de Busca usando operadores Booleanos (AND, OR).</li><li>Escolhas as bases para raspar os dados (Google Acadêmico, PubMed, Scopus).</li></ul>' },
+                { icon: 'fa-diagram-project', title: '2. Protocolo PRISMA', desc: '<ul><li>Aplicação do Diagrama PRISMA: Identificação, Triagem, Elegibilidade e Inclusão. Relate precisamente por que alguns papers foram excluídos.</li></ul>' },
+                { icon: 'fa-file-excel', title: '3. Extração e Tabulação de Dados', desc: '<ul><li>Crie uma grande planilha Excel com os colunas fixas: Autores, Ano, Objetivo, Método Empregado e Resultado Principal.</li></ul>' },
+                { icon: 'fa-pen-clip', title: '4. Síntese Interpretativa Textual', desc: '<ul><li>Escreva a discussão categorizando por "Focos Temáticos" (escolas de pensamento) que os papers revelaram.</li></ul>' },
+                { icon: 'fa-star', title: '5. Lacunas Encontradas e Limitações', desc: '<ul><li>A grande contribuição da RSL: apontar as "Gaps". O que os autores estudados ainda não cobriram? Aponte direcionamentos para pesquisas futuras.</li></ul>' }
+            ]
+        },
+        'projeto': {
+            title: '📐 Guia: Projeto Específico/Engenharia',
+            steps: [
+                { icon: 'fa-building', title: '1. Demanda Local e Condicionantes', desc: '<ul><li>Apresente as plantas primitivas, análise topográfica ou especificações físicas ou sociológicas do objeto.</li><li>Mapeie as necessidades do cliente.</li></ul>' },
+                { icon: 'fa-drafting-compass', title: '2. Esboço e Estudos Iniciais / Croquis', desc: '<ul><li>Renderize versões 3D elementares ou cálculos prévios de eficiência energética/estrutural.</li><li>Defina a materialidade ou tecnologias mecânicas empregadas.</li></ul>' },
+                { icon: 'fa-cogs', title: '3. Memorial Descritivo e Detalhamentos', desc: '<ul><li>Escreva o Memorial com exatidão técnica brutal. O que compõe cada placa, pavimento ou rede elétrica.</li></ul>' },
+                { icon: 'fa-calculator', title: '4. Orçamento Paramétrico / Cronograma', desc: '<ul><li>Aplique tabelas como SINAPI elaborando custos unitários precisos de todo o hardware/material necessário.</li></ul>' },
+                { icon: 'fa-file-contract', title: '5. Pranchas Finais e Documentos de Entrega', desc: '<ul><li>Compile as vistas ortogonais finais, renderizações fotorrealistas ou manuais de uso e documente junto ao TCC normativo.</li></ul>' }
             ]
         }
     };
@@ -671,13 +727,13 @@ window.renderGuiaTCC = function(tipo) {
     titleEl.innerText = guia.title;
     
     stepsEl.innerHTML = guia.steps.map(step => `
-        <div style="background:white; padding:18px; border-radius:12px; border-left:4px solid var(--primary); box-shadow:0 2px 8px rgba(0,0,0,0.05); display:flex; gap:16px; align-items:flex-start;">
-            <div style="width:45px; height:45px; background:rgba(108,92,231,0.1); color:var(--primary); font-size:1.4rem; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+        <div style="background:white; padding:22px; border-radius:14px; border-left:5px solid var(--primary); box-shadow:0 4px 12px rgba(0,0,0,0.03); display:flex; gap:18px; align-items:flex-start;">
+            <div style="width:50px; height:50px; background:rgba(108,92,231,0.08); color:var(--primary); font-size:1.6rem; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; border:1px solid rgba(108,92,231,0.15)">
                 <i class="fa-solid ${step.icon}"></i>
             </div>
-            <div>
-                <h4 style="margin:0 0 6px; color:var(--text-main); font-size:1.1rem">${step.title}</h4>
-                <p style="margin:0; color:var(--text-light); font-size:0.9rem; line-height:1.5">${step.desc}</p>
+            <div style="flex:1">
+                <h4 style="margin:0 0 10px; color:var(--primary); font-size:1.15rem; font-weight:700">${step.title}</h4>
+                <div style="margin:0; color:var(--text-main); font-size:0.95rem; line-height:1.6; padding-left:5px" class="tcc-desc-content">${step.desc}</div>
             </div>
         </div>
     `).join('');
@@ -850,6 +906,7 @@ function renderForumPosts(snap, containerId, collectionName) {
                 <div class="forum-avatar">${(p.autorName||'?').charAt(0).toUpperCase()}</div>
                 <div class="forum-meta"><strong>${p.autorName}</strong><span>${date}</span></div>
                 ${(ME.role==='admin'||ME.role==='professor') ? `<button class="btn" style="font-size:.75rem;padding:4px 10px;background:#eee;color:#555;margin-left:auto" onclick="pinPost('${collectionName}','${d.id}',${!p.pinned})">📌 ${p.pinned?'Desafixar':'Fixar'}</button>` : ''}
+                ${(ME.role==='admin') ? `<button class="btn" style="font-size:.75rem;padding:4px 10px;background:#ff7675;color:white;margin-left:5px" onclick="deletePost('${collectionName}','${d.id}')" title="Excluir Postagem"><i class="fa-solid fa-trash"></i></button>` : ''}
             </div>
             <p class="forum-text">${p.texto.replace(/\n/g,'<br>')}</p>
             <div class="forum-actions">
@@ -866,6 +923,12 @@ window.likePost = async function(col, id, btn) {
 };
 window.pinPost = async function(col, id, pin) {
     await updateDoc(doc(db,col,id), { pinned: pin });
+};
+window.deletePost = async function(col, id) {
+    if(confirm('Tem certeza que deseja apagar esta mensagem permanentemente?')) {
+        await deleteDoc(doc(db, col, id));
+        alert('Mensagem apagada.');
+    }
 };
 
 // ── PROFESSOR TURMAS ──
@@ -1024,9 +1087,12 @@ async function loadPendingProfessors() {
         html += `<div class="dash-card" style="border-left:4px solid ${isPend?'#fdcb6e':'#00b894'}">
             <div class="dash-card-header"><div><h3>${u.name}</h3><small style="color:var(--text-light)">${u.email}</small></div>
             <span class="badge" style="background:${isPend?'#fdcb6e':'#00b894'};color:${isPend?'#333':'#fff'}">${isPend?'⏳ Pendente':'✅ Ativo'}</span></div>
-            ${isPend
-                ? `<button class="btn btn-primary" onclick="ativarProf('${u.uid}')"><i class="fa-solid fa-check"></i> Ativar</button>`
-                : `<button class="btn" style="background:#eee;color:#555" onclick="suspenderProf('${u.uid}')"><i class="fa-solid fa-ban"></i> Suspender</button>`}
+            <div style="display:flex; gap:8px; margin-top:12px;">
+                ${isPend
+                    ? `<button class="btn btn-primary" style="flex:1" onclick="ativarProf('${u.uid}')"><i class="fa-solid fa-check"></i> Ativar</button>`
+                    : `<button class="btn" style="background:#eee;color:#555;flex:1" onclick="suspenderProf('${u.uid}')"><i class="fa-solid fa-ban"></i> Suspender</button>`}
+                <button class="btn" style="background:#ff7675;color:white;padding:0 12px" title="Excluir Conta" onclick="excluirUserAdmin('${u.uid}')"><i class="fa-solid fa-trash"></i></button>
+            </div>
         </div>`;
     });
     list.innerHTML = html;
@@ -1041,12 +1107,33 @@ window.adminTab = function(tab) {
     } else {
         document.getElementById('adminTabContent').innerHTML = '<div id="adminAlunosList">Carregando...</div>';
         getDocs(query(collection(db,'users'),where('role','==','aluno'))).then(snaps => {
-            document.getElementById('adminAlunosList').innerHTML = snaps.docs.map(d=>{const u=d.data();return `<div class="student-item"><div class="s-info"><strong>${u.name}</strong><span>${u.email}</span></div><span class="tag-badge">${u.turmaId?'Em turma':'Sem turma'}</span></div>`;}).join('') || '<p class="text-light">Nenhum aluno.</p>';
+            document.getElementById('adminAlunosList').innerHTML = snaps.docs.map(d=>{
+                const u=d.data();
+                return `<div class="student-item" style="border-left:4px solid var(--primary)">
+                    <div class="s-info"><strong>${u.name}</strong><span>${u.email}</span></div>
+                    <div style="display:flex;align-items:center;gap:15px">
+                        <span class="tag-badge" style="background:${u.turmaId?'var(--tertiary)':'#ccc'}">${u.turmaId?'Em turma':'Sem turma'}</span>
+                        <button class="btn" style="background:none;color:#ff7675;font-size:1.1rem;padding:4px" title="Excluir Aluno" onclick="excluirUserAdmin('${u.uid}')"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>`;
+            }).join('') || '<div class="empty-state"><i class="fa-solid fa-users-slash"></i>Nenhum aluno cadastrado.</div>';
         });
     }
 };
+
 window.ativarProf = async function(uid) { await updateDoc(doc(db,'users',uid),{status:'ativo'}); loadPendingProfessors(); };
 window.suspenderProf = async function(uid) { await updateDoc(doc(db,'users',uid),{status:'pendente'}); loadPendingProfessors(); };
+window.excluirUserAdmin = async function(uid) { 
+    if(confirm('ALERTA: Isso excluirá permanentemente o perfil deste usuário do banco de dados (A autenticação via Google no painel Firebase Auth manterá o login base, mas o sistema o tratará como novo usuário na próxima vez). Deseja prosseguir?')) {
+        await deleteDoc(doc(db,'users',uid)); 
+        alert('Usuário excluído com sucesso.');
+        if(document.getElementById('adminTabProfs').classList.contains('btn-primary')) {
+            loadPendingProfessors();
+        } else {
+            adminTab('alunos');
+        }
+    }
+};
 
 // ── MINHA TURMA INFO ──
 async function loadMinhaTurmaContent() {
@@ -1072,6 +1159,201 @@ function renderProgressIn(id, currentStep) {
 
 // ── observe nav clicks → lazy load ──
 document.getElementById('nav-minha-turma')?.addEventListener('click', loadMinhaTurmaContent);
+
+// ── CONFIA NO PAI AI MODULE ──
+const aiChatBox = document.getElementById('aiChatBox');
+const inputAI = document.getElementById('inputAI');
+const btnSendAI = document.getElementById('btnSendAI');
+const btnMicAI = document.getElementById('btnMicAI');
+
+function addAIMessage(text, sender, specificId = null) {
+    if(!aiChatBox) return;
+    const isMe = sender === 'me';
+    const div = document.createElement('div');
+    if (specificId) div.id = specificId;
+    div.style.display = 'flex';
+    div.style.gap = '12px';
+    div.style.alignItems = 'flex-start';
+    div.style.flexDirection = isMe ? 'row-reverse' : 'row';
+    
+    let avatarHtml = isMe 
+        ? `<div style="width:40px;height:40px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0"><i class="fa-solid fa-user"></i></div>`
+        : `<div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#6c5ce7);color:white;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0"><i class="fa-solid fa-bolt"></i></div>`;
+        
+    let bubbleStyle = isMe
+        ? `background:var(--primary);color:white;padding:12px 18px;border-radius:16px 16px 4px 16px;box-shadow:0 2px 8px rgba(0,0,0,0.05);font-size:1rem;line-height:1.6;max-width:85%`
+        : `background:white;color:var(--text-main);padding:12px 18px;border-radius:0 16px 16px 16px;box-shadow:0 2px 8px rgba(0,0,0,0.05);font-size:0.95rem;line-height:1.6;max-width:85%`;
+
+    div.innerHTML = `${avatarHtml}<div style="${bubbleStyle}">${text}</div>`;
+    aiChatBox.appendChild(div);
+    aiChatBox.scrollTo(0, aiChatBox.scrollHeight);
+}
+
+function speakAI(text) {
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'pt-BR';
+        utterance.rate = 1.05;
+        window.speechSynthesis.speak(utterance);
+    }
+}
+
+window.configurarChaveIA = function() {
+    const atual = localStorage.getItem('GEMINI_API_KEY') || '';
+    const nova = prompt('Para usar o poder completo (Google Gemini AI), insira sua Chave de API gerada no Google AI Studio (Deixe em branco para usar o modo simulado local):\n\n', atual);
+    if(nova !== null) {
+        localStorage.setItem('GEMINI_API_KEY', nova.trim());
+        if(nova.trim().length > 0) {
+            alert('Chave API salva no seu navegador! O ConfiaNoPaiAI agora está no Modo Inteligência Máxima.');
+        } else {
+            alert('Modo Simulado Local ativado (Chave API removida).');
+        }
+    }
+};
+
+async function callGeminiAPI(question) {
+    const apiKey = localStorage.getItem('GEMINI_API_KEY');
+    
+    // Add typing indicator
+    const typingId = 'typing-' + Date.now();
+    addAIMessage('<i class="fa-solid fa-circle-notch fa-spin"></i> Pai tá pensando...', 'ai', typingId);
+    
+    // Configura o prompt de sistema
+    const systemPrompt = "Você é o 'ConfiaNoPai AI', um professor orientador de TCC extremamente didático, brasileiro, motivador e que usa a gíria 'Confia no Pai' de forma moderada para incentivar os alunos. Responda as perguntas focando na metodologia científica, ABNT, planejamento e sempre seja claro, dividindo a tela em tópicos curtos. Nunca fuja de assuntos acadêmicos. Pergunta do aluno: ";
+
+    try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: systemPrompt + question }] }]
+            })
+        });
+
+        const data = await response.json();
+        
+        // Remove typing indicator
+        const typingEl = document.getElementById(typingId);
+        if(typingEl) typingEl.parentNode.removeChild(typingEl);
+
+        if (data.error) {
+            throw new Error(data.error.message);
+        }
+
+        const answerText = data.candidates[0].content.parts[0].text;
+        
+        // Process markdown bold into HTML
+        let formattedAnswer = answerText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        formattedAnswer = formattedAnswer.replace(/\n/g, '<br>');
+
+        addAIMessage(formattedAnswer, 'ai');
+        
+        // Remove markdown chars for speech
+        let cleanTextForSpeech = answerText.replace(/\*/g, '').replace(/#/g, '');
+        speakAI(cleanTextForSpeech);
+
+    } catch (error) {
+        console.error('Gemini API Error:', error);
+        const typingEl = document.getElementById(typingId);
+        if(typingEl) typingEl.parentNode.removeChild(typingEl);
+        
+        let errorMsg = 'Eita! Algo deu errado ao contatar os serivodres (Chave API inválida ou limite excedido). Vou usar minha base neural local.';
+        addAIMessage(errorMsg, 'ai');
+        setTimeout(() => simulateAIResponse(question), 1500);
+    }
+}
+
+function simulateAIResponse(question) {
+    const apiKey = localStorage.getItem('GEMINI_API_KEY');
+    if (apiKey && apiKey.length > 10) {
+        callGeminiAPI(question);
+        return;
+    }
+
+    const q = question.toLowerCase();
+    let answer = 'Confia no Pai! Estou aqui para te ajudar. Pode me focar na sua dúvida de formatação, prazos, banca ou código? <br><br>💡 <em>(Modo Local ativo. Clique no botão API Key acima para conectar a inteligência do Gemini).</em>';
+    
+    if (q.includes('monografia') || q.includes('tcc') || q.includes('projeto')) {
+        answer = 'O projeto perfeito foca muito na amarração do Problema de Pesquisa com a Metodologia. Escreva 3 objetivos específicos claros que eu te garanto sucesso, confia no pai!';
+    } else if (q.includes('abnt') || q.includes('norma') || q.includes('margem')) {
+        answer = 'Normas ABNT assustam mas são fixas: Margens Esquerda/Superior 3cm, Direita/Inferior 2cm. Fonte Arial ou Times 12, espaçamento 1.5. Citações longas mudam para fonte 10 com recuo de 4cm da esquerda.';
+    } else if (q.includes('artigo') || q.includes('pesquisa')) {
+        answer = 'Para artigos científicos a introdução deve contextualizar rápido e fechar no problema. Gaste a maior parte da sua energia em "Resultados e Discussão". A banca vai te julgar lá!';
+    } else if (q.includes('apresentação') || q.includes('banca') || q.includes('falar')) {
+        answer = 'Respire fundo na apresentação! Leve no máximo 15 slides. Nunca leia o slide de costas para a banca. Se faltar a memória improvisa, lembre que ninguém ali leu mais aquele assunto do que você que o escreveu.';
+    } else if (q.includes('sistema') || q.includes('código') || q.includes('erro')) {
+        answer = 'Sistemas acadêmicos falham as vezes na documentação. Eles exigem diagramas ML (UML Caso de Uso e Classe). Não se preocupe em não terminar o escopo total, apresente o seu sistema como um "MVP".';
+    } else if (q.includes('equipe') || q.includes('professor') || q.includes('briga')) {
+        answer = 'Dividam claramente o que o "Backend", "Frontend" ou "Redator" tem que fazer usando a aba da plataforma. Confia no Pai que se mantiverem rituais ágeis tudo acaba bem.';
+    }
+
+    // Add small delay for simulation
+    const typingId = 'typing-' + Date.now();
+    addAIMessage('<i class="fa-solid fa-circle-notch fa-spin"></i> Pai tá pensando...', 'ai', typingId);
+    
+    setTimeout(() => {
+        const typingEl = document.getElementById(typingId);
+        if(typingEl) typingEl.parentNode.removeChild(typingEl);
+        addAIMessage(answer, 'ai');
+        speakAI(answer.replace(/<[^>]*>?/gm, ''));
+    }, 1200);
+}
+
+function sendAIMsg() {
+    const q = inputAI?.value.trim();
+    if(!q) return;
+    addAIMessage(q, 'me');
+    inputAI.value = '';
+    
+    setTimeout(() => {
+        simulateAIResponse(q);
+    }, 1000);
+}
+
+if(btnSendAI) btnSendAI.addEventListener('click', sendAIMsg);
+if(inputAI) inputAI.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendAIMsg(); });
+
+// Speech Recognition Config
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRec();
+    recognition.lang = 'pt-BR';
+    recognition.continuous = false;
+    
+    recognition.onstart = function() {
+        if(btnMicAI) {
+            btnMicAI.style.background = '#ff7675';
+            btnMicAI.style.color = '#fff';
+            btnMicAI.style.border = 'none';
+            btnMicAI.style.boxShadow = '0 0 10px rgba(255, 118, 117, 0.4)';
+            btnMicAI.innerHTML = '<i class="fa-solid fa-microphone-lines fa-fade"></i>';
+        }
+    };
+    recognition.onresult = function(e) {
+        inputAI.value = e.results[0][0].transcript;
+        sendAIMsg();
+    };
+    recognition.onend = function() { resetAIMic(); };
+    recognition.onerror = function() { 
+        console.error('Mic Error.'); 
+        resetAIMic(); 
+    };
+    
+    function resetAIMic() {
+        if(btnMicAI) {
+            btnMicAI.style.background = '#f0f2f5';
+            btnMicAI.style.color = '#555';
+            btnMicAI.style.border = '1px solid #ddd';
+            btnMicAI.style.boxShadow = 'none';
+            btnMicAI.innerHTML = '<i class="fa-solid fa-microphone"></i>';
+        }
+    }
+
+    if(btnMicAI) btnMicAI.addEventListener('click', () => { recognition.start(); });
+} else {
+    if(btnMicAI) btnMicAI.style.display = 'none'; // Mic API not supported in this browser
+}
 
 // ── HAMBURGER ──
 const hamburgerBtn = document.getElementById('hamburgerBtn');
