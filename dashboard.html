@@ -1541,7 +1541,7 @@ window.verTurma = async function(turmaId, nome) {
 
             const approvalBtns = `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
                 <button class="btn" style="background:linear-gradient(135deg,#0984e3,#74b9ff);color:white;flex:1;font-size:.8rem;padding:7px;border:none" onclick="window.abrirAvaliacaoTcc('${eq.id}','${turmaId}','${nome.replace(/'/g,"\\'")}')">
-                    <i class="fa-solid fa-magnifying-glass-chart"></i> Avaliar Entregas
+                    <i class="fa-solid fa-magnifying-glass-chart"></i> Avaliar Projeto & Liberar Etapa
                 </button>
             </div>`;
 
@@ -1625,6 +1625,15 @@ window.abrirFormTcc = async function(stepIndex) {
     const stepData = equipeData[stepIndex] || {};
 
     let html = '';
+    
+    if (stepData._lastEditedByName && stepData._lastEditedAt) {
+        const d = new Date(stepData._lastEditedAt);
+        const dateStr = `${d.toLocaleDateString('pt-BR')} às ${d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})}`;
+        html += `<div style="text-align:right;font-size:0.75rem;color:var(--text-light);margin-bottom:10px;background:#fff8e1;padding:6px 12px;border-radius:6px;display:inline-block;float:right">
+            <i class="fa-solid fa-clock-rotate-left" style="color:#f39c12"></i> Última atualização por <strong>${stepData._lastEditedByName}</strong> em ${dateStr}
+        </div><div style="clear:both"></div>`;
+    }
+
     if (stepIndex === 0) {
         html += `<div style="background:#f0f2f5;padding:12px;border-radius:8px;font-size:0.85rem;color:var(--text-light);margin-bottom:10px">
             <strong>Professor Orientador:</strong> Módulo de Professores<br>
@@ -1657,6 +1666,10 @@ window.abrirFormTcc = async function(stepIndex) {
         fields.forEach(f => {
             newData[f.id] = document.getElementById(f.id).value;
         });
+        
+        newData._lastEditedBy = ME.uid;
+        newData._lastEditedByName = ME.name;
+        newData._lastEditedAt = Date.now();
         
         const eqRef = doc(db, 'equipes', eq.id);
         const mergeData = {};
@@ -1787,8 +1800,17 @@ window.abrirAvaliacaoTcc = async function(equipeId, turmaId, turmaNome) {
         const stepFields = TCC_FORMS[i];
         const stepData = eqData[i] || {};
         
+        let lastEditedHtml = '';
+        if (stepData._lastEditedByName && stepData._lastEditedAt) {
+            const d = new Date(stepData._lastEditedAt);
+            const dateStr = `${d.toLocaleDateString('pt-BR')} às ${d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})}`;
+            lastEditedHtml = `<div style="font-size:0.75rem;color:var(--text-light);margin-left:auto;font-weight:normal;background:#f0f2f5;padding:4px 10px;border-radius:20px">
+                <i class="fa-solid fa-user-pen"></i> Atualizado por <strong>${stepData._lastEditedByName}</strong> em ${dateStr}
+            </div>`;
+        }
+
         let fieldsHtml = '';
-        if (Object.keys(stepData).length === 0) {
+        if (Object.keys(stepData).length === 0 || (!stepData[stepFields[0].id] && !stepData._lastEditedByName)) {
             fieldsHtml = `<div style="padding:16px;background:#f8f9fa;border-radius:8px;color:var(--text-light);font-size:0.85rem;font-style:italic">A equipe ainda não preencheu os dados desta etapa.</div>`;
         } else {
             stepFields.forEach(f => {
@@ -1801,9 +1823,10 @@ window.abrirAvaliacaoTcc = async function(equipeId, turmaId, turmaNome) {
         }
         
         html += `<div class="dash-card" style="box-shadow:none;border:1px solid #eee">
-            <h3 style="margin-bottom:16px;display:flex;align-items:center;gap:8px;color:var(--text-dark)">
+            <h3 style="margin-bottom:16px;display:flex;align-items:center;gap:8px;color:var(--text-dark);flex-wrap:wrap">
                 <span style="background:var(--primary);color:white;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:0.8rem">${i+1}</span> 
                 ${TCC_STEPS[i]}
+                ${lastEditedHtml}
             </h3>
             ${fieldsHtml}
         </div>`;
