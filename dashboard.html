@@ -1276,7 +1276,7 @@ function renderProgressIn(id, currentStep) {
 document.getElementById('nav-minha-turma')?.addEventListener('click', loadMinhaTurmaContent);
 
 // ── CONFIA NO PAI AI MODULE ──
-const GLOBAL_OPENROUTER_API_KEY = "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"; // Chave definida permanentemente
+// Nova configuração usando API 100% gratuita que não requer chaves (Pollinations AI)
 
 const aiChatBox = document.getElementById('aiChatBox');
 const inputAI = document.getElementById('inputAI');
@@ -1339,9 +1339,7 @@ function speakAI(text) {
 // Force voice loading early
 if ('speechSynthesis' in window) window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
 
-async function callOpenRouterAPI(question) {
-    const apiKey = GLOBAL_OPENROUTER_API_KEY.includes('SUA_CHAVE') ? localStorage.getItem('OPENROUTER_API_KEY') : GLOBAL_OPENROUTER_API_KEY;
-    
+async function callFreeAPI(question) {
     // Add typing indicator
     const typingId = 'typing-' + Date.now();
     addAIMessage('<i class="fa-solid fa-circle-notch fa-spin"></i> Pai tá pensando...', 'ai', typingId);
@@ -1350,34 +1348,30 @@ async function callOpenRouterAPI(question) {
     const systemPrompt = "Você é o 'ConfiaNoPai AI', um professor orientador de TCC extremamente didático, brasileiro, motivador e que usa a gíria 'Confia no Pai' de forma moderada para incentivar os alunos. Responda as perguntas focando na metodologia científica, ABNT, planejamento e sempre seja claro, dividindo a tela em tópicos curtos. Nunca fuja de assuntos acadêmicos.";
 
     try {
-        const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        // Usando a API gratuita Pollinations que não exige chave (API 100% aberta)
+        const response = await fetch("https://text.pollinations.ai/", {
             method: 'POST',
             headers: { 
-                'Authorization': `Bearer ${apiKey}`,
-                'HTTP-Referer': window.location.href, // Recommended for OpenRouter
-                'X-Title': 'ConfiaNoPai AI', // Recommended for OpenRouter
                 'Content-Type': 'application/json' 
             },
             body: JSON.stringify({
-                "model": "google/gemini-2.0-flash-lite-preview-02-05:free",
-                "messages": [
+                messages: [
                     {"role": "system", "content": systemPrompt},
                     {"role": "user", "content": question}
-                ]
+                ],
+                model: "openai" // Utiliza o modelo genérico rápido
             })
         });
 
-        const data = await response.json();
+        const answerText = await response.text();
         
         // Remove typing indicator
         const typingEl = document.getElementById(typingId);
         if(typingEl) typingEl.parentNode.removeChild(typingEl);
 
-        if (data.error) {
-            throw new Error(data.error.message);
+        if (!response.ok) {
+            throw new Error("Erro na requisição gratuita");
         }
-
-        const answerText = data.choices[0].message.content;
         
         // Process markdown bold into HTML
         let formattedAnswer = answerText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -1389,22 +1383,20 @@ async function callOpenRouterAPI(question) {
         speakAI(answerText); // speech synthesis sanitization is now done completely inside speakAI()
 
     } catch (error) {
-        console.error('OpenRouter API Error:', error);
+        console.error('Free API Error:', error);
         const typingEl = document.getElementById(typingId);
         if(typingEl) typingEl.parentNode.removeChild(typingEl);
         
-        let errorMsg = 'Eita! Algo deu errado ao contatar os serivodres (Chave API inválida ou limite excedido). Vou usar minha base neural local.';
+        let errorMsg = 'Eita! Algo deu errado na rede da IA genérica. Vou usar minha base neural local enquanto ela respira.';
         addAIMessage(errorMsg, 'ai');
         setTimeout(() => simulateAIResponse(question), 1500);
     }
 }
 
 function simulateAIResponse(question) {
-    const apiKey = GLOBAL_OPENROUTER_API_KEY.includes('SUA_CHAVE') ? localStorage.getItem('OPENROUTER_API_KEY') : GLOBAL_OPENROUTER_API_KEY;
-    if (apiKey && apiKey.length > 10) {
-        callOpenRouterAPI(question);
-        return;
-    }
+    // A nova API é genérica e aberta, logo chamamos direto sem validar chaves
+    callFreeAPI(question);
+    return;
 
     const q = question.toLowerCase();
     let answer = 'Confia no Pai! Estou aqui para te ajudar. Pode me focar na sua dúvida de formatação, prazos, banca ou código? <br><br>💡 <em>(Modo Local ativo. A Chave API de IA ainda não foi configurada no sistema).</em>';
