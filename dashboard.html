@@ -180,7 +180,8 @@
             </div>
         </nav>
         <div class="user-profile">
-            <div class="user-avatar" id="userInitial">U</div>
+            <input type="file" id="avatarInput" accept="image/*" style="display:none">
+            <div class="user-avatar" id="userInitial" style="cursor:pointer; position:relative" title="Alterar Foto" onclick="document.getElementById('avatarInput').click()">U</div>
             <div class="user-info">
                 <p><strong id="userName">...</strong></p>
                 <span class="role-badge" id="userRole">...</span>
@@ -491,9 +492,56 @@ document.getElementById('btnLogout').addEventListener('click', () => signOut(aut
 function setupDashboard(data) {
     document.getElementById('loader').style.display = 'none';
     document.getElementById('userName').innerText = data.name;
-    document.getElementById('userInitial').innerText = (data.name||'U').charAt(0).toUpperCase();
+    
+    if (data.avatarUrl) {
+        document.getElementById('userInitial').innerHTML = `<img src="${data.avatarUrl}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`;
+    } else {
+        document.getElementById('userInitial').innerText = (data.name||'U').charAt(0).toUpperCase();
+    }
+    
+    let stats = '';
+    if (data.role === 'aluno') {
+        const n = data.nota || '--';
+        const m = data.medalhas || {ouro:0, prata:0, bronze:0};
+        let mStr = '';
+        if(m.ouro) mStr += `🥇${m.ouro} `;
+        if(m.prata) mStr += `🥈${m.prata} `;
+        if(m.bronze) mStr += `🥉${m.bronze} `;
+        stats = `<div style="margin-top:6px; font-size:0.75rem; color:#dff9fb; background:rgba(0,0,0,0.15); padding:4px 6px; border-radius:6px; line-height:1.4;">
+            Nota Atual: <strong>${n}</strong><br>
+            ${mStr ? mStr : 'Sem medalhas ainda'}
+        </div>`;
+    }
+
     const labels = { aluno:'Aluno(a)', professor:'Professor(a)', admin:'⭐ Admin' };
-    document.getElementById('userRole').innerText = labels[data.role] || data.role;
+    document.getElementById('userRole').innerHTML = `${labels[data.role] || data.role} ${stats}`;
+
+    // Hook do avatar
+    document.getElementById('avatarInput')?.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = new Image();
+            img.onload = async function() {
+                const canvas = document.createElement('canvas');
+                const maxSize = 250;
+                let width = img.width, height = img.height;
+                if (width > height) { if (width > maxSize) { height *= maxSize/width; width = maxSize; } }
+                else { if (height > maxSize) { width *= maxSize/height; height = maxSize; } }
+                canvas.width = width; canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                const base64Url = canvas.toDataURL('image/jpeg', 0.8); // Compressão
+                
+                document.getElementById('userInitial').innerHTML = `<img src="${base64Url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`;
+                ME.avatarUrl = base64Url;
+                try { await updateDoc(doc(db, 'users', ME.uid), { avatarUrl: base64Url }); } catch(err) { console.error('Error saving avatar:', err); }
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
 
     // General forum is always available
     loadForumGeral();
@@ -1066,7 +1114,30 @@ window.verTurma = async function(turmaId, nome) {
     
     const aList = document.getElementById('alunosTurmaList');
     aList.innerHTML = aSnaps.empty ? '<p class="text-light">Nenhum aluno nesta turma.</p>' :
-        alunosTurma.map(u => `<div class="student-item"><div class="s-info"><strong>${u.name}</strong><span>${u.email}</span></div><span class="tag-badge">${TCC_STEPS[u.tccStep||0]}</span></div>`).join('');
+        alunosTurma.map(u => {
+            let medalhasHtml = '';
+            if (u.medalhas?.ouro) medalhasHtml += `<span style="background:#fff;padding:2px 5px;border-radius:4px;border:1px solid #eee;margin-right:4px" title="${u.medalhas.ouro}x Ouro">🥇 ${u.medalhas.ouro}</span>`;
+            if (u.medalhas?.prata) medalhasHtml += `<span style="background:#fff;padding:2px 5px;border-radius:4px;border:1px solid #eee;margin-right:4px" title="${u.medalhas.prata}x Prata">🥈 ${u.medalhas.prata}</span>`;
+            if (u.medalhas?.bronze) medalhasHtml += `<span style="background:#fff;padding:2px 5px;border-radius:4px;border:1px solid #eee;margin-right:4px" title="${u.medalhas.bronze}x Bronze">🥉 ${u.medalhas.bronze}</span>`;
+            
+            return `<div class="student-item" style="flex-direction:column; align-items:flex-start">
+                <div style="display:flex; width:100%; justify-content:space-between">
+                    <div class="s-info" style="display:flex; align-items:center; gap:8px">
+                        <div style="width:30px;height:30px;border-radius:50%;background:var(--tertiary);overflow:hidden;flex-shrink:0">
+                            ${u.avatarUrl ? `<img src="${u.avatarUrl}" style="width:100%;height:100%;object-fit:cover">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:0.8rem">${u.name.charAt(0).toUpperCase()}</div>`}
+                        </div>
+                        <div style="display:flex; flex-direction:column"><strong>${u.name}</strong><span>${u.email}</span></div>
+                    </div>
+                    <span class="tag-badge">${TCC_STEPS[u.tccStep||0]}</span>
+                </div>
+                <div style="display:flex; gap:10px; margin-top:12px; align-items:center; width:100%; flex-wrap:wrap">
+                    <span style="font-size:0.85rem">Nota Atual: <strong style="color:var(--primary);font-size:1rem">${u.nota||'--'}</strong></span>
+                    <div style="flex:1; display:flex; align-items:center">${medalhasHtml}</div>
+                    <button class="btn" style="padding:4px 10px; font-size:0.75rem; background:#74b9ff; color:white" onclick="window.avaliarAluno('${u.uid}', '${turmaId}', '${nome.replace(/'/g, "\\'")}')"><i class="fa-solid fa-star"></i> Avaliar Nota</button>
+                    <button class="btn" style="padding:4px 10px; font-size:0.75rem; background:#fdcb6e; color:#333" onclick="window.darMedalha('${u.uid}', '${turmaId}', '${nome.replace(/'/g, "\\'")}')"><i class="fa-solid fa-award"></i> Conceder Medalha</button>
+                </div>
+            </div>`;
+        }).join('');
 
     // equipes
     const eqSnaps = await getDocs(query(collection(db,'equipes'), where('turmaId','==',turmaId)));
@@ -1103,6 +1174,30 @@ window.removerMembroEquipe = async function(equipeId, alunoUid, turmaId, turmaNo
     await updateDoc(docRef, { membros: membros.filter(m => m !== alunoUid) });
     alert('Aluno removido.');
     verTurma(turmaId, turmaNome);
+};
+
+window.avaliarAluno = async function(uid, turmaId, turmaNome) {
+    const nota = prompt('Digite a nota ou comentário de avaliação para este aluno (Ex: 9.5 ou "Excelente"):');
+    if (nota === null) return;
+    await updateDoc(doc(db, 'users', uid), { nota: nota.trim() });
+    alert('Avaliação/Nota computada e salva para o aluno!');
+    verTurma(turmaId, turmaNome); // recarrega a lista
+};
+
+window.darMedalha = async function(uid, turmaId, turmaNome) {
+    const tipo = prompt('Qual medalha o aluno merece por seu desempenho?\\nDigite: ouro, prata ou bronze').toLowerCase().trim();
+    if (!['ouro', 'prata', 'bronze'].includes(tipo)) {
+        if (tipo !== '') alert('Opção inválida. Escreva: ouro, prata ou bronze.'); 
+        return;
+    }
+    const snap = await getDoc(doc(db, 'users', uid));
+    if (!snap.exists()) return;
+    const userData = snap.data();
+    const medalhas = userData.medalhas || { ouro:0, prata:0, bronze:0 };
+    medalhas[tipo] += 1;
+    await updateDoc(doc(db, 'users', uid), { medalhas });
+    alert(`Medalha de ${tipo} salva com sucesso no perfil do aluno!`);
+    verTurma(turmaId, turmaNome); // recarrega a lista
 };
 
 window.excluirEquipeVazia = async function(equipeId, turmaId, turmaNome) {
