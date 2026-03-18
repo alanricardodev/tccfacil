@@ -912,14 +912,18 @@ window.setTCCStep = async function(step) {
 function loadEquipeChat() {
     if (!ME._equipe) return;
     const chatBox = document.getElementById('equipeChat');
-    const q = query(collection(db,'mensagens'), where('equipeId','==',ME._equipe.id), orderBy('timestamp','asc'));
+    const q = query(collection(db,'mensagens'), where('equipeId','==',ME._equipe.id)); // Removido orderBy para evitar bloqueio de Composite Index no Firebase do aluno
     onSnapshot(q, snap => {
         chatBox.innerHTML = '';
-        snap.forEach(d => {
+        let docsArray = [];
+        snap.forEach(d => docsArray.push(d));
+        docsArray.sort((a, b) => a.data().timestamp - b.data().timestamp); // Ordenação local asc
+        
+        docsArray.forEach(d => {
             const m = d.data();
             const isMe = m.autorId === ME.uid;
             chatBox.innerHTML += `<div class="chat-msg ${isMe?'me':''}">
-                <div class="chat-bubble"><strong style="font-size:.75rem;display:block;margin-bottom:3px;opacity:.7">${isMe?'Você':m.autorName}</strong>${m.texto}</div>
+                <div class="chat-bubble"><strong style="font-size:.75rem;display:block;margin-bottom:3px;opacity:.7">${isMe?'Você':m.autorName} - ${m.dataString || ''}</strong>${m.texto}</div>
             </div>`;
         });
         chatBox.scrollTop = chatBox.scrollHeight;
@@ -940,7 +944,8 @@ window.postEquipeChat = async function() {
             autorId: ME.uid, 
             autorName: ME.name || 'Usuário', 
             texto: txt, 
-            timestamp: Date.now() 
+            timestamp: Date.now(),
+            dataString: new Date().toLocaleString('pt-BR')
         });
         input.value = '';
     } catch(err) {
@@ -1012,9 +1017,10 @@ window.promptDocEquipe = async function() {
     await addDoc(collection(db,'mensagens'), { 
         equipeId: ME._equipe.id, 
         autorId: ME.uid, 
-        autorName: ME.name, 
+        autorName: ME.name || 'Usuário', 
         texto: `📁 Adicionou um novo projeto/documento: <a href="${url}" target="_blank" style="color:var(--primary);font-weight:bold">${title.trim()}</a>`, 
-        timestamp: Date.now() 
+        timestamp: Date.now(),
+        dataString: new Date().toLocaleString('pt-BR')
     });
 };
 
@@ -1043,8 +1049,9 @@ window.postForumGeral = async function() {
             texto: txt, 
             autorId: ME.uid, 
             autorName: ME.name || 'Usuário', 
-            avatarUrl: ME.avatarUrl || null,
-            timestamp: Date.now(), 
+            avatarUrl: ME.avatarUrl || '',
+            timestamp: Date.now(),
+            dataString: new Date().toLocaleString('pt-BR'), 
             likes: 0, 
             pinned: false 
         });
@@ -1079,9 +1086,10 @@ window.postForumTurma = async function() {
             texto: txt, 
             autorId: ME.uid, 
             autorName: ME.name || 'Usuário', 
-            avatarUrl: ME.avatarUrl || null,
+            avatarUrl: ME.avatarUrl || '',
             turmaId: ME.turmaId, 
-            timestamp: Date.now(), 
+            timestamp: Date.now(),
+            dataString: new Date().toLocaleString('pt-BR'), 
             likes: 0 
         });
         input.value = '';
@@ -1099,9 +1107,16 @@ function renderForumPosts(snap, containerId, collectionName) {
     const el = document.getElementById(containerId);
     if (snap.empty) { el.innerHTML = '<div class="empty-state"><i class="fa-solid fa-comments"></i>Nenhuma publicação ainda.</div>'; return; }
     let html = '';
-    snap.forEach(d => {
+    
+    // Sort locally to prevent Firestore composite index requirements
+    let docsArray = [];
+    snap.forEach(d => docsArray.push(d));
+    docsArray.sort((a, b) => b.data().timestamp - a.data().timestamp);
+    
+    docsArray.forEach(d => {
         const p = d.data();
-        const date = new Date(p.timestamp).toLocaleDateString('pt-BR', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+        // Usar dataString salva explicitamente se existir, senão formata do timestamp clássico
+        const date = p.dataString ? p.dataString : new Date(p.timestamp).toLocaleDateString('pt-BR', {day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
         html += `<div class="forum-post ${p.pinned?'pinned':''}">
             ${p.pinned ? '<small style="color:#b7950b;font-weight:700"><i class="fa-solid fa-thumbtack"></i> Fixado</small>' : ''}
             <div class="forum-post-header">
@@ -1168,7 +1183,7 @@ async function loadTurmasProf() {
 
 window.verTurma = async function(turmaId, nome) {
     switchView('turmas','Gerenciar Turmas','nav-turmas');
-    document.getElementById('turmaDetalheNome').innerText = nome;
+    document.getElementById('turmaDetalheNome').innerHTML = `${nome} <button class="btn btn-primary" style="margin-left:15px; font-size:0.8rem; padding:5px 12px; vertical-align:middle" onclick="window.abrirForumTurmaProf('${turmaId}', '${nome.replace(/'/g, "\\'")}')"><i class="fa-solid fa-comments"></i> Acessar Fórum da Turma</button>`;
     document.getElementById('turmaDetalheView').style.display = 'block';
 
     // alunos
@@ -1218,7 +1233,10 @@ window.verTurma = async function(turmaId, nome) {
             }).join('');
             
             return `<div class="dash-card">
-                <h3>${eq.nome}</h3>
+                <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                    <h3 style="margin-bottom:5px">${eq.nome}</h3>
+                    <button class="btn btn-primary" style="font-size:0.75rem;padding:4px 8px;background:var(--tertiary);border:none" onclick="window.abrirChatEquipeProf('${d.id}', '${eq.nome.replace(/'/g, "\\'")}')"><i class="fa-solid fa-users"></i> Acessar Chat</button>
+                </div>
                 <p style="font-size:.8rem;color:var(--text-light)">${(eq.membros||[]).length}/5 membros • Tema: ${eq.tema||'A definir'}</p>
                 <ul style="font-size:.85rem;margin-top:10px;padding-left:0;list-style:none">${membrosHtml}</ul>
                 ${(eq.membros||[]).length === 0 ? `<button onclick="window.excluirEquipeVazia('${d.id}', '${turmaId}', '${nome.replace(/'/g, "\\'")}')" class="btn" style="background:#ff7675;color:white;font-size:0.75rem;padding:5px 10px;margin-top:10px;width:100%"><i class="fa-solid fa-trash"></i> Excluir Equipe Vazia</button>` : ''}
@@ -1226,6 +1244,21 @@ window.verTurma = async function(turmaId, nome) {
         }).join('');
 
     document.getElementById('turmaDetalheView').scrollIntoView({ behavior:'smooth' });
+};
+
+window.abrirForumTurmaProf = function(turmaId, turmaNome) {
+    ME.turmaId = turmaId; // Associa temporariamente para o Professor poder postar
+    document.getElementById('nav-forum-turma').style.display = 'flex'; 
+    switchView('forum-turma', `Fórum: ${turmaNome}`, 'nav-forum-turma');
+    loadForumTurma(turmaId);
+};
+
+window.abrirChatEquipeProf = function(equipeId, equipeNome) {
+    ME._equipe = { id: equipeId, nome: equipeNome }; // Associa temporariamente a equipe
+    document.getElementById('nav-forum-equipe').style.display = 'flex'; 
+    switchView('forum-equipe', `Chat da Equipe: ${equipeNome}`, 'nav-forum-equipe');
+    loadEquipeChat();
+    window.loadEquipeDocs(); // Carrega também os arquivos postados pela equipe
 };
 
 window.removerMembroEquipe = async function(equipeId, alunoUid, turmaId, turmaNome) {
