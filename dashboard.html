@@ -6,6 +6,7 @@
     <title>Dashboard TCC | Plataforma Integrada</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link rel="stylesheet" href="styles.css">
     <style>
         body { background:#f0f2f5; display:flex; min-height:100vh; }
@@ -535,6 +536,40 @@
                 <div class="dash-grid" id="pendingProfList"><p class="text-light">Carregando...</p></div>
             </div>
         </div>
+
+        <!-- ===== MODAL TCC ALUNO ===== -->
+        <div id="modalTccForm" class="modal-overlay" style="display:none;align-items:center;justify-content:center;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;padding:20px">
+            <div style="background:white;width:100%;max-width:800px;max-height:90vh;border-radius:16px;display:flex;flex-direction:column;box-shadow:0 10px 30px rgba(0,0,0,0.2)">
+                <div style="padding:20px 24px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center">
+                    <h2 id="modalTccFormTitle" style="margin:0;color:var(--primary);font-size:1.3rem"><i class="fa-solid fa-file-pen"></i> Preencher Etapa</h2>
+                    <button onclick="document.getElementById('modalTccForm').style.display='none'" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#999">&times;</button>
+                </div>
+                <div id="modalTccFormBody" style="padding:24px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:16px">
+                    <!-- Form fields injected by JS -->
+                </div>
+                <div style="padding:16px 24px;border-top:1px solid #eee;display:flex;justify-content:flex-end;gap:10px">
+                    <button class="btn" id="btnGerarPdfTccForm" style="display:none;background:#e17055;color:white;margin-right:auto"><i class="fa-solid fa-file-pdf"></i> Gerar PDF (ABNT)</button>
+                    <button class="btn" onclick="document.getElementById('modalTccForm').style.display='none'" style="background:#eee;color:#333">Cancelar</button>
+                    <button class="btn btn-primary" id="btnSalvarTccForm"><i class="fa-solid fa-floppy-disk"></i> Salvar Informações</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== MODAL AVALIAÇÃO PROFESSOR ===== -->
+        <div id="modalTccEval" class="modal-overlay" style="display:none;align-items:center;justify-content:center;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;padding:20px">
+            <div style="background:white;width:100%;max-width:900px;max-height:90vh;border-radius:16px;display:flex;flex-direction:column;box-shadow:0 10px 30px rgba(0,0,0,0.2)">
+                <div style="padding:20px 24px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center">
+                    <h2 style="margin:0;color:var(--primary);font-size:1.3rem"><i class="fa-solid fa-magnifying-glass-chart"></i> Avaliar Entregas da Equipe</h2>
+                    <button onclick="document.getElementById('modalTccEval').style.display='none'" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#999">&times;</button>
+                </div>
+                <div id="modalTccEvalBody" style="padding:24px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:20px;background:#f8f9fa">
+                    <!-- Consolidated read-only view of all filled steps injected by JS -->
+                </div>
+                <div style="padding:16px 24px;border-top:1px solid #eee;display:flex;justify-content:space-between;gap:10px;align-items:center;background:white" id="modalTccEvalFooter">
+                    <!-- Current step info and Approval buttons injected by JS -->
+                </div>
+            </div>
+        </div>
     </main>
 
     <script type="module">
@@ -858,6 +893,57 @@ function loadMinhaEquipeContent() {
     const eq = ME._equipe;
     const el = document.getElementById('minhaEquipeContent');
     if (!eq) { el.innerHTML = '<div class="empty-state"><i class="fa-solid fa-users-slash"></i>Você ainda não está em uma equipe.</div>'; return; }
+
+    const currentStep = eq.tccStep || 0;
+    const liberado    = eq.stepLiberado !== undefined ? eq.stepLiberado : 0; // prof approved up to this index
+    const stepEmojis  = ['\ud83d\udcdd','\u2699\ufe0f','\ud83d\udd0d','\ud83d\udce6','\ud83c\udfa4'];
+
+    const stepsHtml = TCC_STEPS.map((s, i) => {
+        const isCurrent  = i === currentStep;
+        const isDone     = i < currentStep;
+        const isLocked   = i > liberado;
+        const isNextFree = i === currentStep && i <= liberado && !isLocked;
+
+        let border = '#eee';
+        if (isCurrent && !isLocked) border = 'var(--primary)';
+        if (isDone)                 border = '#00b894';
+        if (isLocked)               border = '#dfe6e9';
+
+        let badge = '';
+        if (isDone)    badge = '<span style="position:absolute;top:8px;right:8px;font-size:.65rem;background:#00b894;color:white;padding:2px 7px;border-radius:20px;font-weight:700">✅ Concluída</span>';
+        if (isCurrent && !isLocked) badge = '<span style="position:absolute;top:8px;right:8px;font-size:.65rem;background:var(--primary);color:white;padding:2px 7px;border-radius:20px;font-weight:700">▶ Em andamento</span>';
+        if (isLocked)  badge = '<span style="position:absolute;top:8px;right:8px;font-size:.65rem;background:#b2bec3;color:white;padding:2px 7px;border-radius:20px;font-weight:700">🔒 Bloqueada</span>';
+
+        const emoji = isLocked ? '<span style="font-size:1.8rem;margin-bottom:8px;display:block;opacity:.35">🔒</span>'
+                                : `<div style="font-size:1.8rem;margin-bottom:8px">${stepEmojis[i]}</div>`;
+
+        const clickable  = !isLocked && i <= liberado;
+        const cursorStyle = clickable ? 'pointer' : 'default';
+        const opacityStyle = isLocked ? 'opacity:.55;' : '';
+
+        return `<div class="dash-card" style="text-align:center;cursor:${cursorStyle};border:2px solid ${border};position:relative;${opacityStyle}padding-top:22px"
+            ${clickable ? `onclick="setTCCStep(${i})"` : ''}>
+            ${badge}
+            ${emoji}
+            <div style="font-weight:700">${s}</div>
+            ${isLocked ? '<div style="font-size:.72rem;color:#b2bec3;margin-top:4px">Aguarde aprovação</div>' : ''}
+        </div>`;
+    }).join('');
+
+    const lockInfo = liberado < TCC_STEPS.length - 1
+        ? `<div style="background:linear-gradient(135deg,#fdcb6e22,#f39c1222);border:1px solid #fdcb6e55;border-radius:12px;padding:10px 14px;margin-bottom:16px;font-size:.85rem;display:flex;align-items:center;gap:8px">
+                <i class="fa-solid fa-lock" style="color:#e17055"></i>
+                <span>A etapa <strong>${TCC_STEPS[liberado+1]}</strong> estará disponível após o professor aprovar sua proposta atual.</span>
+           </div>`
+        : '';
+        
+    const btnPreencherForm = liberado >= currentStep ? 
+        `<div style="margin-top:20px;text-align:center">
+            <button class="btn btn-primary" onclick="window.abrirFormTcc(${currentStep})" style="padding:10px 24px;font-size:1rem;border-radius:12px;box-shadow:0 6px 15px rgba(108,92,231,0.2)">
+                <i class="fa-solid fa-pen-to-square"></i> Preencher Dados da Etapa: ${TCC_STEPS[currentStep]}
+            </button>
+        </div>` : '';
+
     el.innerHTML = `
         <div class="dash-card" style="margin-bottom:20px; position:relative;">
             <div class="dash-card-header">
@@ -868,14 +954,16 @@ function loadMinhaEquipeContent() {
                 </div>
             </div>
             <p><i class="fa-solid fa-book-open text-primary"></i> <strong>Tema:</strong> ${eq.tema || 'A definir'} <button onclick="window.renomearTemaEquipe()" style="background:none; border:none; color:var(--text-light); cursor:pointer; font-size:.9rem; margin-left:5px" title="Renomear Tema"><i class="fa-solid fa-pen"></i></button></p>
+            <!-- Progress bar -->
+            <div style="margin-top:12px;background:#f0f2f5;border-radius:20px;height:8px;overflow:hidden">
+                <div style="width:${Math.round(((currentStep+1)/TCC_STEPS.length)*100)}%;background:linear-gradient(90deg,var(--primary),var(--tertiary));height:100%;border-radius:20px;transition:width .4s"></div>
+            </div>
+            <div style="font-size:.75rem;color:var(--text-light);margin-top:4px">Etapa atual: <strong>${TCC_STEPS[currentStep]}</strong> (${currentStep+1}/${TCC_STEPS.length})</div>
         </div>
         <div class="section-title"><i class="fa-solid fa-road" style="color:var(--primary)"></i> Etapas do TCC</div>
-        <div class="dash-grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr))">
-            ${TCC_STEPS.map((s,i)=>`<div class="dash-card" style="text-align:center;cursor:pointer;border:2px solid ${(ME.tccStep||0)===i?'var(--primary)':'#eee'}" onclick="setTCCStep(${i})">
-                <div style="font-size:1.8rem;margin-bottom:8px">${['📝','⚙️','🔍','📦','🎤'][i]}</div>
-                <div style="font-weight:700">${s}</div>
-            </div>`).join('')}
-        </div>`;
+        ${lockInfo}
+        <div class="dash-grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr))">${stepsHtml}</div>
+        ${btnPreencherForm}`;
 }
 
 window.modalAdicionarColega = async function() {
@@ -1439,23 +1527,312 @@ window.verTurma = async function(turmaId, nome) {
                     : '';
                 return `<li style="display:flex; justify-content:space-between; align-items:center; padding: 4px 0; border-bottom:1px dashed #eee">
                     <span style="display:flex;align-items:center;gap:4px">${dotHtml}<i class="fa-solid fa-user" style="color:var(--text-light);margin-right:5px"></i>${nomeAluno}${vstoHtml}</span>
-                    <button onclick="window.removerMembroEquipe('${d.id}', '${uid}', '${turmaId}', '${nome.replace(/'/g, "\\'")}')"
-style="background:none; border:none; color:#ff7675; cursor:pointer;" title="Remover Aluno da Equipe"><i class="fa-solid fa-xmark"></i></button>
+                    <button onclick="window.removerMembroEquipe('${d.id}', '${uid}', '${turmaId}', '${nome.replace(/'"'"'/g, "\\'")}')" style="background:none; border:none; color:#ff7675; cursor:pointer;" title="Remover Aluno da Equipe"><i class="fa-solid fa-xmark"></i></button>
                 </li>`;
             }).join('');
-            
-            return `<div class="dash-card">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start">
-                    <h3 style="margin-bottom:5px">${eq.nome}</h3>
-                    <button class="btn btn-primary" style="font-size:0.75rem;padding:4px 8px;background:var(--tertiary);border:none" onclick="window.abrirChatEquipeProf('${d.id}', '${eq.nome.replace(/'/g, "\\'")}')"><i class="fa-solid fa-users"></i> Acessar Chat</button>
-                </div>
-                <p style="font-size:.8rem;color:var(--text-light)">${(eq.membros||[]).length}/5 membros • Tema: ${eq.tema||'A definir'}</p>
-                <ul style="font-size:.85rem;margin-top:10px;padding-left:0;list-style:none">${membrosHtml}</ul>
-                ${(eq.membros||[]).length === 0 ? `<button onclick="window.excluirEquipeVazia('${d.id}', '${turmaId}', '${nome.replace(/'/g, "\\'")}')" class="btn" style="background:#ff7675;color:white;font-size:0.75rem;padding:5px 10px;margin-top:10px;width:100%"><i class="fa-solid fa-trash"></i> Excluir Equipe Vazia</button>` : ''}
-            </div>`; 
+
+            // Step approval controls
+            const eqStep     = eq.tccStep     !== undefined ? eq.tccStep     : 0;
+            const eqLiberado = eq.stepLiberado !== undefined ? eq.stepLiberado : 0;
+            const podeAprovar  = eqLiberado < TCC_STEPS.length - 1;
+            const podeReverter = eqLiberado > 0;
+
+            const progBar = `<div style="margin:10px 0 4px;background:#f0f2f5;border-radius:20px;height:6px;overflow:hidden"><div style="width:${Math.round(((eqStep+1)/TCC_STEPS.length)*100)}%;background:linear-gradient(90deg,var(--primary),var(--tertiary));height:100%;border-radius:20px"></div></div><div style="font-size:.72rem;color:var(--text-light);margin-bottom:8px">Em: <strong>${TCC_STEPS[eqStep]}</strong> | Liberado ate: <strong>${TCC_STEPS[eqLiberado]}</strong></div>`;
+
+            const approvalBtns = `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+                <button class="btn" style="background:linear-gradient(135deg,#0984e3,#74b9ff);color:white;flex:1;font-size:.8rem;padding:7px;border:none" onclick="window.abrirAvaliacaoTcc('${eq.id}','${turmaId}','${nome.replace(/'/g,"\\'")}')">
+                    <i class="fa-solid fa-magnifying-glass-chart"></i> Avaliar Entregas
+                </button>
+            </div>`;
+
+            return `<div class="dash-card"><div style="display:flex;justify-content:space-between;align-items:flex-start"><h3 style="margin-bottom:5px">${eq.nome}</h3><button class="btn btn-primary" style="font-size:0.75rem;padding:4px 8px;background:var(--tertiary);border:none" onclick="window.abrirChatEquipeProf('${d.id}', '${eq.nome.replace(/'"'"'/g, "\\'")}')"><i class="fa-solid fa-users"></i> Acessar Chat</button></div><p style="font-size:.8rem;color:var(--text-light)">${(eq.membros||[]).length}/5 membros &bull; Tema: ${eq.tema||'A definir'}</p>${progBar}<ul style="font-size:.85rem;margin-top:10px;padding-left:0;list-style:none">${membrosHtml}</ul>${approvalBtns}${(eq.membros||[]).length === 0 ? `<button onclick="window.excluirEquipeVazia('${d.id}', '${turmaId}', '${nome.replace(/'"'"'/g, "\\'")}') " class="btn" style="background:#ff7675;color:white;font-size:0.75rem;padding:5px 10px;margin-top:10px;width:100%"><i class="fa-solid fa-trash"></i> Excluir Equipe Vazia</button>` : ''}</div>`;
         }).join('');
 
     document.getElementById('turmaDetalheView').scrollIntoView({ behavior:'smooth' });
+};
+
+// ── APROVAÇÃO DE ETAPAS ──
+window.aprovarEtapa = async function(equipeId, turmaId, turmaNome) {
+    const docRef = doc(db,'equipes',equipeId);
+    const snap   = await getDoc(docRef);
+    if (!snap.exists()) return;
+    const atual  = snap.data().stepLiberado !== undefined ? snap.data().stepLiberado : 0;
+    if (atual >= TCC_STEPS.length - 1) { alert('Todas as etapas ja foram liberadas para esta equipe!'); return; }
+    const proxima = atual + 1;
+    if (!confirm('Aprovar e liberar a etapa "' + TCC_STEPS[proxima] + '" para esta equipe?')) return;
+    await updateDoc(docRef, { stepLiberado: proxima });
+    alert('Etapa "' + TCC_STEPS[proxima] + '" liberada com sucesso!');
+    verTurma(turmaId, turmaNome);
+};
+
+window.reverterEtapa = async function(equipeId, turmaId, turmaNome) {
+    const docRef  = doc(db,'equipes',equipeId);
+    const snap    = await getDoc(docRef);
+    if (!snap.exists()) return;
+    const atual   = snap.data().stepLiberado !== undefined ? snap.data().stepLiberado : 0;
+    if (atual === 0) { alert('Ja esta na primeira etapa.'); return; }
+    const anterior = atual - 1;
+    if (!confirm('Reverter para a etapa "' + TCC_STEPS[anterior] + '"?')) return;
+    await updateDoc(docRef, { stepLiberado: anterior, tccStep: Math.min(snap.data().tccStep||0, anterior) });
+    alert('Etapa revertida para "' + TCC_STEPS[anterior] + '".');
+    verTurma(turmaId, turmaNome);
+};
+
+// ── AVALIAÇÃO DE ETAPAS E FORMULÁRIOS ──
+const TCC_FORMS = {
+    0: [
+        { id:'f_tema', label:'Tema Escolhido', type:'text', placeholder:'Ex: IA na Educação' },
+        { id:'f_titulo', label:'Título do Projeto', type:'text', placeholder:'Ex: O uso de IA...' },
+        { id:'f_tipo', label:'Tipo de TCC', type:'select', options:['Projeto de Intervenção','Artigo Científico','Manual Técnico','Relatório Técnico científico','Outro'] },
+        { id:'f_questao', label:'Questão ou Problema Identificado', type:'text', placeholder:'Ex: O uso excessivo das telas...' },
+        { id:'f_justificativa', label:'Justificativa (Por que escolheu, importância, exemplos)', type:'textarea' },
+        { id:'f_objGeral', label:'Objetivo Geral', type:'textarea' },
+        { id:'f_objEspec', label:'Objetivos Específicos (2 ou 3)', type:'textarea' },
+        { id:'f_hipoteses', label:'Hipóteses (Opcional)', type:'textarea' },
+        { id:'f_metodologia', label:'Metodologia (Descrição Detalhada e Materiais)', type:'textarea' },
+        { id:'f_refTeorico', label:'Referencial Teórico (3 ou 4 artigos base)', type:'textarea' },
+        { id:'f_resultados', label:'Resultados Esperados ou Conclusão Parcial', type:'textarea' },
+        { id:'f_cronograma', label:'Cronograma (Resumo)', type:'textarea' },
+        { id:'f_referencias', label:'Referências (Trabalhos e sites)', type:'textarea' }
+    ],
+    1: [
+        { id:'f_devLink', label:'Link do Repositório/Drive com o desenvolvimento prático', type:'text' },
+        { id:'f_devRelatorio', label:'Relatório de Progresso (O que já foi feito, dificuldades)', type:'textarea' }
+    ],
+    2: [
+        { id:'f_revLink', label:'Link do Documento (versão para revisão do orientador)', type:'text' },
+        { id:'f_revMensagem', label:'Considerações/Dúvidas para o orientador', type:'textarea' }
+    ],
+    3: [
+        { id:'f_entLink', label:'Link do Trabalho Final (PDF/Doc)', type:'text' },
+        { id:'f_entResumo', label:'Resumo/Abstract (Texto)', type:'textarea' }
+    ],
+    4: [
+        { id:'f_aprLink', label:'Link dos Slides (Canva/PPT/PDF)', type:'text' },
+        { id:'f_aprVideo', label:'Link do Vídeo Pitch (Opcional)', type:'text' }
+    ]
+};
+
+window.abrirFormTcc = async function(stepIndex) {
+    const eq = ME._equipe;
+    if (!eq) return;
+    document.getElementById('modalTccFormTitle').innerHTML = '<i class="fa-solid fa-file-pen"></i> Preencher Etapa: ' + TCC_STEPS[stepIndex];
+    const fields = TCC_FORMS[stepIndex];
+    if (!fields) return;
+
+    // Load existing data if any
+    const equipeData = eq.tccData || {};
+    const stepData = equipeData[stepIndex] || {};
+
+    let html = '';
+    if (stepIndex === 0) {
+        html += `<div style="background:#f0f2f5;padding:12px;border-radius:8px;font-size:0.85rem;color:var(--text-light);margin-bottom:10px">
+            <strong>Professor Orientador:</strong> Módulo de Professores<br>
+            <strong>Colégio:</strong> Centro Estadual de Educação Profissional Formação e Eventos Isaías Alves<br>
+            <strong>Série/Ano:</strong> 3º ano do curso Técnico em nível médio em XXXX
+        </div>`;
+    }
+
+    fields.forEach(f => {
+        const val = stepData[f.id] || '';
+        html += `<div style="display:flex;flex-direction:column;gap:6px">
+            <label style="font-size:0.85rem;font-weight:700;color:var(--text-dark)">${f.label}</label>`;
+        if (f.type === 'textarea') {
+            html += `<textarea id="${f.id}" rows="4" style="width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;font-family:'Inter',sans-serif" placeholder="${f.placeholder||''}">${val}</textarea>`;
+        } else if (f.type === 'select') {
+            html += `<select id="${f.id}" style="width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;font-family:'Inter',sans-serif">
+                <option value="">Selecione...</option>
+                ${f.options.map(o => `<option value="${o}" ${val===o?'selected':''}>${o}</option>`).join('')}
+            </select>`;
+        } else {
+            html += `<input type="${f.type}" id="${f.id}" style="width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;font-family:'Inter',sans-serif" placeholder="${f.placeholder||''}" value="${val}">`;
+        }
+        html += `</div>`;
+    });
+
+    document.getElementById('modalTccFormBody').innerHTML = html;
+    
+    document.getElementById('btnSalvarTccForm').onclick = async () => {
+        const newData = {};
+        fields.forEach(f => {
+            newData[f.id] = document.getElementById(f.id).value;
+        });
+        
+        const eqRef = doc(db, 'equipes', eq.id);
+        const mergeData = {};
+        mergeData[`tccData.${stepIndex}`] = newData;
+        
+        // Optimistic local update
+        if (!ME._equipe.tccData) ME._equipe.tccData = {};
+        ME._equipe.tccData[stepIndex] = newData;
+
+        await updateDoc(eqRef, mergeData);
+        alert('Informações salvas com sucesso!');
+        document.getElementById('modalTccForm').style.display = 'none';
+        loadMinhaEquipeContent();
+    };
+
+    document.getElementById('btnGerarPdfTccForm').style.display = 'block';
+    document.getElementById('btnGerarPdfTccForm').onclick = () => window.gerarPdfAbnt(stepIndex);
+
+    document.getElementById('modalTccForm').style.display = 'flex';
+};
+
+window.gerarPdfAbnt = function(stepIndex) {
+    const eq = ME._equipe;
+    if (!eq) return;
+    const equipeData = eq.tccData || {};
+    const stepData = equipeData[stepIndex] || {};
+    const fields = TCC_FORMS[stepIndex];
+    if (!fields) return;
+
+    // Create a hidden container for the PDF content
+    const container = document.createElement('div');
+    // ABNT Margins applied as padding since html2pdf margin option can be tricky with page breaks
+    container.style.padding = '3cm 2cm 2cm 3cm';
+    container.style.fontFamily = '"Times New Roman", Times, serif';
+    container.style.fontSize = '12pt';
+    container.style.lineHeight = '1.5';
+    container.style.textAlign = 'justify';
+    container.style.color = '#000';
+    container.style.background = '#fff';
+
+    // Cover Page / Header
+    let html = `
+        <div style="text-align:center;font-weight:bold;margin-bottom:20px;text-transform:uppercase">
+            CENTRO ESTADUAL DE EDUCAÇÃO PROFISSIONAL FORMAÇÃO E EVENTOS ISAÍAS ALVES<br>
+            CURSO TÉCNICO EM NÍVEL MÉDIO EM XXXX
+        </div>
+        <div style="text-align:center;margin-bottom:40px;margin-top:40px">
+            EQUIPE: ${eq.nome.toUpperCase()}<br>
+            ${(eq.membros || []).map(m => m.nome.toUpperCase()).join('<br>')}
+        </div>
+        <div style="text-align:center;font-weight:bold;margin-top:150px;margin-bottom:100px;text-transform:uppercase;font-size:14pt">
+            ${(stepData['f_titulo'] || eq.tema || 'TÍTULO DO PROJETO').toUpperCase()}
+        </div>
+        <div style="text-align:right;margin-left:45%;margin-bottom:100px;font-size:10pt;line-height:1.2">
+            Relatório de etapa apresentado como requisito parcial para aprovação na disciplina de Projeto Final do curso Técnico.
+        </div>
+        <div style="text-align:center;position:absolute;bottom:2cm;width:calc(100% - 5cm)">
+            SALVADOR - BA<br>
+            ${new Date().getFullYear()}
+        </div>
+    `;
+
+    // Page Break before content
+    html += `<div class="html2pdf__page-break"></div>`;
+
+    // Content Pages
+    html += `<div style="text-align:center;font-weight:bold;margin-bottom:30px;text-transform:uppercase;font-size:12pt">
+        ${TCC_STEPS[stepIndex].toUpperCase()}
+    </div>`;
+
+    fields.forEach((f, idx) => {
+        const val = stepData[f.id] || '(Não informado)';
+        html += `<div style="margin-bottom:20px">
+            <div style="font-weight:bold;margin-bottom:10px;text-transform:uppercase">${idx + 1}. ${f.label}</div>
+            <div style="text-indent:1.25cm;white-space:pre-wrap;margin-bottom:10px">${val}</div>
+        </div>`;
+    });
+
+    container.innerHTML = html;
+
+    const opt = {
+        margin: [0, 0, 0, 0],
+        filename: `TCC_Etapa${stepIndex+1}_${eq.nome.replace(/\s+/g, '_')}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['css', 'legacy'] }
+    };
+
+    document.body.appendChild(container);
+    
+    const btn = document.getElementById('btnGerarPdfTccForm');
+    const oldHtml = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Gerando PDF...';
+    btn.disabled = true;
+
+    // Use html2pdf library
+    html2pdf().set(opt).from(container).save().then(() => {
+        document.body.removeChild(container);
+        btn.innerHTML = oldHtml;
+        btn.disabled = false;
+    }).catch(err => {
+        console.error('PDF error:', err);
+        document.body.removeChild(container);
+        btn.innerHTML = oldHtml;
+        btn.disabled = false;
+        alert('Erro ao gerar o PDF.');
+    });
+};
+
+window.abrirAvaliacaoTcc = async function(equipeId, turmaId, turmaNome) {
+    const docRef = doc(db, 'equipes', equipeId);
+    const snap = await getDoc(docRef);
+    if (!snap.exists()) return;
+    const eq = snap.data();
+    
+    document.getElementById('modalTccEval').style.display = 'flex';
+    const body = document.getElementById('modalTccEvalBody');
+    const footer = document.getElementById('modalTccEvalFooter');
+    
+    const eqData = eq.tccData || {};
+    
+    let html = '';
+    // Show all steps up to the current one
+    const maxVisibleStep = eq.tccStep !== undefined ? eq.tccStep : 0;
+    
+    for (let i = 0; i <= maxVisibleStep; i++) {
+        const stepFields = TCC_FORMS[i];
+        const stepData = eqData[i] || {};
+        
+        let fieldsHtml = '';
+        if (Object.keys(stepData).length === 0) {
+            fieldsHtml = `<div style="padding:16px;background:#f8f9fa;border-radius:8px;color:var(--text-light);font-size:0.85rem;font-style:italic">A equipe ainda não preencheu os dados desta etapa.</div>`;
+        } else {
+            stepFields.forEach(f => {
+                const val = stepData[f.id] || '<span style="color:#ccc">Não informado</span>';
+                fieldsHtml += `<div style="margin-bottom:12px">
+                    <div style="font-size:0.75rem;font-weight:700;color:var(--primary);text-transform:uppercase;margin-bottom:4px">${f.label}</div>
+                    <div style="background:#f8f9fa;padding:12px;border-radius:8px;font-size:0.9rem;white-space:pre-wrap;border-left:3px solid var(--tertiary)">${val}</div>
+                </div>`;
+            });
+        }
+        
+        html += `<div class="dash-card" style="box-shadow:none;border:1px solid #eee">
+            <h3 style="margin-bottom:16px;display:flex;align-items:center;gap:8px;color:var(--text-dark)">
+                <span style="background:var(--primary);color:white;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:0.8rem">${i+1}</span> 
+                ${TCC_STEPS[i]}
+            </h3>
+            ${fieldsHtml}
+        </div>`;
+    }
+    body.innerHTML = html;
+    
+    // Config footer
+    const eqLiberado = eq.stepLiberado !== undefined ? eq.stepLiberado : 0;
+    const podeAprovar  = eqLiberado < TCC_STEPS.length - 1 && eqLiberado === maxVisibleStep; // Can only approve if they advanced
+    const podeReverter = eqLiberado > 0;
+    
+    let footerHtml = `<div><strong style="font-size:0.9rem">Etapa Liberada:</strong> <span class="tag-badge" style="background:#00b894;color:white">${TCC_STEPS[eqLiberado]}</span></div>`;
+    
+    footerHtml += `<div style="display:flex;gap:10px">`;
+    if (podeReverter) {
+        footerHtml += `<button class="btn" style="background:#fff3f3;color:#e17055;border:1px solid #ff7675;font-size:.85rem;padding:8px 16px" onclick="document.getElementById('modalTccEval').style.display='none'; window.reverterEtapa('${equipeId}','${turmaId}','${turmaNome}')">
+            <i class="fa-solid fa-rotate-left"></i> Reverter para ${TCC_STEPS[eqLiberado-1]}</button>`;
+    }
+    if (podeAprovar) {
+        footerHtml += `<button class="btn btn-primary" style="font-size:.85rem;padding:8px 16px" onclick="document.getElementById('modalTccEval').style.display='none'; window.aprovarEtapa('${equipeId}','${turmaId}','${turmaNome}')">
+            <i class="fa-solid fa-circle-check"></i> Aprovar Equipe para ${TCC_STEPS[eqLiberado+1]}</button>`;
+    } else if (eqLiberado < TCC_STEPS.length - 1) {
+        footerHtml += `<span style="font-size:0.85rem;color:var(--text-light);display:flex;align-items:center;gap:6px"><i class="fa-solid fa-clock"></i> Aguardando equipe avançar</span>`;
+    } else {
+        footerHtml += `<span style="font-size:0.85rem;color:#00b894;font-weight:700"><i class="fa-solid fa-flag-checkered"></i> TCC concluído!</span>`;
+    }
+    footerHtml += `</div>`;
+    
+    footer.innerHTML = footerHtml;
 };
 
 window.abrirForumTurmaProf = function(turmaId, turmaNome) {
