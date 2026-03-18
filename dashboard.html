@@ -469,8 +469,13 @@
                 </div>
                 <div class="section-title">Equipes</div>
                 <div class="dash-grid" id="equipesDetalheList"><p class="text-light">Nenhuma equipe.</p></div>
-                <div class="section-title mt-4" style="margin-top:24px">Alunos nesta turma</div>
-                <div id="alunosTurmaList"></div>
+                <div class="section-title mt-4" style="margin-top:24px; cursor:pointer; display:flex; justify-content:space-between; align-items:center" onclick="const el = document.getElementById('alunosTurmaCollapse'); el.style.display = el.style.display === 'none' ? 'block' : 'none'; this.querySelector('.fa-chevron-down').style.transform = el.style.display === 'none' ? 'rotate(-90deg)' : 'rotate(0deg)';">
+                    <span><i class="fa-solid fa-users" style="color:var(--primary)"></i> Alunos nesta turma</span>
+                    <i class="fa-solid fa-chevron-down" style="transition:transform 0.3s"></i>
+                </div>
+                <div id="alunosTurmaCollapse">
+                    <div id="alunosTurmaList"></div>
+                </div>
             </div>
         </div>
 
@@ -1519,8 +1524,20 @@ async function loadTurmasProf() {
 
 window.verTurma = async function(turmaId, nome) {
     switchView('turmas','Gerenciar Turmas','nav-turmas');
-    document.getElementById('turmaDetalheNome').innerHTML = `${nome} <button class="btn btn-primary" style="margin-left:15px; font-size:0.8rem; padding:5px 12px; vertical-align:middle" onclick="window.abrirForumTurmaProf('${turmaId}', '${nome.replace(/'/g, "\\'")}')"><i class="fa-solid fa-comments"></i> Acessar Fórum da Turma</button>`;
+    document.getElementById('turmaDetalheNome').innerHTML = `${nome} 
+        <button class="btn" style="margin-left:10px; font-size:0.8rem; padding:4px 8px; background:#fff; border:1px solid #ddd; color:#555; vertical-align:middle" onclick="window.editarNomeTurma('${turmaId}', '${nome.replace(/'/g, "\\'")}')" title="Editar Nome da Turma"><i class="fa-solid fa-pen"></i></button>
+        <button class="btn btn-primary" style="margin-left:10px; font-size:0.8rem; padding:5px 12px; vertical-align:middle" onclick="window.abrirForumTurmaProf('${turmaId}', '${nome.replace(/'/g, "\\'")}')"><i class="fa-solid fa-comments"></i> Acessar Fórum da Turma</button>`;
     document.getElementById('turmaDetalheView').style.display = 'block';
+
+    window.editarNomeTurma = async function(tId, nomeAtual) {
+        const novoNome = prompt('Digite o novo nome para a turma:', nomeAtual);
+        if (!novoNome || novoNome.trim() === '' || novoNome === nomeAtual) return;
+        try {
+            await updateDoc(doc(db, 'turmas', tId), { nome: novoNome.trim() });
+            loadTurmasProf();
+            verTurma(tId, novoNome.trim());
+        } catch(e) { console.error(e); alert('Erro ao atualizar nome.'); }
+    };
 
     // alunos
     const aSnaps = await getDocs(query(collection(db,'users'), where('turmaId','==',turmaId)));
@@ -1589,7 +1606,13 @@ window.verTurma = async function(turmaId, nome) {
             const podeAprovar  = eqLiberado < TCC_STEPS.length - 1;
             const podeReverter = eqLiberado > 0;
 
-            const progBar = `<div style="margin:10px 0 4px;background:#f0f2f5;border-radius:20px;height:6px;overflow:hidden"><div style="width:${Math.round(((eqStep+1)/TCC_STEPS.length)*100)}%;background:linear-gradient(90deg,var(--primary),var(--tertiary));height:100%;border-radius:20px"></div></div><div style="font-size:.72rem;color:var(--text-light);margin-bottom:8px">Em: <strong>${TCC_STEPS[eqStep]}</strong> | Liberado ate: <strong>${TCC_STEPS[eqLiberado]}</strong></div>`;
+            const progBar = `<div style="cursor:pointer; padding:6px; border-radius:8px; transition:background 0.2s" onmouseover="this.style.background='#f0f2f5'" onmouseout="this.style.background='transparent'" onclick="window.abrirAvaliacaoTcc('${eq.id}','${turmaId}','${nome.replace(/'/g,"\\'")}')">
+                <div style="margin:4px 0;background:#e2e6ea;border-radius:20px;height:6px;overflow:hidden"><div style="width:${Math.round(((eqStep+1)/TCC_STEPS.length)*100)}%;background:linear-gradient(90deg,var(--primary),var(--tertiary));height:100%;border-radius:20px"></div></div>
+                <div style="font-size:.75rem;color:var(--text-light);margin-bottom:4px;display:flex;justify-content:space-between">
+                    <span>Em elaboração: <strong>${TCC_STEPS[eqStep]}</strong></span>
+                    <span>Progresso Liberado até: <strong>${TCC_STEPS[eqLiberado]}</strong> <i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+                </div>
+            </div>`;
 
             const approvalBtns = `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
                 <button class="btn" style="background:linear-gradient(135deg,#0984e3,#74b9ff);color:white;flex:1;font-size:.8rem;padding:7px;border:none" onclick="window.abrirAvaliacaoTcc('${eq.id}','${turmaId}','${nome.replace(/'/g,"\\'")}')">
