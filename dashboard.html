@@ -1229,13 +1229,40 @@ async function loadMinhaTurmaContent() {
     const tSnap = await getDoc(doc(db,'turmas',ME.turmaId));
     const t = tSnap.data();
     const el = document.getElementById('minhasTurmasContent');
+    
+    // Buscar colegas de turma
+    const aSnaps = await getDocs(query(collection(db,'users'), where('turmaId','==',ME.turmaId), where('role','==','aluno')));
+    
+    let colegasHtml = '<div class="dash-grid" style="grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:15px; margin-top:20px;">';
+    let countColegas = 0;
+    aSnaps.forEach(d => {
+        const u = d.data();
+        if (u.uid === ME.uid) return; // pular o proprio usuario
+        countColegas++;
+        colegasHtml += `
+            <div class="dash-card" style="display:flex; align-items:center; gap:12px; padding:15px">
+                <div style="width:40px;height:40px;border-radius:50%;background:var(--tertiary);color:white;display:flex;align-items:center;justify-content:center;font-weight:bold;flex-shrink:0">${u.name.charAt(0).toUpperCase()}</div>
+                <div style="flex:1;overflow:hidden">
+                    <strong style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${u.name}">${u.name}</strong>
+                    <span style="font-size:0.8rem;color:var(--text-light)">Etapa: ${TCC_STEPS[u.tccStep||0]}</span>
+                </div>
+            </div>`;
+    });
+    colegasHtml += '</div>';
+    if (countColegas === 0) colegasHtml = '<p class="text-light" style="margin-top:20px"><i class="fa-solid fa-ghost"></i> Você é o único aluno nesta turma até o momento.</p>';
+
     el.innerHTML = `
         <div class="dash-card" style="margin-bottom:20px">
-            <h2 style="color:var(--primary)">${t.nome}</h2>
-            <p style="color:var(--text-light);margin-top:4px">Código: <strong>${t.code}</strong></p>
+            <h2 style="color:var(--primary)"><i class="fa-solid fa-chalkboard-user"></i> ${t.nome}</h2>
+            <p style="color:var(--text-light);margin-top:4px">Código da Turma: <strong>${t.code}</strong></p>
         </div>
-        <div class="section-title"><i class="fa-solid fa-road" style="color:var(--primary)"></i> Seu Progresso no TCC</div>
-        <div id="turmaProgressTrack" class="progress-track"></div>`;
+        
+        <div class="section-title" style="margin-top:30px"><i class="fa-solid fa-users" style="color:var(--tertiary)"></i> Seus Colegas de Turma</div>
+        ${colegasHtml}
+        
+        <div class="section-title" style="margin-top:30px"><i class="fa-solid fa-road" style="color:var(--primary)"></i> Seu Progresso no TCC</div>
+        <div id="turmaProgressTrack" class="progress-track" style="margin-bottom:20px"></div>`;
+        
     renderProgressIn('turmaProgressTrack', ME.tccStep||0);
 }
 function renderProgressIn(id, currentStep) {
@@ -1282,15 +1309,26 @@ function addAIMessage(text, sender, specificId = null) {
 function speakAI(text) {
     if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
+        
+        // Remove ANY markdown or special characters that cause the AI voice to pause unnaturally
+        const cleanText = text.replace(/[*_#`~\[\]>]/g, '').replace(/\n/g, ' ').trim();
+        
+        const utterance = new SpeechSynthesisUtterance(cleanText);
         utterance.lang = 'pt-BR';
-        utterance.rate = 1.05;
+        utterance.rate = 1.15; // Slightly faster for a more fluid, conversational Alexa-style feel
+        utterance.pitch = 1.0; 
         
         let voices = window.speechSynthesis.getVoices();
         if (voices.length > 0) {
             let ptVoices = voices.filter(v => v.lang.includes('pt-BR') || v.lang.includes('pt_BR'));
             if (ptVoices.length > 0) {
-                let bestVoice = ptVoices.find(v => v.name.includes('Google') || v.name.includes('Microsoft') || v.name.includes('Natural')) || ptVoices[0];
+                // Priority: Francisca (Microsoft Natural Online), Antonio, or Google pt-BR
+                let bestVoice = ptVoices.find(v => 
+                    v.name.includes('Francisca') || 
+                    v.name.includes('Antonio') || 
+                    v.name.includes('Google português do Brasil') || 
+                    v.name.includes('Natural')
+                ) || ptVoices[0];
                 utterance.voice = bestVoice;
             }
         }
@@ -1339,8 +1377,7 @@ async function callGeminiAPI(question) {
         addAIMessage(formattedAnswer, 'ai');
         
         // Remove markdown chars for speech
-        let cleanTextForSpeech = answerText.replace(/\*/g, '').replace(/#/g, '');
-        speakAI(cleanTextForSpeech);
+        speakAI(answerText); // speech synthesis sanitization is now done completely inside speakAI()
 
     } catch (error) {
         console.error('Gemini API Error:', error);
