@@ -235,14 +235,31 @@
             <!-- Aluno sem turma -->
             <div id="panel-sem-turma" style="display:none">
                 <div class="waiting-screen">
-                    <div class="big-icon">⏳</div>
-                    <h2 style="color:var(--primary);margin-bottom:10px">Aguardando sua Turma</h2>
-                    <p style="color:var(--text-light);line-height:1.7;margin-bottom:25px">
-                        Seu cadastro foi realizado com sucesso!<br>
-                        Agora aguarde seu <strong>Professor</strong> te inserir em uma turma.<br>
-                        Você será notificado assim que isso acontecer.
-                    </p>
-                    <div style="background:#f0f2f5;border-radius:14px;padding:15px;font-size:.85rem;color:#666">
+                    <div class="big-icon">🎓</div>
+                    <h2 style="color:var(--primary);margin-bottom:10px">Encontre sua Turma</h2>
+                    
+                    <div id="alunoSelectTurmaArea">
+                        <p style="color:var(--text-light);line-height:1.7;margin-bottom:25px">
+                            Seu cadastro foi realizado com sucesso!<br>
+                            Para começar a usar a plataforma, selecione a sua turma abaixo e solicite a entrada para que o professor aprove.
+                        </p>
+                        <select id="turmaSolicitarSelect" style="width:100%;max-width:300px;padding:12px;border-radius:10px;border:1px solid #ddd;font-family:'Inter',sans-serif;font-size:1rem;margin-bottom:15px;appearance:menulist">
+                            <option value="">Carregando turmas disponíveis...</option>
+                        </select>
+                        <br>
+                        <button class="btn btn-primary" onclick="window.solicitarEntradaTurma()" style="padding:12px 24px;font-size:1rem;width:100%;max-width:300px"><i class="fa-solid fa-paper-plane"></i> Solicitar Entrada</button>
+                    </div>
+
+                    <div id="alunoAguardandoArea" style="display:none">
+                        <div class="big-icon" style="font-size:3rem;margin:20px 0;animation:pulse-online 2s infinite">⏳</div>
+                        <h3 style="color:#f39c12">Solicitação Pendente</h3>
+                        <p style="color:var(--text-light);line-height:1.7;margin-bottom:25px;margin-top:10px">
+                            Você solicitou entrada na turma <strong><span id="nomeTurmaSolicitada">...</span></strong>.<br>
+                            Aguarde o professor aprovar o seu acesso.
+                        </p>
+                    </div>
+
+                    <div style="background:#f0f2f5;border-radius:14px;padding:15px;font-size:.85rem;color:#666;margin-top:30px">
                         <i class="fa-solid fa-circle-info"></i> Enquanto aguarda, você já pode visitar o <strong>Fórum Geral</strong> e interagir com a comunidade!
                     </div>
                 </div>
@@ -459,6 +476,11 @@
 
         <!-- ===== ALUNOS (PROFESSOR) ===== -->
         <div id="view-alunos" class="view-container">
+            <div id="solicitacoesAlunosView" style="display:none;margin-bottom:30px">
+                <div class="section-title" style="color:#e17055"><i class="fa-solid fa-bell"></i> Solicitações Pendentes</div>
+                <div id="solicitacoesAlunosList"></div>
+            </div>
+            
             <div style="margin-bottom:20px">
                 <input type="search" id="searchAluno" placeholder="🔍 Buscar aluno por nome ou e-mail..." style="width:100%;max-width:420px;padding:10px 16px;border-radius:30px;border:1px solid #ddd;font-size:.9rem;box-sizing:border-box">
             </div>
@@ -767,10 +789,40 @@ function renderProgress(currentStep) {
 }
 
 // ── ALUNO HOME ──
+window.solicitarEntradaTurma = async function() {
+    const tId = document.getElementById('turmaSolicitarSelect').value;
+    if(!tId) { alert('Por favor, selecione uma turma.'); return; }
+    await updateDoc(doc(db, 'users', ME.uid), { turmaIdSolicitada: tId, status: 'pendente' });
+    ME.turmaIdSolicitada = tId;
+    ME.status = 'pendente';
+    loadAlunoHome();
+};
+
 async function loadAlunoHome() {
     const turmaId = ME.turmaId;
     if (!turmaId) {
         document.getElementById('panel-sem-turma').style.display = 'block';
+        if (ME.status === 'pendente' && ME.turmaIdSolicitada) {
+            document.getElementById('alunoSelectTurmaArea').style.display = 'none';
+            document.getElementById('alunoAguardandoArea').style.display = 'block';
+            let tNome = 'Desconhecida';
+            try {
+                const tSnap = await getDoc(doc(db, 'turmas', ME.turmaIdSolicitada));
+                if(tSnap.exists()) tNome = tSnap.data().nome;
+            } catch(e) {}
+            document.getElementById('nomeTurmaSolicitada').innerText = tNome;
+        } else {
+            document.getElementById('alunoSelectTurmaArea').style.display = 'block';
+            document.getElementById('alunoAguardandoArea').style.display = 'none';
+            const tSnaps = await getDocs(collection(db, 'turmas'));
+            const sel = document.getElementById('turmaSolicitarSelect');
+            if(tSnaps.empty) {
+                sel.innerHTML = '<option value="">Nenhuma turma disponível ainda.</option>';
+            } else {
+                sel.innerHTML = '<option value="">Selecione a turma...</option>' + 
+                    tSnaps.docs.map(d => `<option value="${d.id}">${d.data().nome} (${d.data().code})</option>`).join('');
+            }
+        }
         return;
     }
     document.getElementById('panel-aluno').style.display = 'block';
@@ -1929,18 +1981,59 @@ document.getElementById('btnCreateTurma2')?.addEventListener('click', createTurm
 // ── LOAD ALL ALUNOS (PROFESSOR) ──
 async function loadAllAlunos() {
     const snaps = await getDocs(query(collection(db,'users'), where('role','==','aluno')));
-    renderAlunosList(snaps.docs.map(d=>d.data()));
+    const todosAlunos = snaps.docs.map(d=>d.data());
+    
+    const turmaSnaps = await getDocs(query(collection(db,'turmas'), where('professorId','==',ME.uid)));
+    const minhasTurmas = turmaSnaps.docs.map(d=>({id:d.id,...d.data()}));
+    const minhasTurmasIds = minhasTurmas.map(t=>t.id);
+    
+    // Check solicitacoes
+    const pendentes = todosAlunos.filter(u => u.status === 'pendente' && u.turmaIdSolicitada && minhasTurmasIds.includes(u.turmaIdSolicitada));
+    const solArea = document.getElementById('solicitacoesAlunosView');
+    const solList = document.getElementById('solicitacoesAlunosList');
+    
+    if (pendentes.length > 0) {
+        solArea.style.display = 'block';
+        solList.innerHTML = pendentes.map(u => {
+            const tNome = minhasTurmas.find(t=>t.id===u.turmaIdSolicitada)?.nome || 'Turma Desconhecida';
+            return `<div class="dash-card" style="border-left:4px solid #e17055;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;margin-bottom:10px;flex-wrap:wrap;gap:10px">
+                <div>
+                    <strong>${u.name}</strong> <span style="font-size:0.8rem;color:var(--text-light)">(${u.email})</span><br>
+                    <span style="font-size:0.85rem">Solicitou entrada na turma: <strong>${tNome}</strong></span>
+                </div>
+                <div style="display:flex;gap:10px">
+                    <button class="btn btn-primary" style="background:#00b894;border:none;padding:6px 14px;font-size:0.8rem" onclick="window.aprovarSolicitacaoAluno('${u.uid}','${u.turmaIdSolicitada}')"><i class="fa-solid fa-check"></i> Aprovar</button>
+                    <button class="btn" style="background:#ff7675;color:white;border:none;padding:6px 14px;font-size:0.8rem" onclick="window.recusarSolicitacaoAluno('${u.uid}')"><i class="fa-solid fa-xmark"></i> Recusar</button>
+                </div>
+            </div>`;
+        }).join('');
+    } else {
+        solArea.style.display = 'none';
+        solList.innerHTML = '';
+    }
+
+    renderAlunosList(todosAlunos, minhasTurmas);
 
     document.getElementById('searchAluno')?.addEventListener('input', function() {
         const q = this.value.toLowerCase();
-        const filtered = snaps.docs.map(d=>d.data()).filter(u => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q));
-        renderAlunosList(filtered);
+        const filtered = todosAlunos.filter(u => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q));
+        renderAlunosList(filtered, minhasTurmas);
     });
 }
 
-async function renderAlunosList(alunos) {
-    const turmaSnaps = await getDocs(query(collection(db,'turmas'), where('professorId','==',ME.uid)));
-    const minhasTurmas = turmaSnaps.docs.map(d=>({id:d.id,...d.data()}));
+window.aprovarSolicitacaoAluno = async function(uid, turmaId) {
+    await updateDoc(doc(db,'users',uid), { turmaId: turmaId, status: 'ativo', turmaIdSolicitada: null });
+    alert('Aluno aprovado e inserido na turma!');
+    loadAllAlunos();
+};
+
+window.recusarSolicitacaoAluno = async function(uid) {
+    if(!confirm('Tem certeza que deseja recusar a entrada deste aluno?')) return;
+    await updateDoc(doc(db,'users',uid), { status: 'ativo', turmaIdSolicitada: null });
+    loadAllAlunos();
+};
+
+async function renderAlunosList(alunos, minhasTurmas) {
 
     const el = document.getElementById('allAlunosList');
     if (!alunos.length) { el.innerHTML = '<div class="empty-state"><i class="fa-solid fa-users-slash"></i>Nenhum aluno encontrado.</div>'; return; }
