@@ -2476,7 +2476,9 @@ const ENTREGA_ETAPAS = [
 ];
 
 window.carregarEntregas = async function() {
-    const turmaId = document.getElementById('entregasTurmaSelect').value;
+    const selectEl = document.getElementById('entregasTurmaSelect');
+    const turmaId = selectEl.value;
+    const turmaNome = turmaId ? selectEl.options[selectEl.selectedIndex].text : '';
     const el = document.getElementById('entregasManager');
     if (!turmaId) { el.innerHTML = '<p class="text-light">Selecione uma turma.</p>'; return; }
     el.innerHTML = '<p class="text-light">Carregando...</p>';
@@ -2519,7 +2521,12 @@ window.carregarEntregas = async function() {
         equipes.forEach(eq => {
             const eqCfg = cfg[`equipe_${eq.id}`] || {};
             html += `<div class="dash-card" style="padding:16px">
-                <h4 style="margin-bottom:12px"><i class="fa-solid fa-users" style="color:var(--tertiary)"></i> ${eq.nome}</h4>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px">
+                    <h4 style="margin:0"><i class="fa-solid fa-users" style="color:var(--tertiary)"></i> ${eq.nome}</h4>
+                    <button class="btn btn-primary" style="font-size:0.75rem;padding:6px 12px;background:var(--accent);color:#333;border:none;font-weight:bold" onclick="window.abrirAvaliacaoTcc('${eq.id}','${turmaId}','${turmaNome.replace(/'/g,"\\'")}')">
+                        <i class="fa-solid fa-magnifying-glass-chart"></i> Avaliar Projeto & Liberar Etapa
+                    </button>
+                </div>
                 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">`;
             ENTREGA_ETAPAS.forEach(e => {
                 const curStatus = eqCfg[e.key] || 'pendente';
