@@ -323,6 +323,7 @@
                 </div>
 
                 <div style="display:flex; gap:10px; align-items:center; background:white; padding:10px; border-radius:16px; border:1px solid #ddd; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+                    <button class="btn" id="btnMuteAI" style="background:#f0f2f5; color:#555; width:45px; height:45px; border-radius:50%; padding:0; flex-shrink:0; transition:all 0.3s; font-size:1.1rem; border:1px solid #ddd" title="Mutar/Desmutar Voz"><i id="btnMuteAIIcon" class="fa-solid fa-volume-high"></i></button>
                     <button class="btn" id="btnMicAI" style="background:#f0f2f5; color:#555; width:45px; height:45px; border-radius:50%; padding:0; flex-shrink:0; transition:all 0.3s; font-size:1.1rem; border:1px solid #ddd" title="Falar por Voz"><i class="fa-solid fa-microphone"></i></button>
                     <input type="text" id="inputAI" placeholder="Digite sua mensagem para o ConfiaNoPai AI..." style="flex:1; border:none; background:transparent; font-family:'Inter',sans-serif; font-size:1rem; outline:none; padding:10px;">
                     <button class="btn btn-primary" id="btnSendAI" style="border-radius:12px; padding:10px 22px; font-size:1rem"><i class="fa-solid fa-paper-plane"></i></button>
@@ -825,6 +826,10 @@ window.renderGuiaTCC = function(tipo) {
             </div>
         </div>
     `).join('');
+
+    setTimeout(() => {
+        contentArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 150);
 };
 
 window.renomearEquipe = async function() {
@@ -1283,6 +1288,16 @@ const inputAI = document.getElementById('inputAI');
 const btnSendAI = document.getElementById('btnSendAI');
 const btnMicAI = document.getElementById('btnMicAI');
 
+let isAIVoiceMuted = false;
+const btnMuteAI = document.getElementById('btnMuteAI');
+if (btnMuteAI) {
+    btnMuteAI.addEventListener('click', () => {
+        isAIVoiceMuted = !isAIVoiceMuted;
+        document.getElementById('btnMuteAIIcon').className = isAIVoiceMuted ? 'fa-solid fa-volume-xmark' : 'fa-solid fa-volume-high';
+        if (isAIVoiceMuted && 'speechSynthesis' in window) window.speechSynthesis.cancel();
+    });
+}
+
 function addAIMessage(text, sender, specificId = null) {
     if(!aiChatBox) return;
     const isMe = sender === 'me';
@@ -1307,27 +1322,28 @@ function addAIMessage(text, sender, specificId = null) {
 }
 
 function speakAI(text) {
+    if (isAIVoiceMuted) return;
     if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         
         // Remove ANY markdown or special characters that cause the AI voice to pause unnaturally
-        const cleanText = text.replace(/[*_#`~\[\]>]/g, '').replace(/\n/g, ' ').trim();
+        // Também removemos pontos e vírgulas para dar mais fluidez e menos pausa "robótica"
+        const cleanText = text.replace(/[*_#`~\[\]>]/g, '').replace(/\n/g, ' ').replace(/[:;-]/g, ',').trim();
         
         const utterance = new SpeechSynthesisUtterance(cleanText);
         utterance.lang = 'pt-BR';
-        utterance.rate = 1.15; // Slightly faster for a more fluid, conversational Alexa-style feel
-        utterance.pitch = 1.0; 
+        utterance.rate = 1.25; // Mais fluido
+        utterance.pitch = 0.9; // Tom um pouco mais grave para voz masculina
         
         let voices = window.speechSynthesis.getVoices();
         if (voices.length > 0) {
             let ptVoices = voices.filter(v => v.lang.includes('pt-BR') || v.lang.includes('pt_BR'));
             if (ptVoices.length > 0) {
-                // Priority: Francisca (Microsoft Natural Online), Antonio, or Google pt-BR
+                // Priority: Antonio, Daniel, ou Microsoft pt-BR (geralmente masculinas)
                 let bestVoice = ptVoices.find(v => 
-                    v.name.includes('Francisca') || 
                     v.name.includes('Antonio') || 
-                    v.name.includes('Google português do Brasil') || 
-                    v.name.includes('Natural')
+                    v.name.includes('Daniel') || 
+                    v.name.includes('Google português do Brasil')
                 ) || ptVoices[0];
                 utterance.voice = bestVoice;
             }
