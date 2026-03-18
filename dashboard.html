@@ -286,7 +286,11 @@
                     <button class="btn btn-primary" onclick="renderGuiaTCC('monografia')" style="padding:15px; font-size:1rem; background:linear-gradient(135deg,#00b894,#55efc4); border:none; text-align:left"><i class="fa-solid fa-book"></i> Monografia Tradicional</button>
                     <button class="btn btn-primary" onclick="renderGuiaTCC('negocios')" style="padding:15px; font-size:1rem; background:linear-gradient(135deg,#f39c12,#f1c40f); border:none; text-align:left"><i class="fa-solid fa-briefcase"></i> Plano de Negócios</button>
                     <button class="btn btn-primary" onclick="renderGuiaTCC('revisao')" style="padding:15px; font-size:1rem; background:linear-gradient(135deg,#3498db,#2980b9); border:none; text-align:left"><i class="fa-solid fa-magnifying-glass-plus"></i> Revisão Sistemática</button>
-                    <button class="btn btn-primary" onclick="renderGuiaTCC('projeto')" style="padding:15px; font-size:1rem; background:linear-gradient(135deg,#8e44ad,#9b59b6); border:none; text-align:left"><i class="fa-solid fa-ruler-combined"></i> Projeto Específico/Social</button>
+                    <button class="btn btn-primary" onclick="renderGuiaTCC('projeto')" style="padding:15px; font-size:1rem; background:linear-gradient(135deg,#8e44ad,#9b59b6); border:none; text-align:left"><i class="fa-solid fa-ruler-combined"></i> Projeto Específico/Engenharia</button>
+                    <button class="btn btn-primary" onclick="renderGuiaTCC('intervencao')" style="padding:15px; font-size:1rem; background:linear-gradient(135deg,#d35400,#e67e22); border:none; text-align:left"><i class="fa-solid fa-hand-holding-medical"></i> Projeto de Intervenção</button>
+                    <button class="btn btn-primary" onclick="renderGuiaTCC('relatorio')" style="padding:15px; font-size:1rem; background:linear-gradient(135deg,#7f8c8d,#95a5a6); border:none; text-align:left"><i class="fa-solid fa-clipboard-list"></i> Relatório Técnico/Estágio</button>
+                    <button class="btn btn-primary" onclick="renderGuiaTCC('estudo_caso')" style="padding:15px; font-size:1rem; background:linear-gradient(135deg,#16a085,#1abc9c); border:none; text-align:left"><i class="fa-solid fa-search-location"></i> Estudo de Caso Clínico/Prático</button>
+                    <button class="btn btn-primary" onclick="renderGuiaTCC('revisao_integradora')" style="padding:15px; font-size:1rem; background:linear-gradient(135deg,#c0392b,#e74c3c); border:none; text-align:left"><i class="fa-solid fa-swatchbook"></i> Revisão Integradora / Descritiva</button>
                 </div>
 
                 <div id="guiaContentArea" style="background:#f8f9fa; border:1px solid #eee; border-radius:16px; padding:25px; display:none;">
@@ -303,10 +307,9 @@
             <div class="dash-card mb-4" style="margin-bottom:24px; display:flex; flex-direction:column; height: 75vh;">
                 <h2 style="color:var(--primary); margin-bottom:5px"><i class="fa-solid fa-robot" style="margin-right:8px"></i> ConfiaNoPai AI</h2>
                 <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:15px">
-                    <p style="color:var(--text-light); line-height:1.6; margin:0; font-size: 0.9rem; max-width:80%">
+                    <p style="color:var(--text-light); line-height:1.6; margin:0; font-size: 0.9rem; max-width:100%">
                         Seu assistente virtual acadêmico inteligente alimentado pela IA do Google. Pergunte sobre metodologias, regras da ABNT, cronogramas ou qualquer dúvida sobre o desenvolvimento do seu TCC.
                     </p>
-                    <button class="btn" onclick="configurarChaveIA()" style="background:#eee; color:#555; padding:6px 14px; font-size:.8rem; border-radius:10px" title="Configurar Chave API"><i class="fa-solid fa-key"></i> API Key</button>
                 </div>
                 
                 <div id="aiChatBox" style="flex:1; overflow-y:auto; background:#f8f9fa; border:1px solid #eee; border-radius:16px; padding:20px; display:flex; flex-direction:column; gap:20px; margin-bottom:15px; scroll-behavior: smooth;">
@@ -639,7 +642,10 @@ function loadMinhaEquipeContent() {
         <div class="dash-card" style="margin-bottom:20px; position:relative;">
             <div class="dash-card-header">
                 <h3>${eq.nome} <button onclick="window.renomearEquipe()" style="background:none; border:none; color:var(--text-light); cursor:pointer; font-size:1rem; margin-left:10px" title="Renomear Equipe"><i class="fa-solid fa-pen"></i></button></h3>
-                <span class="tag-badge">${(eq.membros||[]).length}/5 membros</span>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <span class="tag-badge">${(eq.membros||[]).length}/5 membros</span>
+                    ${(eq.membros||[]).length < 5 ? `<button class="btn btn-primary" style="font-size:0.75rem; padding:4px 8px; border-radius:6px" onclick="window.modalAdicionarColega()" title="Adicionar Colega"><i class="fa-solid fa-user-plus"></i></button>` : ''}
+                </div>
             </div>
             <p><i class="fa-solid fa-book-open text-primary"></i> <strong>Tema:</strong> ${eq.tema || 'A definir'} <button onclick="window.renomearTemaEquipe()" style="background:none; border:none; color:var(--text-light); cursor:pointer; font-size:.9rem; margin-left:5px" title="Renomear Tema"><i class="fa-solid fa-pen"></i></button></p>
         </div>
@@ -651,6 +657,48 @@ function loadMinhaEquipeContent() {
             </div>`).join('')}
         </div>`;
 }
+
+window.modalAdicionarColega = async function() {
+    if (!ME._equipe || (ME._equipe.membros||[]).length >= 5) return;
+    const turmaId = ME.turmaId;
+    
+    // get all students in this class
+    const aSnaps = await getDocs(query(collection(db,'users'), where('turmaId','==',turmaId), where('role','==','aluno')));
+    const todosAlunos = aSnaps.docs.map(d=>d.data());
+    
+    // get all teams in this class to know who is already in a team
+    const eqSnaps = await getDocs(query(collection(db,'equipes'), where('turmaId','==',turmaId)));
+    let alunosEmEquipes = [];
+    eqSnaps.forEach(d => { alunosEmEquipes = alunosEmEquipes.concat(d.data().membros || []); });
+    
+    const alunosSemEquipe = todosAlunos.filter(a => !alunosEmEquipes.includes(a.uid));
+    
+    if (alunosSemEquipe.length === 0) {
+        alert("Todos os colegas desta turma já estão em alguma equipe!");
+        return;
+    }
+    
+    let msg = "Digite o NÚMERO do colega para adicionar:\n\n";
+    alunosSemEquipe.forEach((a, i) => {
+        msg += `${i+1}. ${a.name} (${a.email})\n`;
+    });
+    
+    const escolha = prompt(msg);
+    if (!escolha) return;
+    const idx = parseInt(escolha) - 1;
+    if (isNaN(idx) || idx < 0 || idx >= alunosSemEquipe.length) {
+        alert("Opção inválida.");
+        return;
+    }
+    
+    const colegaEscolhido = alunosSemEquipe[idx];
+    if (confirm(`Adicionar ${colegaEscolhido.name} à equipe?`)) {
+        const novosMembros = [...(ME._equipe.membros||[]), colegaEscolhido.uid];
+        await updateDoc(doc(db,'equipes',ME._equipe.id), { membros: novosMembros });
+        alert(`${colegaEscolhido.name} foi adicionado com sucesso!`);
+        window.location.reload();
+    }
+};
 
 // ── GUIA DO TCC INTERATIVO ──
 window.renderGuiaTCC = function(tipo) {
@@ -719,6 +767,46 @@ window.renderGuiaTCC = function(tipo) {
                 { icon: 'fa-cogs', title: '3. Memorial Descritivo e Detalhamentos', desc: '<ul><li>Escreva o Memorial com exatidão técnica brutal. O que compõe cada placa, pavimento ou rede elétrica.</li></ul>' },
                 { icon: 'fa-calculator', title: '4. Orçamento Paramétrico / Cronograma', desc: '<ul><li>Aplique tabelas como SINAPI elaborando custos unitários precisos de todo o hardware/material necessário.</li></ul>' },
                 { icon: 'fa-file-contract', title: '5. Pranchas Finais e Documentos de Entrega', desc: '<ul><li>Compile as vistas ortogonais finais, renderizações fotorrealistas ou manuais de uso e documente junto ao TCC normativo.</li></ul>' }
+            ]
+        },
+        'intervencao': {
+            title: '🤝 Guia: Projeto de Intervenção Padrão Capes',
+            steps: [
+                { icon: 'fa-eye', title: '1. Diagnóstico Situacional', desc: '<ul><li>Realize uma imersão no local (escola, comunidade, empresa) para mapear os sintomas do problema.</li><li>Descreva o cenário atual (antes da intervenção) com dados reais, estatísticas locais ou questionários diagnósticos.</li></ul>' },
+                { icon: 'fa-bullseye', title: '2. Desenho da Ação (Plano de Intervenção)', desc: '<ul><li>Defina claramente o que será feito (Ação), quem fará, quando, onde e com quais recursos (Metodologia 5W2H).</li><li>Estipule Metas tangíveis (ex: Reduzir em 20% o desperdício, capacitar 50 educadores).</li></ul>' },
+                { icon: 'fa-person-digging', title: '3. Execução Controlada', desc: '<ul><li>Implemente o plano e registre tudo. Tire fotos, colete listas de presença, anote intercorrências (o que deu errado).</li><li>A execução não precisa ser perfeita, mas o relatório dela precisa ser verdadeiro e crítico.</li></ul>' },
+                { icon: 'fa-magnifying-glass-chart', title: '4. Avaliação de Resultados', desc: '<ul><li>Compare o "Antes" (Diagnóstico) com o "Depois" (Pós-intervenção). Ocorreu melhoria? Os indicadores mudaram?</li><li>Aplique instrumentos de avaliação ou feedback para os participantes validarem o resultado empírico.</li></ul>' },
+                { icon: 'fa-file-signature', title: '5. Relato Crítico no TCC', desc: '<ul><li>Estruture textualmente: Contextualização do Problema, Fundamentação Teórica breve que ampara a técnica usada, Descrição do Passo-a-passo e Conclusão demonstrando ganhos sociais ou técnicos.</li></ul>' }
+            ]
+        },
+        'relatorio': {
+            title: '📋 Guia: Relatório Técnico / Estágio Supervisionado',
+            steps: [
+                { icon: 'fa-building-user', title: '1. Caracterização da Organização', desc: '<ul><li>Apresente a empresa onde o estágio ou técnica ocorreu. Qual o setor de atuação, tamanho, organograma departamental e missão/visão organizacional.</li></ul>' },
+                { icon: 'fa-list-check', title: '2. Descrição das Atividades Executadas', desc: '<ul><li>Faça uma listagem cronológica estruturada do seu dia-a-dia prático.</li><li>Não seja genérico ("Eu programava"). Diga quais ferramentas usou, para quais clientes e com quais graus de autonomia e dificuldade.</li></ul>' },
+                { icon: 'fa-brain', title: '3. Correlação Teórico-Prática', desc: '<ul><li>Esse é o elemento que transforma o relatório em TCC! Prove onde aquilo que você vivenciou na empresa (Prática) se encaixa no que você aprendeu no currículo da Faculdade (Teoria). Cite as disciplinas.</li></ul>' },
+                { icon: 'fa-triangle-exclamation', title: '4. Identificação de Problemas e Sugestões', desc: '<ul><li>Aponte disfunções nos processos da empresa em que você esteve.</li><li>Formule sugestões concretas e factíveis para melhorar a eficiência organizacional baseadas no seu olhar acadêmico.</li></ul>' },
+                { icon: 'fa-pen-to-square', title: '5. Considerações Finais e Anexos', desc: '<ul><li>Exponha conclusões sobre sua formação pessoal e profissional. Inserir em Anexos formulários, manuais criados, declarações de horas e fotos pertinentes se autorizadas.</li></ul>' }
+            ]
+        },
+        'estudo_caso': {
+            title: '⚕️/🔍 Guia: Estudo de Caso Clínico, Jurídico ou Organizacional',
+            steps: [
+                { icon: 'fa-user-nurse', title: '1. Escolha e Justificativa do Caso', desc: '<ul><li>Por que este caso específico merece ser estudado? Ele é raro? É exemplar? Define um precedente inédito?</li><li>Apresente a justificativa técnica para investigar em profundidade apenas 1 sujeito, 1 sentença ou 1 empresa.</li></ul>' },
+                { icon: 'fa-book-medical', title: '2. Anamnese / Histórico Detalhado', desc: '<ul><li>Escreva o "Histórico do Sujeito" (Paciente/Empresa/Processo). Idade, sintomas principais, queixa atual, balanço financeiro temporal, andamento processual prévio, etc. O contexto deve ser irretocável.</li></ul>' },
+                { icon: 'fa-stethoscope', title: '3. Conduta ou Decisão Tomada', desc: '<ul><li>Qual tratamento foi aplicado? Qual estratégia empresarial foi executada para salvar a concordata? Qual o veredito alcançado?</li><li>Explique o embasamento prático da tomada de decisão.</li></ul>' },
+                { icon: 'fa-comments', title: '4. Discussão à Luz da Literatura', desc: '<ul><li>Cruze o Caso com a Literatura: "O paciente respondeu X, o que concorda com o autor Silva (2020) que afirma Y em situações idênticas".</li><li>Aponte contrastes se a literatura previu algo que na prática não ocorreu.</li></ul>' },
+                { icon: 'fa-scale-balanced', title: '5. Conclusões e Recomendações', desc: '<ul><li>Sintetize as lições tiradas desse caso microscópico para toda a profissão macrossocial. Sugira condutas para profissionais que enfrentarem a mesma situação no futuro.</li></ul>' }
+            ]
+        },
+        'revisao_integradora': {
+            title: '📚 Guia: Revisão Integradora / Referencial Simples',
+            steps: [
+                { icon: 'fa-question-circle', title: '1. Selecionando o Eixo Temático', desc: '<ul><li>Qual é o recorte? (Ex: "Impactos do Burnout em Enfermeiros na UTI" ou "Tendências do Marketing Digital 3.0"). Define um rumo rigoroso.</li></ul>' },
+                { icon: 'fa-layer-group', title: '2. Coleta em Plataformas Acadêmicas', desc: '<ul><li>Ao contrário de buscar em blogs ou matérias normais, pesquise apenas em periódicos como Scielo, Redalyc, PubMed ou LILACS.</li><li>Selecione ao menos de 15 a 30 autores relevantes da última década.</li></ul>' },
+                { icon: 'fa-highlighter', title: '3. Fichamento de Citações Cruciais', desc: '<ul><li>Leia Resumos e Conclusões de cada artigo filtrado. Fiche (copie ou resuma) os argumentos mais fortes.</li><li>Agrupe as ideias de autores que "brigam" (têm opiniões divergentes) ou concordam fortemente sobre o eixo temático.</li></ul>' },
+                { icon: 'fa-pen-nib', title: '4. Costura do Texto (Diálogo de Autores)', desc: '<ul><li>Não faça uma colcha de retalhos ("O autor A disse isso. Logo abaixo, o autor B disse aquilo").</li><li>Crie fluidez conectando-os: "Enquanto Silva (2021) defende Y, o pesquisador Souza (2022) apresenta uma visão muito mais pessimista justificando que Z...".</li></ul>' },
+                { icon: 'fa-check', title: '5. Considerações do Aluno / Conclusão', desc: '<ul><li>Finalize seu TCC respondendo: Na visão macro do que todos os autores relataram, qual é o consenso final atual do tema escolhido? A ciência fechou questão?</li></ul>' }
             ]
         }
     };
@@ -1161,6 +1249,8 @@ function renderProgressIn(id, currentStep) {
 document.getElementById('nav-minha-turma')?.addEventListener('click', loadMinhaTurmaContent);
 
 // ── CONFIA NO PAI AI MODULE ──
+const GLOBAL_GEMINI_API_KEY = "SUA_CHAVE_API_AQUI"; // TODO: Cole sua chave do Google AI Studio aqui
+
 const aiChatBox = document.getElementById('aiChatBox');
 const inputAI = document.getElementById('inputAI');
 const btnSendAI = document.getElementById('btnSendAI');
@@ -1195,25 +1285,24 @@ function speakAI(text) {
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'pt-BR';
         utterance.rate = 1.05;
+        
+        let voices = window.speechSynthesis.getVoices();
+        if (voices.length > 0) {
+            let ptVoices = voices.filter(v => v.lang.includes('pt-BR') || v.lang.includes('pt_BR'));
+            if (ptVoices.length > 0) {
+                let bestVoice = ptVoices.find(v => v.name.includes('Google') || v.name.includes('Microsoft') || v.name.includes('Natural')) || ptVoices[0];
+                utterance.voice = bestVoice;
+            }
+        }
         window.speechSynthesis.speak(utterance);
     }
 }
 
-window.configurarChaveIA = function() {
-    const atual = localStorage.getItem('GEMINI_API_KEY') || '';
-    const nova = prompt('Para usar o poder completo (Google Gemini AI), insira sua Chave de API gerada no Google AI Studio (Deixe em branco para usar o modo simulado local):\n\n', atual);
-    if(nova !== null) {
-        localStorage.setItem('GEMINI_API_KEY', nova.trim());
-        if(nova.trim().length > 0) {
-            alert('Chave API salva no seu navegador! O ConfiaNoPaiAI agora está no Modo Inteligência Máxima.');
-        } else {
-            alert('Modo Simulado Local ativado (Chave API removida).');
-        }
-    }
-};
+// Force voice loading early
+if ('speechSynthesis' in window) window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
 
 async function callGeminiAPI(question) {
-    const apiKey = localStorage.getItem('GEMINI_API_KEY');
+    const apiKey = GLOBAL_GEMINI_API_KEY.includes('SUA_CHAVE') ? localStorage.getItem('GEMINI_API_KEY') : GLOBAL_GEMINI_API_KEY;
     
     // Add typing indicator
     const typingId = 'typing-' + Date.now();
@@ -1265,14 +1354,14 @@ async function callGeminiAPI(question) {
 }
 
 function simulateAIResponse(question) {
-    const apiKey = localStorage.getItem('GEMINI_API_KEY');
+    const apiKey = GLOBAL_GEMINI_API_KEY.includes('SUA_CHAVE') ? localStorage.getItem('GEMINI_API_KEY') : GLOBAL_GEMINI_API_KEY;
     if (apiKey && apiKey.length > 10) {
         callGeminiAPI(question);
         return;
     }
 
     const q = question.toLowerCase();
-    let answer = 'Confia no Pai! Estou aqui para te ajudar. Pode me focar na sua dúvida de formatação, prazos, banca ou código? <br><br>💡 <em>(Modo Local ativo. Clique no botão API Key acima para conectar a inteligência do Gemini).</em>';
+    let answer = 'Confia no Pai! Estou aqui para te ajudar. Pode me focar na sua dúvida de formatação, prazos, banca ou código? <br><br>💡 <em>(Modo Local ativo. A Chave API de IA ainda não foi configurada no sistema).</em>';
     
     if (q.includes('monografia') || q.includes('tcc') || q.includes('projeto')) {
         answer = 'O projeto perfeito foca muito na amarração do Problema de Pesquisa com a Metodologia. Escreva 3 objetivos específicos claros que eu te garanto sucesso, confia no pai!';
