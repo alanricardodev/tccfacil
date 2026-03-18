@@ -479,15 +479,29 @@
             }).catch(err => console.warn("Erro ao verificar perfil:", err));
         }
 
-        // Firebase Auth Init and Observer
-
+        // Auth State Observer — update UI when logged in
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const docSnap = await getDoc(doc(db, "users", user.uid)).catch(() => null);
-                // Only redirect if the profile already exists.
-                // If it doesn't exist, it means either getRedirectResult is showing the modal or manual signup is handling it.
+
                 if (docSnap && docSnap.exists()) {
-                    window.location.href = 'dashboard.html';
+                    // User is fully registered. Instead of forcing redirect, update the buttons
+                    // so they can read the guide and click "Ir para Dashboard" when ready.
+                    document.querySelectorAll('.btn-open-auth').forEach(btn => {
+                        // Change text depending on the button element type
+                        if (btn.tagName === 'DIV') {
+                            btn.innerHTML = '<i class="fa-solid fa-table-columns"></i><span>Dashboard</span>';
+                        } else {
+                            btn.innerHTML = 'Ir para o Dashboard <i class="fa-solid fa-arrow-right-to-bracket"></i>';
+                        }
+
+                        // Replace the old event listener by cloning or overriding click
+                        btn.onclick = (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            window.location.href = 'dashboard.html';
+                        };
+                    });
                 }
             }
         });
@@ -548,8 +562,9 @@
         // === UI Logic ===
         let isLoginMode = true;
 
+        // Note: The onclick will be overridden by onAuthStateChanged if the user is already logged in.
         document.querySelectorAll('.btn-open-auth').forEach(btn => {
-            btn.addEventListener('click', () => document.getElementById('authModal').classList.add('active'));
+            btn.onclick = () => document.getElementById('authModal').classList.add('active');
         });
         document.getElementById('closeAuthModal').addEventListener('click', () => {
             document.getElementById('authModal').classList.remove('active');

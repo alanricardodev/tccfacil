@@ -515,20 +515,42 @@ async function loadEquipesList(turmaId) {
     let html = '';
     snaps.forEach(d => {
         const eq = d.data();
-        const isMembro = eq.membros && eq.membros.includes(ME.uid);
+        const membros = eq.membros || [];
+        const isMembro = membros.includes(ME.uid);
+        const isCheia = membros.length >= 5;
+        
+        let actionHtml = '';
+        if (isMembro) {
+            actionHtml = '<span class="badge" style="background:#00b894;color:white">✅ Sua Equipe</span>';
+        } else if (ME._equipe) {
+            // Já está em outra equipe
+            actionHtml = ''; 
+        } else if (isCheia) {
+            actionHtml = '<span class="badge" style="background:#e17055;color:white">🚫 Lotada (5/5)</span>';
+        } else {
+            actionHtml = `<button class="btn btn-primary" style="font-size:.85rem;padding:7px 14px" onclick="entrarEquipe('${d.id}')"><i class="fa-solid fa-right-to-bracket"></i> Entrar</button>`;
+        }
+
         html += `<div class="dash-card">
             <div class="dash-card-header"><h3><i class="fa-solid fa-users text-primary"></i> ${eq.nome}</h3>
-            <span class="tag-badge">${eq.membros ? eq.membros.length : 0} membros</span></div>
+            <span class="tag-badge">${membros.length}/5 membros</span></div>
             <p style="font-size:.85rem;color:var(--text-light);margin-bottom:12px">Tema: ${eq.tema || 'A definir'}</p>
-            ${isMembro ? '<span class="badge" style="background:#00b894;color:white">✅ Sua Equipe</span>' :
-            `<button class="btn btn-primary" style="font-size:.85rem;padding:7px 14px" onclick="entrarEquipe('${d.id}')"><i class="fa-solid fa-right-to-bracket"></i> Entrar</button>`}
+            ${actionHtml}
         </div>`;
     });
     list.innerHTML = html;
 }
 
 window.entrarEquipe = async function(equipeId) {
-    await updateDoc(doc(db,'equipes',equipeId), { membros: [...((await getDoc(doc(db,'equipes',equipeId))).data().membros || []), ME.uid] });
+    const docRef = doc(db,'equipes',equipeId);
+    const snap = await getDoc(docRef);
+    if (!snap.exists()) return;
+    const membros = snap.data().membros || [];
+    if (membros.length >= 5) {
+        alert("Esta equipe já atingiu o limite máximo de 5 membros.");
+        return;
+    }
+    await updateDoc(docRef, { membros: [...membros, ME.uid] });
     location.reload();
 };
 
@@ -547,9 +569,12 @@ function loadMinhaEquipeContent() {
     const el = document.getElementById('minhaEquipeContent');
     if (!eq) { el.innerHTML = '<div class="empty-state"><i class="fa-solid fa-users-slash"></i>Você ainda não está em uma equipe.</div>'; return; }
     el.innerHTML = `
-        <div class="dash-card" style="margin-bottom:20px">
-            <div class="dash-card-header"><h3>${eq.nome}</h3><span class="tag-badge">${(eq.membros||[]).length} membros</span></div>
-            <p><i class="fa-solid fa-book-open text-primary"></i> <strong>Tema:</strong> ${eq.tema || 'A definir'}</p>
+        <div class="dash-card" style="margin-bottom:20px; position:relative;">
+            <div class="dash-card-header">
+                <h3>${eq.nome} <button onclick="window.renomearEquipe()" style="background:none; border:none; color:var(--text-light); cursor:pointer; font-size:1rem; margin-left:10px" title="Renomear Equipe"><i class="fa-solid fa-pen"></i></button></h3>
+                <span class="tag-badge">${(eq.membros||[]).length}/5 membros</span>
+            </div>
+            <p><i class="fa-solid fa-book-open text-primary"></i> <strong>Tema:</strong> ${eq.tema || 'A definir'} <button onclick="window.renomearTemaEquipe()" style="background:none; border:none; color:var(--text-light); cursor:pointer; font-size:.9rem; margin-left:5px" title="Renomear Tema"><i class="fa-solid fa-pen"></i></button></p>
         </div>
         <div class="section-title"><i class="fa-solid fa-road" style="color:var(--primary)"></i> Etapas do TCC</div>
         <div class="dash-grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr))">
@@ -559,6 +584,27 @@ function loadMinhaEquipeContent() {
             </div>`).join('')}
         </div>`;
 }
+
+window.renomearEquipe = async function() {
+    if (!ME._equipe) return;
+    const novoNome = prompt('Digite o novo nome da equipe:', ME._equipe.nome);
+    if (!novoNome || novoNome.trim() === '') return;
+    await updateDoc(doc(db,'equipes',ME._equipe.id), { nome: novoNome.trim() });
+    ME._equipe.nome = novoNome.trim();
+    loadMinhaEquipeContent();
+    loadEquipesList(ME.turmaId);
+    if(document.getElementById('minhaEquipeNome')) document.getElementById('minhaEquipeNome').innerText = novoNome.trim();
+};
+
+window.renomearTemaEquipe = async function() {
+    if (!ME._equipe) return;
+    const novoTema = prompt('Digite o novo tema do TCC:', ME._equipe.tema);
+    if (!novoTema || novoTema.trim() === '') return;
+    await updateDoc(doc(db,'equipes',ME._equipe.id), { tema: novoTema.trim() });
+    ME._equipe.tema = novoTema.trim();
+    loadMinhaEquipeContent();
+    if(document.getElementById('minhaEquipeTema')) document.getElementById('minhaEquipeTema').innerText = novoTema.trim();
+};
 
 window.setTCCStep = async function(step) {
     await updateDoc(doc(db,'users',ME.uid), { tccStep: step });
@@ -760,19 +806,55 @@ window.verTurma = async function(turmaId, nome) {
     document.getElementById('turmaDetalheNome').innerText = nome;
     document.getElementById('turmaDetalheView').style.display = 'block';
 
+    // alunos
+    const aSnaps = await getDocs(query(collection(db,'users'), where('turmaId','==',turmaId)));
+    const alunosTurma = aSnaps.docs.map(d => d.data());
+    
+    const aList = document.getElementById('alunosTurmaList');
+    aList.innerHTML = aSnaps.empty ? '<p class="text-light">Nenhum aluno nesta turma.</p>' :
+        alunosTurma.map(u => `<div class="student-item"><div class="s-info"><strong>${u.name}</strong><span>${u.email}</span></div><span class="tag-badge">${TCC_STEPS[u.tccStep||0]}</span></div>`).join('');
+
     // equipes
     const eqSnaps = await getDocs(query(collection(db,'equipes'), where('turmaId','==',turmaId)));
     const eqList = document.getElementById('equipesDetalheList');
     eqList.innerHTML = eqSnaps.empty ? '<p class="text-light">Nenhuma equipe.</p>' :
-        [...eqSnaps.docs].map(d => { const eq = d.data(); return `<div class="dash-card"><h3>${eq.nome}</h3><p style="font-size:.8rem;color:var(--text-light)">${(eq.membros||[]).length} membros • ${eq.tema||'Tema a definir'}</p></div>`; }).join('');
-
-    // alunos
-    const aSnaps = await getDocs(query(collection(db,'users'), where('turmaId','==',turmaId)));
-    const aList = document.getElementById('alunosTurmaList');
-    aList.innerHTML = aSnaps.empty ? '<p class="text-light">Nenhum aluno nesta turma.</p>' :
-        [...aSnaps.docs].map(d => { const u = d.data(); return `<div class="student-item"><div class="s-info"><strong>${u.name}</strong><span>${u.email}</span></div><span class="tag-badge">${TCC_STEPS[u.tccStep||0]}</span></div>`; }).join('');
+        [...eqSnaps.docs].map(d => { 
+            const eq = d.data(); 
+            const membrosHtml = (eq.membros||[]).map(uid => {
+                const aluno = alunosTurma.find(a => a.uid === uid);
+                const nomeAluno = aluno ? aluno.name : 'Desconhecido';
+                return `<li style="display:flex; justify-content:space-between; align-items:center; padding: 4px 0; border-bottom:1px dashed #eee">
+                    <span><i class="fa-solid fa-user" style="color:var(--text-light);margin-right:5px"></i> ${nomeAluno}</span>
+                    <button onclick="window.removerMembroEquipe('${d.id}', '${uid}', '${turmaId}', '${nome.replace(/'/g, "\\'")}')" style="background:none; border:none; color:#ff7675; cursor:pointer;" title="Remover Aluno da Equipe"><i class="fa-solid fa-xmark"></i></button>
+                </li>`;
+            }).join('');
+            
+            return `<div class="dash-card">
+                <h3>${eq.nome}</h3>
+                <p style="font-size:.8rem;color:var(--text-light)">${(eq.membros||[]).length}/5 membros • Tema: ${eq.tema||'A definir'}</p>
+                <ul style="font-size:.85rem;margin-top:10px;padding-left:0;list-style:none">${membrosHtml}</ul>
+                ${(eq.membros||[]).length === 0 ? `<button onclick="window.excluirEquipeVazia('${d.id}', '${turmaId}', '${nome.replace(/'/g, "\\'")}')" class="btn" style="background:#ff7675;color:white;font-size:0.75rem;padding:5px 10px;margin-top:10px;width:100%"><i class="fa-solid fa-trash"></i> Excluir Equipe Vazia</button>` : ''}
+            </div>`; 
+        }).join('');
 
     document.getElementById('turmaDetalheView').scrollIntoView({ behavior:'smooth' });
+};
+
+window.removerMembroEquipe = async function(equipeId, alunoUid, turmaId, turmaNome) {
+    if (!confirm('Deseja realmente remover este aluno da equipe? Ele ficará sem equipe.')) return;
+    const docRef = doc(db, 'equipes', equipeId);
+    const snap = await getDoc(docRef);
+    if (!snap.exists()) return;
+    const membros = snap.data().membros || [];
+    await updateDoc(docRef, { membros: membros.filter(m => m !== alunoUid) });
+    alert('Aluno removido.');
+    verTurma(turmaId, turmaNome);
+};
+
+window.excluirEquipeVazia = async function(equipeId, turmaId, turmaNome) {
+    if (!confirm('Excluir esta equipe permanentemente?')) return;
+    await deleteDoc(doc(db, 'equipes', equipeId));
+    verTurma(turmaId, turmaNome);
 };
 
 // ── CREATE TURMA ──
