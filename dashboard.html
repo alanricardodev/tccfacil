@@ -215,6 +215,9 @@
             <div class="nav-item" id="nav-temas-notas" style="display:none" onclick="switchView('temas-notas','Temas, Notas & Entregas','nav-temas-notas')">
                 <i class="fa-solid fa-clipboard-list"></i> Temas & Avaliação
             </div>
+            <div class="nav-item" id="nav-atas" style="display:none" onclick="switchView('atas','Gerar Atas de Defesa','nav-atas'); window.carregarTurmasAta()">
+                <i class="fa-solid fa-file-contract"></i> Atas de Defesa
+            </div>
 
             <div class="nav-section" id="section-admin" style="display:none">Administração</div>
             <div class="nav-item" id="nav-admin" style="display:none" onclick="switchView('admin','Painel Admin','nav-admin')">
@@ -609,19 +612,31 @@
                 </div>
             </div>
         </div>
-        <!-- ===== MODAL GERAR ATA ===== -->
-        <div id="modalAta" class="modal-overlay" style="display:none;align-items:center;justify-content:center;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;padding:20px">
-            <div style="background:white;width:100%;max-width:600px;max-height:90vh;border-radius:16px;display:flex;flex-direction:column;box-shadow:0 10px 30px rgba(0,0,0,0.2)">
-                <div style="padding:20px 24px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center">
-                    <h2 style="margin:0;color:var(--primary);font-size:1.3rem"><i class="fa-solid fa-file-contract"></i> Gerar Ata de Defesa</h2>
-                    <button onclick="document.getElementById('modalAta').style.display='none'" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#999">&times;</button>
+        <!-- ===== ATAS DE DEFESA ===== -->
+        <div id="view-atas" class="view-container" style="display:none">
+            <div class="dash-card" style="margin-bottom:20px">
+                <h3 style="color:var(--primary);margin-bottom:4px"><i class="fa-solid fa-file-contract"></i> Gerador de Atas de Defesa</h3>
+                <p style="color:var(--text-light);font-size:.88rem;margin-bottom:14px">Selecione a turma e a equipe para preencher os dados e gerar a Ata de Apresentação Final impressa.</p>
+                <div style="display:flex;gap:10px;flex-wrap:wrap">
+                    <select id="ataTurmaSelect" style="flex:1;min-width:200px;padding:8px 12px;border-radius:10px;border:1px solid #ddd;font-family:'Inter',sans-serif" onchange="window.carregarEquipesAta()">
+                        <option value="">Selecionar turma...</option>
+                    </select>
+                    <select id="ataEquipeSelect" style="flex:1;min-width:200px;padding:8px 12px;border-radius:10px;border:1px solid #ddd;font-family:'Inter',sans-serif" onchange="window.selecionarEquipeAta()">
+                        <option value="">Selecione primeiro a turma...</option>
+                    </select>
                 </div>
-                <div style="padding:24px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:12px">
-                    <p style="margin:-10px 0 10px;font-size:0.9rem;color:var(--text-light)">Preencha os dados abaixo para gerar a Ata Final de Apresentação da equipe.</p>
-                    
-                    <div style="display:flex;gap:10px;flex-wrap:wrap">
+            </div>
+
+            <div class="dash-card" id="ataFormContainer" style="display:none">
+                <div style="display:flex;flex-direction:column;gap:12px">
+                    <div>
+                        <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px;color:var(--primary)"><i class="fa-solid fa-users"></i> Estudantes Avaliados (Você pode editar e separar por vírgulas)</label>
+                        <textarea id="ataNomesAlunos" rows="2" style="width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-family:'Inter',sans-serif"></textarea>
+                    </div>
+
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
                         <div style="flex:1;min-width:120px">
-                            <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px">Data</label>
+                            <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px">Data da Apresentação</label>
                             <input type="date" id="ataData" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-family:'Inter',sans-serif">
                         </div>
                         <div style="flex:1;min-width:100px">
@@ -656,9 +671,8 @@
                         <input type="text" id="ataBanca2" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-family:'Inter',sans-serif" placeholder="Nome do examinador 2">
                     </div>
                 </div>
-                <div style="padding:16px 24px;border-top:1px solid #eee;display:flex;justify-content:flex-end;gap:10px">
-                    <button class="btn" style="background:#eee;color:#333" onclick="document.getElementById('modalAta').style.display='none'">Cancelar</button>
-                    <button class="btn btn-primary" id="btnGerarAtaPdf" onclick="window.gerarPdfAta()"><i class="fa-solid fa-file-pdf"></i> Baixar Ata</button>
+                <div style="margin-top:20px;padding-top:16px;border-top:1px solid #eee;display:flex;justify-content:flex-end">
+                    <button class="btn btn-primary" id="btnGerarAtaPdf" onclick="window.gerarPdfAta()"><i class="fa-solid fa-file-pdf"></i> Gerar e Baixar Ata</button>
                 </div>
             </div>
         </div>
@@ -824,7 +838,23 @@ function setupDashboard(data) {
         document.getElementById('section-admin').style.display = 'block';
         document.getElementById('nav-admin').style.display = 'flex';
         document.getElementById('panel-admin').style.display = 'block';
+        
+        // Show Professor menus
+        document.getElementById('section-prof').style.display = 'block';
+        document.getElementById('nav-turmas').style.display = 'flex';
+        document.getElementById('nav-alunos').style.display = 'flex';
+        document.getElementById('nav-temas-notas').style.display = 'flex';
+        document.getElementById('nav-atas').style.display = 'flex';
+
+        // Show Aluno menus (for test/support)
+        document.getElementById('section-aluno').style.display = 'block';
+        document.getElementById('nav-guia-tcc').style.display = 'flex';
+        document.getElementById('nav-ai').style.display = 'flex';
+
         loadPendingProfessors();
+        loadTurmasProf();
+        loadAllAlunos();
+        loadTurmaSelectsProf();
 
     } else if (data.role === 'professor' && data.status === 'pendente') {
         document.getElementById('panel-prof-pendente').style.display = 'block';
@@ -1558,7 +1588,7 @@ window.deletePost = async function(col, id) {
 
 // ── PROFESSOR TURMAS ──
 async function loadTurmasProf() {
-    const q = query(collection(db,'turmas'), where('professorId','==',ME.uid));
+    const q = ME.role === 'admin' ? collection(db,'turmas') : query(collection(db,'turmas'), where('professorId','==',ME.uid));
     const snaps = await getDocs(q);
     const list = document.getElementById('turmasListProf');
     const list2 = document.getElementById('turmasViewList');
@@ -2032,13 +2062,80 @@ window.abrirAvaliacaoTcc = async function(equipeId, turmaId, turmaNome) {
     footer.innerHTML = footerHtml;
 };
 
-window.abrirModalAta = async function(equipeId) {
-    const docRef = doc(db, 'equipes', equipeId);
-    const snap = await getDoc(docRef);
-    if (!snap.exists()) return;
-    ME._ataEquipe = snap.data();
+window.carregarTurmasAta = async function() {
+    const turmaSelect = document.getElementById('ataTurmaSelect');
+    if (!turmaSelect) return;
+    turmaSelect.innerHTML = '<option value="">Carregando turmas...</option>';
+    document.getElementById('ataEquipeSelect').innerHTML = '<option value="">Selecione primeiro a turma...</option>';
+    document.getElementById('ataFormContainer').style.display = 'none';
+
+    try {
+        const qTurmas = ME.role === 'admin' ? collection(db, 'turmas') : query(collection(db, 'turmas'), where('professores', 'array-contains', ME.uid));
+        const snap = await getDocs(qTurmas);
+        let html = '<option value="">Selecionar turma...</option>';
+        if (snap.empty) {
+            html = '<option value="">Nenhuma turma encontrada</option>';
+        } else {
+            snap.forEach(doc => {
+                html += `<option value="${doc.id}">${doc.data().nome}</option>`;
+            });
+        }
+        turmaSelect.innerHTML = html;
+        window._atasEquipesCache = [];
+    } catch (e) {
+        console.error(e);
+        turmaSelect.innerHTML = '<option value="">Erro ao carregar</option>';
+    }
+};
+
+window.carregarEquipesAta = async function() {
+    const turmaId = document.getElementById('ataTurmaSelect').value;
+    const equipeSelect = document.getElementById('ataEquipeSelect');
+    document.getElementById('ataFormContainer').style.display = 'none';
     
-    // Set some defaults
+    if (!turmaId) {
+        equipeSelect.innerHTML = '<option value="">Selecione primeiro a turma...</option>';
+        return;
+    }
+
+    equipeSelect.innerHTML = '<option value="">Carregando equipes...</option>';
+    try {
+        const qEq = query(collection(db, 'equipes'), where('turmaId', '==', turmaId));
+        const snap = await getDocs(qEq);
+        let html = '<option value="">Selecionar equipe...</option>';
+        window._atasEquipesCache = [];
+        
+        if (snap.empty) {
+            html = '<option value="">Nenhuma equipe nesta turma</option>';
+        } else {
+            snap.forEach(doc => {
+                const data = doc.data();
+                data.id = doc.id;
+                window._atasEquipesCache.push(data);
+                html += `<option value="${doc.id}">${data.nome}</option>`;
+            });
+        }
+        equipeSelect.innerHTML = html;
+    } catch (e) {
+        console.error(e);
+        equipeSelect.innerHTML = '<option value="">Erro ao carregar</option>';
+    }
+};
+
+window.selecionarEquipeAta = function() {
+    const equipeId = document.getElementById('ataEquipeSelect').value;
+    const formContainer = document.getElementById('ataFormContainer');
+    
+    if (!equipeId) {
+        formContainer.style.display = 'none';
+        return;
+    }
+
+    const eq = window._atasEquipesCache.find(e => e.id === equipeId);
+    if (!eq) return;
+    
+    ME._ataEquipe = eq;
+    
     const today = new Date();
     document.getElementById('ataData').value = today.toISOString().split('T')[0];
     document.getElementById('ataOrientador').value = ME.name;
@@ -2047,7 +2144,25 @@ window.abrirModalAta = async function(equipeId) {
     document.getElementById('ataBanca1').value = '';
     document.getElementById('ataBanca2').value = '';
     
-    document.getElementById('modalAta').style.display = 'flex';
+    const nomesArray = (eq.membros || []).map(m => m.nome.toUpperCase());
+    document.getElementById('ataNomesAlunos').value = nomesArray.join(', ');
+
+    formContainer.style.display = 'block';
+};
+
+window.abrirModalAta = async function(equipeId) {
+    document.getElementById('nav-atas').click();
+    const docRef = doc(db, 'equipes', equipeId);
+    const snap = await getDoc(docRef);
+    if (!snap.exists()) return;
+    const eq = snap.data();
+    
+    await window.carregarTurmasAta();
+    document.getElementById('ataTurmaSelect').value = eq.turmaId;
+    
+    await window.carregarEquipesAta();
+    document.getElementById('ataEquipeSelect').value = equipeId;
+    window.selecionarEquipeAta();
 };
 
 window.gerarPdfAta = function() {
@@ -2068,7 +2183,9 @@ window.gerarPdfAta = function() {
     const banca1 = document.getElementById('ataBanca1').value || '_______';
     const banca2 = document.getElementById('ataBanca2').value || '_______';
     
-    const equipeNomes = (eq.membros || []).map(m => m.nome.toUpperCase()).join(', ');
+    const editedNomesTxt = document.getElementById('ataNomesAlunos').value || '';
+    const equipeNomesArray = editedNomesTxt.split(',').map(n => n.trim()).filter(n => n.length > 0);
+    const equipeNomesFormatados = equipeNomesArray.join(', ');
     
     const container = document.createElement('div');
     container.style.width = '794px';
@@ -2096,7 +2213,7 @@ window.gerarPdfAta = function() {
         </div>
         
         <div style="text-indent:1.5cm;margin-bottom:40px">
-            Aos ${dia} dias do mês de ${mesExtenso} de ${ano}, às ${hora} horas, ocorreu a banca de apresentação do Trabalho de Conclusão de Curso, em sessão presencial, na sala ${sala} do Centro Estadual de Educação Profissional Formação e Eventos Isaías Alves. Na presença da Banca Examinadora, presidida pela professora orientadora ${orientador}, composta pelos examinadores: 1. ${banca1}, 2. ${banca2}. Os estudantes ${equipeNomes}, regularmente matriculadas no Curso Técnico de Nível médio de Informática apresentaram o Trabalho de Conclusão de Curso perante os avaliadores e, tendo em vista o atendimento dos critérios de avaliação, as recomendações e apresentação pública dão parecer favorável à APROVAÇÃO, com a nota ${nota} do referido trabalho, divulgando o resultado formalmente ao aluno e demais presentes e eu, na qualidade de Presidente da Banca, lavrei a presente ata que será assinada por mim, pelos demais examinadores e pelos alunos.
+            Aos ${dia} dias do mês de ${mesExtenso} de ${ano}, às ${hora} horas, ocorreu a banca de apresentação do Trabalho de Conclusão de Curso, em sessão presencial, na sala ${sala} do Centro Estadual de Educação Profissional Formação e Eventos Isaías Alves. Na presença da Banca Examinadora, presidida pela professora orientadora ${orientador}, composta pelos examinadores: 1. ${banca1}, 2. ${banca2}. Os estudantes ${equipeNomesFormatados}, regularmente matriculadas no Curso Técnico de Nível médio de Informática apresentaram o Trabalho de Conclusão de Curso perante os avaliadores e, tendo em vista o atendimento dos critérios de avaliação, as recomendações e apresentação pública dão parecer favorável à APROVAÇÃO, com a nota ${nota} do referido trabalho, divulgando o resultado formalmente ao aluno e demais presentes e eu, na qualidade de Presidente da Banca, lavrei a presente ata que será assinada por mim, pelos demais examinadores e pelos alunos.
         </div>
         
         <div style="text-align:center;font-weight:bold;margin-bottom:60px">ASSINATURAS</div>
@@ -2117,10 +2234,11 @@ window.gerarPdfAta = function() {
         </div>
     `;
     
-    (eq.membros || []).forEach(m => {
+    // Add signature lines based on the EDITED names
+    equipeNomesArray.forEach(nome => {
         html += `<div style="text-align:center;margin-bottom:40px">
             _________________________________________________________<br>
-            (${m.nome.toUpperCase()} - Aluno/a)
+            (${nome.toUpperCase()} - Aluno/a)
         </div>`;
     });
     
@@ -2128,7 +2246,7 @@ window.gerarPdfAta = function() {
     
     const opt = {
         margin: [0, 0, 0, 0],
-        filename: `ATA_DEFESA_${eq.nome.replace(/\\s+/g, '_')}.pdf`,
+        filename: `ATA_DEFESA_${eq.nome.replace(/\s+/g, '_')}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true, logging: false },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
@@ -2143,7 +2261,6 @@ window.gerarPdfAta = function() {
     html2pdf().set(opt).from(container).save().then(() => {
         btn.innerHTML = oldHtml;
         btn.disabled = false;
-        document.getElementById('modalAta').style.display = 'none';
         alert('Ata de apresentação gerada com sucesso!');
     }).catch(err => {
         console.error('PDF error:', err);
@@ -2226,7 +2343,8 @@ async function loadAllAlunos() {
     const snaps = await getDocs(query(collection(db,'users'), where('role','==','aluno')));
     const todosAlunos = snaps.docs.map(d=>d.data());
     
-    const turmaSnaps = await getDocs(query(collection(db,'turmas'), where('professorId','==',ME.uid)));
+    const qTurmas = ME.role === 'admin' ? collection(db,'turmas') : query(collection(db,'turmas'), where('professorId','==',ME.uid));
+    const turmaSnaps = await getDocs(qTurmas);
     const minhasTurmas = turmaSnaps.docs.map(d=>({id:d.id,...d.data()}));
     const minhasTurmasIds = minhasTurmas.map(t=>t.id);
     
@@ -2681,7 +2799,8 @@ window.tnTab = function(tab) {
 
 // Populate turma selects for the temas-notas view
 async function loadTurmaSelectsProf() {
-    const snaps = await getDocs(query(collection(db,'turmas'), where('professorId','==',ME.uid)));
+    const q = ME.role === 'admin' ? collection(db,'turmas') : query(collection(db,'turmas'), where('professorId','==',ME.uid));
+    const snaps = await getDocs(q);
     const minhasTurmas = snaps.docs.map(d => ({id:d.id,...d.data()}));
     ['temasTurmaSelect','notasTurmaSelect','entregasTurmaSelect'].forEach(selId => {
         const sel = document.getElementById(selId);
