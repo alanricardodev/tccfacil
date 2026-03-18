@@ -917,13 +917,25 @@ function loadEquipeChat() {
         chatBox.innerHTML = '';
         let docsArray = [];
         snap.forEach(d => docsArray.push(d));
-        docsArray.sort((a, b) => a.data().timestamp - b.data().timestamp); // Ordenação local asc
+        docsArray.sort((a, b) => {
+            const timeA = a.data().timestamp || 0;
+            const timeB = b.data().timestamp || 0;
+            return timeA - timeB;
+        }); // Ordenação local asc
         
         docsArray.forEach(d => {
             const m = d.data();
             const isMe = m.autorId === ME.uid;
+            
+            let date = m.dataString || '';
+            if (!date && m.timestamp) {
+                try { date = new Date(m.timestamp).toLocaleDateString('pt-BR', {hour:'2-digit',minute:'2-digit'}); } 
+                catch(e) { }
+            }
+            const dateStr = date ? ` - ${date}` : '';
+            
             chatBox.innerHTML += `<div class="chat-msg ${isMe?'me':''}">
-                <div class="chat-bubble"><strong style="font-size:.75rem;display:block;margin-bottom:3px;opacity:.7">${isMe?'Você':m.autorName} - ${m.dataString || ''}</strong>${m.texto}</div>
+                <div class="chat-bubble"><strong style="font-size:.75rem;display:block;margin-bottom:3px;opacity:.7">${isMe?'Você':(m.autorName||'Usuário')}${dateStr}</strong>${m.texto}</div>
             </div>`;
         });
         chatBox.scrollTop = chatBox.scrollHeight;
@@ -1111,12 +1123,25 @@ function renderForumPosts(snap, containerId, collectionName) {
     // Sort locally to prevent Firestore composite index requirements
     let docsArray = [];
     snap.forEach(d => docsArray.push(d));
-    docsArray.sort((a, b) => b.data().timestamp - a.data().timestamp);
+    docsArray.sort((a, b) => {
+        const timeA = a.data().timestamp || 0;
+        const timeB = b.data().timestamp || 0;
+        return timeB - timeA;
+    });
     
     docsArray.forEach(d => {
         const p = d.data();
-        // Usar dataString salva explicitamente se existir, senão formata do timestamp clássico
-        const date = p.dataString ? p.dataString : new Date(p.timestamp).toLocaleDateString('pt-BR', {day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+        let date = p.dataString || '';
+        if (!date) {
+            try {
+                if (p.timestamp) {
+                    date = new Date(p.timestamp).toLocaleDateString('pt-BR', {day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+                } else {
+                    date = 'Data desconhecida';
+                }
+            } catch(e) { date = 'Data inválida'; }
+        }
+        
         html += `<div class="forum-post ${p.pinned?'pinned':''}">
             ${p.pinned ? '<small style="color:#b7950b;font-weight:700"><i class="fa-solid fa-thumbtack"></i> Fixado</small>' : ''}
             <div class="forum-post-header">
