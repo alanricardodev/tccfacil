@@ -722,6 +722,66 @@
             font-size: .65rem;
             opacity: .7;
         }
+
+        /* ── FORUM REPLIES ── */
+        .forum-replies-thread {
+            margin-left: 32px;
+            padding-left: 16px;
+            border-left: 3px solid rgba(108, 92, 231, 0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .forum-reply-card {
+            background: #fafbff !important;
+            border: 1px solid rgba(108, 92, 231, 0.12) !important;
+            border-radius: 12px !important;
+            padding: 12px 16px !important;
+            margin-bottom: 0 !important;
+            box-shadow: 0 2px 8px rgba(108, 92, 231, 0.05) !important;
+        }
+
+        .forum-reply-btn {
+            background: none;
+            border: 1px solid rgba(108, 92, 231, 0.25);
+            color: var(--primary);
+            font-size: .75rem;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all .2s;
+            font-family: 'Inter', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .forum-reply-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(108, 92, 231, 0.25);
+        }
+
+        .forum-reply-compose {
+            animation: fadeSlideDown 0.2s ease;
+        }
+
+        @keyframes fadeSlideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 
@@ -1854,10 +1914,27 @@
         });
 
         // ── MINHA EQUIPE ──
-        function loadMinhaEquipeContent() {
+        async function loadMinhaEquipeContent() {
             const eq = ME._equipe;
             const el = document.getElementById('minhaEquipeContent');
             if (!eq) { el.innerHTML = '<div class="empty-state"><i class="fa-solid fa-users-slash"></i>Você ainda não está em uma equipe.</div>'; return; }
+
+            // Fetch delivery statuses from entregasConfig
+            let eqCfg = {};
+            try {
+                if (ME.turmaId) {
+                    const cfgSnap = await getDoc(doc(db, 'entregasConfig', ME.turmaId));
+                    if (cfgSnap.exists()) eqCfg = cfgSnap.data()[`equipe_${eq.id}`] || {};
+                }
+            } catch (e) { console.warn('Erro ao carregar status de entrega:', e); }
+
+            const statusInfo = {
+                pendente: { label: 'Pendente', color: '#b2bec3', icon: 'fa-clock' },
+                analise: { label: 'Em Análise', color: '#0984e3', icon: 'fa-magnifying-glass' },
+                entregue: { label: 'Entregue', color: '#00b894', icon: 'fa-check' },
+                aprovado: { label: 'Aprovado', color: '#6c5ce7', icon: 'fa-star' },
+                atrasado: { label: 'Atrasado', color: '#ff7675', icon: 'fa-triangle-exclamation' }
+            };
 
             const currentStep = eq.tccStep || 0;
             const liberado = eq.stepLiberado !== undefined ? eq.stepLiberado : 0; // prof approved up to this index
@@ -1882,6 +1959,12 @@
                 const emoji = isLocked ? '<span style="font-size:1.8rem;margin-bottom:8px;display:block;opacity:.35">🔒</span>'
                     : `<div style="font-size:1.8rem;margin-bottom:8px">${stepEmojis[i]}</div>`;
 
+                // Delivery status badge
+                const etapaKey = STEP_TO_ETAPA[i];
+                const curStatus = eqCfg[etapaKey] || 'pendente';
+                const si = statusInfo[curStatus] || statusInfo.pendente;
+                const deliveryBadge = `<div style="margin-top:8px;font-size:.65rem;font-weight:700;color:${si.color};display:flex;align-items:center;justify-content:center;gap:4px"><i class="fa-solid ${si.icon}"></i> ${si.label}</div>`;
+
                 const clickable = !isLocked && i <= liberado;
                 const cursorStyle = clickable ? 'pointer' : 'default';
                 const opacityStyle = isLocked ? 'opacity:.55;' : '';
@@ -1891,7 +1974,7 @@
             ${badge}
             ${emoji}
             <div style="font-weight:700">${s}</div>
-            ${isLocked ? '<div style="font-size:.72rem;color:#b2bec3;margin-top:4px">Aguarde aprovação</div>' : ''}
+            ${isLocked ? '<div style="font-size:.72rem;color:#b2bec3;margin-top:4px">Aguarde aprovação</div>' : deliveryBadge}
         </div>`;
             }).join('');
 
@@ -2338,52 +2421,142 @@
         };
         document.getElementById('btnPostForumTurma')?.addEventListener('click', window.postForumTurma);
 
-        // ── RENDER FORUM ──
+        // ── RENDER FORUM (threaded replies) ──
         function renderForumPosts(snap, containerId, collectionName) {
             const el = document.getElementById(containerId);
+            if (!el) return;
             if (snap.empty) { el.innerHTML = '<div class="empty-state"><i class="fa-solid fa-comments"></i>Nenhuma publicação ainda.</div>'; return; }
-            let html = '';
 
-            // Sort locally to prevent Firestore composite index requirements
             let docsArray = [];
-            snap.forEach(d => docsArray.push(d));
-            docsArray.sort((a, b) => {
-                const timeA = a.data().timestamp || 0;
-                const timeB = b.data().timestamp || 0;
-                return timeB - timeA;
-            });
+            snap.forEach(d => docsArray.push({ id: d.id, ...d.data() }));
 
-            docsArray.forEach(d => {
-                const p = d.data();
+            // Separate top-level posts from replies
+            const topPosts = docsArray.filter(p => !p.parentId).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            const repliesMap = {};
+            docsArray.filter(p => p.parentId).forEach(r => {
+                if (!repliesMap[r.parentId]) repliesMap[r.parentId] = [];
+                repliesMap[r.parentId].push(r);
+            });
+            // Sort replies oldest first so conversation reads top-down
+            Object.values(repliesMap).forEach(arr => arr.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0)));
+
+            function buildPostHtml(p, isReply = false) {
                 let date = p.dataString || '';
                 if (!date) {
-                    try {
-                        if (p.timestamp) {
-                            date = new Date(p.timestamp).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-                        } else {
-                            date = 'Data desconhecida';
-                        }
-                    } catch (e) { date = 'Data inválida'; }
+                    try { date = p.timestamp ? new Date(p.timestamp).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Data desconhecida'; }
+                    catch (e) { date = 'Data inválida'; }
                 }
 
-                html += `<div class="forum-post ${p.pinned ? 'pinned' : ''}">
-            ${p.pinned ? '<small style="color:#b7950b;font-weight:700"><i class="fa-solid fa-thumbtack"></i> Fixado</small>' : ''}
-            <div class="forum-post-header">
-                <div class="forum-avatar" style="overflow:hidden">
-                    ${p.avatarUrl ? `<img src="${p.avatarUrl}" style="width:100%;height:100%;object-fit:cover">` : (p.autorName || '?').charAt(0).toUpperCase()}
-                </div>
-                <div class="forum-meta"><strong>${p.autorName || 'Usuário'}</strong><span>${date}</span></div>
-                ${(ME.role === 'admin' || ME.role === 'professor') ? `<button class="btn" style="font-size:.75rem;padding:4px 10px;background:#eee;color:#555;margin-left:auto" onclick="pinPost('${collectionName}','${d.id}',${!p.pinned})">📌 ${p.pinned ? 'Desafixar' : 'Fixar'}</button>` : ''}
-                ${(ME.role === 'admin') ? `<button class="btn" style="font-size:.75rem;padding:4px 10px;background:#ff7675;color:white;margin-left:5px" onclick="deletePost('${collectionName}','${d.id}')" title="Excluir Postagem"><i class="fa-solid fa-trash"></i></button>` : ''}
-            </div>
-            <p class="forum-text">${p.texto.replace(/\n/g, '<br>')}</p>
-            <div class="forum-actions">
-                <button class="like-btn" onclick="likePost('${collectionName}','${d.id}',this)">❤️ ${p.likes || 0}</button>
-            </div>
-        </div>`;
+                const avatarHtml = p.avatarUrl
+                    ? `<img src="${p.avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+                    : (p.autorName || '?').charAt(0).toUpperCase();
+
+                // Reply quote banner (shown inside a reply)
+                const quoteBanner = isReply ? `<div style="border-left:3px solid var(--primary);padding:4px 10px;margin-bottom:8px;background:#f8f9fa;border-radius:0 6px 6px 0;font-size:.78rem;color:var(--text-light)"><i class="fa-solid fa-reply" style="transform:scaleX(-1);display:inline-block"></i> Respondendo a <strong>${p.replyToName || 'mensagem'}</strong></div>` : '';
+
+                const pinnedBar = (!isReply && p.pinned) ? '<small style="color:#b7950b;font-weight:700"><i class="fa-solid fa-thumbtack"></i> Fixado</small>' : '';
+
+                const adminBtns = `
+                    ${(ME.role === 'admin' || ME.role === 'professor') && !isReply ? `<button class="btn" style="font-size:.72rem;padding:3px 8px;background:#eee;color:#555;margin-left:auto" onclick="pinPost('${collectionName}','${p.id}',${!p.pinned})">📌 ${p.pinned ? 'Desafixar' : 'Fixar'}</button>` : ''}
+                    ${(ME.role === 'admin') ? `<button class="btn" style="font-size:.72rem;padding:3px 8px;background:#ff7675;color:white;margin-left:${isReply ? 'auto' : '5px'}" onclick="deletePost('${collectionName}','${p.id}')" title="Excluir"><i class="fa-solid fa-trash"></i></button>` : ''}`;
+
+                const replyBtn = `<button class="forum-reply-btn" onclick="window.toggleReplyBox('${collectionName}','${p.id}','${(p.autorName || '').replace(/'/g, "\\'")}')"><i class="fa-solid fa-reply"></i> Responder</button>`;
+
+                return `<div class="forum-post${isReply ? ' forum-reply-card' : ''}${(!isReply && p.pinned) ? ' pinned' : ''}" id="fpost-${p.id}">
+                    ${pinnedBar}
+                    ${quoteBanner}
+                    <div class="forum-post-header">
+                        <div class="forum-avatar" style="overflow:hidden;${isReply ? 'width:30px;height:30px;font-size:.75rem' : ''}">${avatarHtml}</div>
+                        <div class="forum-meta"><strong>${p.autorName || 'Usuário'}</strong><span>${date}</span></div>
+                        ${adminBtns}
+                    </div>
+                    <p class="forum-text">${p.texto.replace(/\n/g, '<br>')}</p>
+                    <div class="forum-actions">
+                        <button class="like-btn" onclick="likePost('${collectionName}','${p.id}',this)">❤️ ${p.likes || 0}</button>
+                        ${replyBtn}
+                    </div>
+                    <div class="forum-reply-compose" id="replybox-${p.id}" style="display:none">
+                        <div style="display:flex;gap:8px;align-items:flex-start;padding:10px;background:#f8f9fa;border-radius:10px;border:1px solid #e0e0e0;margin-top:8px">
+                            <div style="width:28px;height:28px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0;overflow:hidden">
+                                ${ME.avatarUrl ? `<img src="${ME.avatarUrl}" style="width:100%;height:100%;object-fit:cover">` : (ME.name || '?').charAt(0).toUpperCase()}
+                            </div>
+                            <div style="flex:1">
+                                <textarea id="replyinput-${p.id}" placeholder="Responder a ${p.autorName || 'este post'}..." style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid #ddd;font-family:'Inter',sans-serif;font-size:.88rem;resize:vertical;min-height:60px;box-sizing:border-box"></textarea>
+                                <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px">
+                                    <button class="btn" style="background:#eee;color:#555;font-size:.8rem;padding:5px 12px" onclick="window.toggleReplyBox('${collectionName}','${p.id}','${(p.autorName || '').replace(/'/g, "\\'")}')">Cancelar</button>
+                                    <button class="btn btn-primary" style="font-size:.8rem;padding:5px 14px" onclick="window.enviarResposta('${collectionName}','${p.id}','${(p.autorName || '').replace(/'/g, "\\'")}')"><i class="fa-solid fa-paper-plane"></i> Enviar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            let html = '';
+            topPosts.forEach(p => {
+                html += buildPostHtml(p, false);
+                const replies = repliesMap[p.id] || [];
+                if (replies.length > 0) {
+                    html += `<div class="forum-replies-thread">`;
+                    replies.forEach(r => { html += buildPostHtml(r, true); });
+                    html += `</div>`;
+                }
             });
             el.innerHTML = html;
         }
+
+        // Toggle the inline reply box
+        window.toggleReplyBox = function (collectionName, postId, autorName) {
+            const box = document.getElementById('replybox-' + postId);
+            if (!box) return;
+            const isOpen = box.style.display !== 'none';
+            // Close all open reply boxes first
+            document.querySelectorAll('.forum-reply-compose').forEach(b => b.style.display = 'none');
+            if (!isOpen) {
+                box.style.display = 'block';
+                const ta = document.getElementById('replyinput-' + postId);
+                if (ta) ta.focus();
+            }
+        };
+
+        // Send a reply to a specific post
+        window.enviarResposta = async function (collectionName, parentId, parentAutorName) {
+            const ta = document.getElementById('replyinput-' + parentId);
+            if (!ta) return;
+            const txt = ta.value.trim();
+            if (!txt) { alert('Escreva algo para responder!'); return; }
+
+            const btn = ta.parentElement.querySelector('button.btn-primary');
+            if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'; }
+
+            // Grab extra context fields (turmaId, equipeId) from existing posts if present
+            const parentEl = document.getElementById('fpost-' + parentId);
+            let extra = {};
+            // Try to get turmaId from ME
+            if (ME.turmaId) extra.turmaId = ME.turmaId;
+            if (ME._equipe) extra.equipeId = ME._equipe.id;
+
+            try {
+                await addDoc(collection(db, collectionName), {
+                    texto: txt,
+                    autorId: ME.uid,
+                    autorName: ME.name || 'Usuário',
+                    avatarUrl: ME.avatarUrl || '',
+                    parentId: parentId,
+                    replyToName: parentAutorName,
+                    timestamp: Date.now(),
+                    dataString: new Date().toLocaleString('pt-BR'),
+                    likes: 0,
+                    ...extra
+                });
+                ta.value = '';
+                document.getElementById('replybox-' + parentId).style.display = 'none';
+            } catch (err) {
+                console.error(err);
+                alert('Erro ao enviar resposta: ' + err.message);
+            }
+            if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar'; }
+        };
 
         window.likePost = async function (col, id, btn) {
             btn.classList.toggle('liked');
@@ -2535,6 +2708,9 @@
         };
 
         // ── APROVAÇÃO DE ETAPAS ──
+        // Maps TCC_STEPS index to ENTREGA_ETAPAS key
+        const STEP_TO_ETAPA = ['proposta', 'desenvolvimento', 'revisao', 'entrega', 'apresentacao'];
+
         window.aprovarEtapa = async function (equipeId, turmaId, turmaNome) {
             const docRef = doc(db, 'equipes', equipeId);
             const snap = await getDoc(docRef);
@@ -2544,6 +2720,13 @@
             const proxima = atual + 1;
             if (!confirm('Aprovar e liberar a etapa "' + TCC_STEPS[proxima] + '" para esta equipe?')) return;
             await updateDoc(docRef, { stepLiberado: proxima, feedbackDevolucao: null, feedbackDevolucaoEtapa: null });
+            // Auto-update entregasConfig: current step = 'aprovado', next step = 'pendente'
+            try {
+                const cfgUpdates = {};
+                cfgUpdates[`equipe_${equipeId}.${STEP_TO_ETAPA[atual]}`] = 'aprovado';
+                cfgUpdates[`equipe_${equipeId}.${STEP_TO_ETAPA[proxima]}`] = 'pendente';
+                await setDoc(doc(db, 'entregasConfig', turmaId), cfgUpdates, { merge: true });
+            } catch (e) { console.warn('Erro ao atualizar status automatico:', e); }
             alert('Etapa "' + TCC_STEPS[proxima] + '" liberada com sucesso!');
             verTurma(turmaId, turmaNome);
         };
@@ -2566,7 +2749,14 @@
                 feedbackDevolucao: motivo,
                 feedbackDevolucaoEtapa: anterior
             });
-            alert('Etapa revertida para "' + TCC_STEPS[anterior] + '".');
+            // Auto-update entregasConfig: reverted step = 'pendente'
+            try {
+                const cfgUpdates = {};
+                cfgUpdates[`equipe_${equipeId}.${STEP_TO_ETAPA[atual]}`] = 'pendente';
+                cfgUpdates[`equipe_${equipeId}.${STEP_TO_ETAPA[anterior]}`] = 'analise';
+                await setDoc(doc(db, 'entregasConfig', turmaId), cfgUpdates, { merge: true });
+            } catch (e) { console.warn('Erro ao atualizar status automatico:', e); }
+            alert('Etapa revertida para "' + TCC_STEPS[anterior] + '". Feedback enviado aos alunos.');
             verTurma(turmaId, turmaNome);
         };
 
@@ -2696,7 +2886,17 @@
                 ME._equipe.tccData[stepIndex] = newData;
 
                 await updateDoc(eqRef, mergeData);
-                alert('Informações salvas com sucesso!');
+
+                // Auto-update entregasConfig status to 'analise' when student submits step data
+                try {
+                    if (ME.turmaId && STEP_TO_ETAPA[stepIndex]) {
+                        const cfgUpdates = {};
+                        cfgUpdates[`equipe_${eq.id}.${STEP_TO_ETAPA[stepIndex]}`] = 'analise';
+                        await setDoc(doc(db, 'entregasConfig', ME.turmaId), cfgUpdates, { merge: true });
+                    }
+                } catch (e) { console.warn('Erro ao atualizar status de entrega:', e); }
+
+                alert('Informações salvas com sucesso! Status atualizado para "Em Análise".');
                 document.getElementById('modalTccForm').style.display = 'none';
                 loadMinhaEquipeContent();
             };
@@ -2867,12 +3067,15 @@
             footer.innerHTML = footerHtml;
         };
 
+        window._atasEquipesCache = []; // global init to prevent undefined errors
+
         window.carregarTurmasAta = async function () {
             const turmaSelect = document.getElementById('ataTurmaSelect');
             if (!turmaSelect) return;
             turmaSelect.innerHTML = '<option value="">Carregando turmas...</option>';
             document.getElementById('ataEquipeSelect').innerHTML = '<option value="">Selecione primeiro a turma...</option>';
             document.getElementById('ataFormContainer').style.display = 'none';
+            window._atasEquipesCache = [];
 
             try {
                 const qTurmas = ME.role === 'admin' ? collection(db, 'turmas') : query(collection(db, 'turmas'), where('professorId', '==', ME.uid));
@@ -2881,12 +3084,11 @@
                 if (snap.empty) {
                     html = '<option value="">Nenhuma turma encontrada</option>';
                 } else {
-                    snap.forEach(doc => {
-                        html += `<option value="${doc.id}">${doc.data().nome}</option>`;
+                    snap.forEach(d => {
+                        html += `<option value="${d.id}">${d.data().nome}</option>`;
                     });
                 }
                 turmaSelect.innerHTML = html;
-                window._atasEquipesCache = [];
             } catch (e) {
                 console.error(e);
                 turmaSelect.innerHTML = '<option value="">Erro ao carregar</option>';
@@ -2913,11 +3115,11 @@
                 if (snap.empty) {
                     html = '<option value="">Nenhuma equipe nesta turma</option>';
                 } else {
-                    snap.forEach(doc => {
-                        const data = doc.data();
-                        data.id = doc.id;
+                    snap.forEach(d => {
+                        const data = d.data();
+                        data.id = d.id;
                         window._atasEquipesCache.push(data);
-                        html += `<option value="${doc.id}">${data.nome}</option>`;
+                        html += `<option value="${d.id}">${data.nome}</option>`;
                     });
                 }
                 equipeSelect.innerHTML = html;
@@ -3767,6 +3969,7 @@
 
             const statusOpts = [
                 { v: 'pendente', l: '⏳ Pendente', color: '#b2bec3' },
+                { v: 'analise', l: '🔍 Em Análise', color: '#0984e3' },
                 { v: 'entregue', l: '✅ Entregue', color: '#00b894' },
                 { v: 'atrasado', l: '🚨 Atrasado', color: '#ff7675' },
                 { v: 'aprovado', l: '🌟 Aprovado', color: '#fdcb6e' }
