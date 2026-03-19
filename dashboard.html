@@ -2077,7 +2077,7 @@ window.carregarTurmasAta = async function() {
     document.getElementById('ataFormContainer').style.display = 'none';
 
     try {
-        const qTurmas = ME.role === 'admin' ? collection(db, 'turmas') : query(collection(db, 'turmas'), where('professores', 'array-contains', ME.uid));
+        const qTurmas = ME.role === 'admin' ? collection(db, 'turmas') : query(collection(db, 'turmas'), where('professorId', '==', ME.uid));
         const snap = await getDocs(qTurmas);
         let html = '<option value="">Selecionar turma...</option>';
         if (snap.empty) {
