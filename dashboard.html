@@ -864,6 +864,13 @@ function setupDashboard(data) {
         document.getElementById('nav-turmas').style.display = 'flex';
         document.getElementById('nav-alunos').style.display = 'flex';
         document.getElementById('nav-temas-notas').style.display = 'flex';
+        document.getElementById('nav-atas').style.display = 'flex';
+        
+        // Habilitar a IA e o Guia TCC que nasceram na aba do aluno
+        document.getElementById('section-aluno').style.display = 'block';
+        document.getElementById('nav-ai').style.display = 'flex';
+        document.getElementById('nav-guia-tcc').style.display = 'flex';
+        
         document.getElementById('panel-prof').style.display = 'block';
         loadTurmasProf();
         loadAllAlunos();
