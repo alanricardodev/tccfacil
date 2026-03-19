@@ -2166,7 +2166,11 @@ window.selecionarEquipeAta = async function() {
 };
 
 window.abrirModalAta = async function(equipeId) {
-    document.getElementById('nav-atas').click();
+    window.switchView('atas', 'Atas de Defesa', 'nav-atas');
+    
+    document.getElementById('ataTurmaSelect').innerHTML = '<option value="">Carregando...</option>';
+    document.getElementById('ataEquipeSelect').innerHTML = '<option value="">Carregando...</option>';
+    
     const docRef = doc(db, 'equipes', equipeId);
     const snap = await getDoc(docRef);
     if (!snap.exists()) return;
@@ -2177,6 +2181,7 @@ window.abrirModalAta = async function(equipeId) {
     
     await window.carregarEquipesAta();
     document.getElementById('ataEquipeSelect').value = equipeId;
+    
     window.selecionarEquipeAta();
 };
 
@@ -2273,11 +2278,19 @@ window.gerarPdfAta = function() {
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Gerando...';
     btn.disabled = true;
 
+    // Attach to DOM temporarily so html2canvas can measure computed styles
+    container.style.position = 'absolute';
+    container.style.left = '-9999px';
+    container.style.top = '0';
+    document.body.appendChild(container);
+
     html2pdf().set(opt).from(container).save().then(() => {
+        document.body.removeChild(container);
         btn.innerHTML = oldHtml;
         btn.disabled = false;
         alert('Ata de apresentação gerada com sucesso!');
     }).catch(err => {
+        if(document.body.contains(container)) document.body.removeChild(container);
         console.error('PDF error:', err);
         btn.innerHTML = oldHtml;
         btn.disabled = false;
