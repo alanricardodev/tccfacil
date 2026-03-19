@@ -1224,7 +1224,60 @@
         .nav-badge.pulse {
             animation: badgePulse 0.5s ease;
         }
+
+        /* ── RESPONSIVIDADE MOBILE ── */
+        @media (max-width: 600px) {
+            /* Modais do TCC: tela cheia no mobile */
+            #modalTccForm > div,
+            #modalTccEval > div {
+                border-radius: 12px 12px 0 0;
+                max-height: 92vh;
+                margin-bottom: 0;
+            }
+
+            /* Toasts no centro inferior do mobile */
+            #toastContainer {
+                left: 12px;
+                right: 12px;
+                bottom: 12px;
+            }
+
+            .notif-toast {
+                min-width: unset;
+                max-width: 100%;
+            }
+
+            /* Layout das Atas empilhado */
+            .atas-layout {
+                flex-direction: column !important;
+            }
+
+            /* Formulários internos de etapas */
+            .modal-footer-btns {
+                flex-direction: column-reverse;
+                align-items: stretch;
+            }
+
+            .modal-footer-btns .btn {
+                text-align: center;
+                padding: 10px 16px;
+                font-size: 0.9rem;
+            }
+
+            /* font-size 16px em todos os inputs do dashboard evita zoom iOS */
+            input[type="text"],
+            input[type="email"],
+            input[type="password"],
+            input[type="number"],
+            input[type="date"],
+            input[type="time"],
+            textarea,
+            select {
+                font-size: 16px !important;
+            }
+        }
     </style>
+
 </head>
 
 <body>
@@ -1958,21 +2011,21 @@
 
         <!-- ===== MODAL TCC ALUNO ===== -->
         <div id="modalTccForm" class="modal-overlay"
-            style="display:none;align-items:center;justify-content:center;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;padding:20px">
-            <div
-                style="background:white;width:100%;max-width:800px;max-height:90vh;border-radius:16px;display:flex;flex-direction:column;box-shadow:0 10px 30px rgba(0,0,0,0.2)">
+            style="display:none;align-items:flex-start;justify-content:center;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;padding:10px;overflow-y:auto">
+            <div class="modal-inner-box"
+                style="background:white;width:100%;max-width:800px;max-height:95vh;border-radius:16px;display:flex;flex-direction:column;box-shadow:0 10px 30px rgba(0,0,0,0.2);margin:auto">
                 <div
-                    style="padding:20px 24px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center">
-                    <h2 id="modalTccFormTitle" style="margin:0;color:var(--primary);font-size:1.3rem"><i
+                    style="padding:16px 20px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center">
+                    <h2 id="modalTccFormTitle" style="margin:0;color:var(--primary);font-size:1.1rem"><i
                             class="fa-solid fa-file-pen"></i> Preencher Etapa</h2>
                     <button onclick="document.getElementById('modalTccForm').style.display='none'"
                         style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#999">&times;</button>
                 </div>
                 <div id="modalTccFormBody"
-                    style="padding:24px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:16px">
+                    style="padding:20px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:16px">
                     <!-- Form fields injected by JS -->
                 </div>
-                <div style="padding:16px 24px;border-top:1px solid #eee;display:flex;justify-content:flex-end;gap:10px">
+                <div class="modal-footer-btns" style="padding:12px 20px;border-top:1px solid #eee;display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap">
                     <button class="btn" id="btnGerarPdfTccForm"
                         style="display:none;background:#e17055;color:white;margin-right:auto"><i
                             class="fa-solid fa-file-pdf"></i> Gerar PDF (ABNT)</button>
@@ -1986,21 +2039,21 @@
 
         <!-- ===== MODAL AVALIAÇÃO PROFESSOR ===== -->
         <div id="modalTccEval" class="modal-overlay"
-            style="display:none;align-items:center;justify-content:center;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;padding:20px">
+            style="display:none;align-items:flex-start;justify-content:center;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;padding:10px;overflow-y:auto">
             <div
-                style="background:white;width:100%;max-width:900px;max-height:90vh;border-radius:16px;display:flex;flex-direction:column;box-shadow:0 10px 30px rgba(0,0,0,0.2)">
+                style="background:white;width:100%;max-width:900px;max-height:95vh;border-radius:16px;display:flex;flex-direction:column;box-shadow:0 10px 30px rgba(0,0,0,0.2);margin:auto">
                 <div
-                    style="padding:20px 24px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center">
-                    <h2 style="margin:0;color:var(--primary);font-size:1.3rem"><i
+                    style="padding:16px 20px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center">
+                    <h2 style="margin:0;color:var(--primary);font-size:1.1rem"><i
                             class="fa-solid fa-magnifying-glass-chart"></i> Avaliar Entregas da Equipe</h2>
                     <button onclick="document.getElementById('modalTccEval').style.display='none'"
                         style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#999">&times;</button>
                 </div>
                 <div id="modalTccEvalBody"
-                    style="padding:24px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:20px;background:#f8f9fa">
+                    style="padding:20px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:20px;background:#f8f9fa">
                     <!-- Consolidated read-only view of all filled steps injected by JS -->
                 </div>
-                <div style="padding:16px 24px;border-top:1px solid #eee;display:flex;justify-content:space-between;gap:10px;align-items:center;background:white"
+                <div style="padding:12px 20px;border-top:1px solid #eee;display:flex;justify-content:space-between;gap:10px;align-items:center;background:white;flex-wrap:wrap"
                     id="modalTccEvalFooter">
                     <!-- Current step info and Approval buttons injected by JS -->
                 </div>
@@ -2008,10 +2061,10 @@
         </div>
         <!-- ===== ATAS DE DEFESA ===== -->
         <div id="view-atas" class="view-container">
-            <div style="display:flex; gap:20px; flex-wrap:wrap; align-items:flex-start">
+            <div class="atas-layout" style="display:flex; gap:20px; flex-wrap:wrap; align-items:flex-start">
 
                 <!-- Equipes Container -->
-                <div style="flex:1; min-width:300px">
+                <div style="flex:1; min-width:250px">
                     <div class="dash-card" style="position:sticky; top:20px">
                         <h3 style="color:var(--primary);margin-bottom:4px"><i class="fa-solid fa-users-viewfinder"></i>
                             Suas Equipes</h3>
@@ -2026,7 +2079,7 @@
                 </div>
 
                 <!-- Formulário Manual -->
-                <div style="flex:2; min-width:400px">
+                <div style="flex:2; min-width:280px">
                     <div class="dash-card" id="ataFormContainer">
                         <h3 style="color:var(--tertiary);margin-bottom:4px"><i class="fa-solid fa-file-contract"></i>
                             Gerador de Ata (Preenchimento Manual)</h3>
@@ -2218,35 +2271,44 @@
             signOut(auth).then(() => window.location.href = 'index.html');
         });
 
-        // Mark online when app ready, mark offline on close
+        // ── PRESENCE + STUDY TIMER COM DETECÇÃO DE ATIVIDADE ──
         function initPresenceSystem(uid) {
             markPresence(uid, true);
-            // Heartbeat every 60s to keep isOnline fresh & increment study XP
+
+            // Rastreia atividade: qualquer interação reinicia o timer de 40s
+            let lastActivityTime = Date.now();
+            const INACTIVITY_LIMIT_MS = 40 * 1000; // 40 segundos
+
+            const resetActivity = () => { lastActivityTime = Date.now(); };
+            ['mousemove', 'mousedown', 'keydown', 'touchstart', 'touchmove', 'scroll', 'click'].forEach(ev => {
+                window.addEventListener(ev, resetActivity, { passive: true });
+            });
+
+            // Heartbeat a cada 60s: presença + studyMinutes (só se ativo)
             setInterval(() => {
                 markPresence(uid, true);
-                if (ME && ME.role === 'aluno') {
+                const isActive = (Date.now() - lastActivityTime) < INACTIVITY_LIMIT_MS;
+                if (ME && ME.role === 'aluno' && isActive) {
                     try {
                         updateDoc(doc(db, 'users', uid), {
                             studyMinutes: increment(1)
                         });
                         ME.studyMinutes = (ME.studyMinutes || 0) + 1;
-                        // Gamification Notification: every 60 mins
+                        // Gamification: a cada 60 mins de estudo ativo
                         if (ME.studyMinutes % 60 === 0 && ME.studyMinutes > 0) {
-                            showToast("🎯 Objetivo Alcançado!", `Parabéns! Você completou ${Math.floor(ME.studyMinutes / 60)} hora(s) de foco na plataforma.`, "fa-fire", true);
+                            showToast("🎯 Objetivo Alcançado!", `Parabéns! Você completou ${Math.floor(ME.studyMinutes / 60)} hora(s) de foco na plataforma.`, "fa-fire", 'success');
                         }
-                    } catch (e) { }
+                    } catch (e) { console.warn('Erro ao salvar studyMinutes:', e); }
                 }
             }, 60000);
 
-            // Mark offline when tab closes
+            // Marca offline ao fechar a aba
             window.addEventListener('beforeunload', () => {
-                // Synchronous best-effort (beacon)
                 const payload = JSON.stringify({ isOnline: false, lastSeen: Date.now() });
                 navigator.sendBeacon && navigator.sendBeacon(
                     `https://firestore.googleapis.com/v1/projects/projetotcc-37266/databases/(default)/documents/users/${uid}`,
                     new Blob([payload], { type: 'application/json' })
                 );
-                // Also try updateDoc (may not complete before page unloads)
                 markPresence(uid, false);
             });
         }
@@ -2255,8 +2317,9 @@
         function setupDashboard(data) {
             document.getElementById('loader').style.display = 'none';
             document.getElementById('userName').innerText = data.name;
-            // Start online presence
+            // Start online presence + notifications
             initPresenceSystem(data.uid);
+            initNotifications(data);
 
             if (data.avatarUrl) {
                 document.getElementById('userInitial').innerHTML = `<img src="${data.avatarUrl}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`;
@@ -2729,13 +2792,43 @@
 
         // ── TCC PROGRESS ──
         const TCC_STEPS = ['Proposta', 'Desenvolvimento', 'Revis\u00e3o', 'Entrega', 'Apresenta\u00e7\u00e3o'];
+        const STEP_PRAZO_KEYS = ['proposta', 'desenvolvimento', 'revisao', 'entrega', 'apresentacao'];
+
+        // Armazena os prazos carregados para mostrar nas etapas
+        window._prazosEtapas = {};
+
+        async function loadPrazosEtapas(turmaId) {
+            if (!turmaId) return;
+            try {
+                const cfgSnap = await getDoc(doc(db, 'entregasConfig', turmaId));
+                if (cfgSnap.exists()) {
+                    const cfg = cfgSnap.data();
+                    STEP_PRAZO_KEYS.forEach(k => {
+                        if (cfg[`prazo_${k}`]) window._prazosEtapas[k] = cfg[`prazo_${k}`];
+                    });
+                    // Re-renderiza o progresso com as datas
+                    if (ME && ME.tccStep !== undefined) renderProgress(ME.tccStep || 0);
+                }
+            } catch (e) { console.warn('Erro ao carregar prazos:', e); }
+        }
 
         function renderProgress(currentStep) {
             const track = document.getElementById('progressTrack');
+            if (!track) return;
             track.innerHTML = TCC_STEPS.map((s, i) => {
                 const cls = i < currentStep ? 'done' : i === currentStep ? 'current' : '';
                 const icon = i < currentStep ? '<i class="fa-solid fa-check"></i>' : (i + 1);
-                return `<div class="progress-step ${cls}"><div class="step-dot">${icon}</div><div class="step-label">${s}</div></div>`;
+                const prazoKey = STEP_PRAZO_KEYS[i];
+                const prazoVal = window._prazosEtapas[prazoKey];
+                let prazoHtml = '';
+                if (prazoVal) {
+                    const [ano, mes, dia] = prazoVal.split('-');
+                    const hoje = new Date();
+                    const prazoDate = new Date(ano, mes - 1, dia);
+                    const expirado = prazoDate < hoje && i >= currentStep;
+                    prazoHtml = `<div class="step-label" style="font-size:.6rem;margin-top:2px;color:${expirado ? '#ff7675' : '#00b894'};font-weight:600">${expirado ? '⚠️ ' : '📅 '}${dia}/${mes}/${ano}</div>`;
+                }
+                return `<div class="progress-step ${cls}"><div class="step-dot">${icon}</div><div class="step-label">${s}</div>${prazoHtml}</div>`;
             }).join('');
         }
 
@@ -2810,6 +2903,7 @@
             loadForumTurma(turmaId);
             loadMinhaEquipeContent();
             loadTemasAluno(turmaId);
+            loadPrazosEtapas(turmaId);
         }
 
         // ── TEMAS ALUNO ──
@@ -2943,6 +3037,17 @@
                 const si = statusInfo[curStatus] || statusInfo.pendente;
                 const deliveryBadge = `<div style="margin-top:8px;font-size:.65rem;font-weight:700;color:${si.color};display:flex;align-items:center;justify-content:center;gap:4px"><i class="fa-solid ${si.icon}"></i> ${si.label}</div>`;
 
+                // Prazo da etapa (se definido pelo professor)
+                const prazoKey2 = STEP_PRAZO_KEYS[i];
+                const prazoVal2 = window._prazosEtapas[prazoKey2];
+                let prazoBadge = '';
+                if (prazoVal2) {
+                    const [ano2, mes2, dia2] = prazoVal2.split('-');
+                    const prazoDate2 = new Date(ano2, mes2 - 1, dia2);
+                    const expirado2 = prazoDate2 < new Date() && i >= currentStep;
+                    prazoBadge = `<div style="margin-top:4px;font-size:.6rem;font-weight:600;color:${expirado2 ? '#ff7675' : '#00b894'}">${expirado2 ? '⚠️ ' : '📅 '}Prazo: ${dia2}/${mes2}/${ano2}</div>`;
+                }
+
                 const clickable = !isLocked && i <= liberado;
                 const cursorStyle = clickable ? 'pointer' : 'default';
                 const opacityStyle = isLocked ? 'opacity:.55;' : '';
@@ -2953,6 +3058,7 @@
             ${emoji}
             <div style="font-weight:700">${s}</div>
             ${isLocked ? '<div style="font-size:.72rem;color:#b2bec3;margin-top:4px">Aguarde aprovação</div>' : deliveryBadge}
+            ${prazoBadge}
         </div>`;
             }).join('');
 
@@ -3365,7 +3471,9 @@
 
         // ── FORUM TURMA ──
         function loadForumTurma(turmaId) {
-            const q = query(collection(db, 'forum_turma'), where('turmaId', '==', turmaId), orderBy('timestamp', 'desc'));
+            // Nota: não usamos orderBy junto com where() para evitar exigir índice composto no Firestore.
+            // A ordenação é feita localmente dentro de renderForumPosts.
+            const q = query(collection(db, 'forum_turma'), where('turmaId', '==', turmaId));
             onSnapshot(q, snap => renderForumPosts(snap, 'forumTurmaList', 'forum_turma'));
         }
         window.postForumTurma = async function () {

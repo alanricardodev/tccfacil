@@ -836,6 +836,9 @@ footer {
   justify-content: center;
   align-items: center;
   animation: fadeInModal 0.3s ease;
+  padding: 16px;
+  box-sizing: border-box;
+  overflow-y: auto;
 }
 
 .modal-overlay.active {
@@ -855,10 +858,11 @@ footer {
 }
 
 .modal-content {
-  width: 90%;
+  width: 100%;
   max-width: 450px;
   position: relative;
   padding: 40px;
+  margin: auto;
 }
 
 .close-modal {
@@ -904,10 +908,12 @@ footer {
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 12px;
   font-family: 'Inter', sans-serif;
-  font-size: 1rem;
+  font-size: 16px; /* mínimo 16px evita zoom automático no iOS */
   background: rgba(255, 255, 255, 0.7);
   outline: none;
   transition: border-color 0.3s, background 0.3s;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .auth-form input:focus,
@@ -945,4 +951,58 @@ footer {
   text-align: center;
   font-size: 0.9rem;
   font-weight: 600;
+}
+
+/* ── Responsividade Mobile do Modal de Auth ── */
+@media (max-width: 480px) {
+  .modal-overlay {
+    align-items: flex-start;
+    padding: 10px;
+  }
+
+  .modal-content {
+    padding: 24px 18px;
+    border-radius: 16px;
+    margin: auto 0;
+  }
+
+  .modal-header {
+    margin-bottom: 18px;
+  }
+
+  .modal-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .modal-header p {
+    font-size: 0.9rem;
+  }
+
+  .auth-form .input-group {
+    margin-bottom: 14px;
+  }
+
+  .auth-form input,
+  .auth-form select {
+    padding: 13px 13px 13px 40px;
+    font-size: 16px;
+    border-radius: 10px;
+  }
+
+  .auth-form .input-group i {
+    top: 14px;
+    left: 12px;
+    font-size: 0.9rem;
+  }
+
+  /* Botões menores no mobile */
+  .auth-form .btn {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    border-radius: 20px;
+  }
+
+  .auth-switch {
+    font-size: 0.85rem;
+  }
 }
