@@ -879,6 +879,50 @@
             }
         }
 
+        /* ── RANKING / GAMIFICAÇÃO ── */
+        .podium-container {
+            display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin-top: 30px;
+        }
+        .podium-step {
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+            background: linear-gradient(to top, rgba(108, 92, 231, 0.08), rgba(108, 92, 231, 0.01));
+            border-top-left-radius: 12px; border-top-right-radius: 12px;
+            width: 85px; position: relative; transition: all 0.3s;
+            border: 1px solid rgba(108, 92, 231, 0.15); border-bottom: none;
+        }
+        .podium-step:hover { filter: brightness(1.05); transform: translateY(-3px); }
+        .podium-rank { font-weight: 800; font-size: 1.6rem; color: var(--primary); margin-bottom: 5px; }
+        .podium-avatar {
+            width: 54px; height: 54px; border-radius: 50%; background: var(--primary);
+            color: white; display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; font-weight: bold; position: absolute; top: -27px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15); border: 3px solid white;
+        }
+        .podium-name { font-size: 0.8rem; font-weight: 600; text-align: center; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 5px; color:var(--text-main); }
+        .podium-score { font-size: 0.75rem; color: var(--text-light); margin-bottom: 10px; font-weight: 700; background: rgba(255,255,255,0.8); padding: 2px 6px; border-radius: 10px;}
+        .podium-1 { height: 160px; background: linear-gradient(to top, rgba(241, 196, 15, 0.15), rgba(241, 196, 15, 0.02)); border-color: rgba(241, 196, 15, 0.3); z-index: 3;}
+        .podium-1 .podium-rank { color: #f39c12; text-shadow: 0 2px 4px rgba(243, 156, 18, 0.3); }
+        .podium-1 .podium-avatar { background: linear-gradient(135deg, #f1c40f, #f39c12); }
+        .podium-2 { height: 120px; background: linear-gradient(to top, rgba(189, 195, 199, 0.2), rgba(189, 195, 199, 0.02)); border-color: rgba(189, 195, 199, 0.4); z-index: 2;}
+        .podium-2 .podium-rank { color: #7f8c8d; }
+        .podium-2 .podium-avatar { background: linear-gradient(135deg, #bdc3c7, #95a5a6); }
+        .podium-3 { height: 90px; background: linear-gradient(to top, rgba(211, 84, 0, 0.15), rgba(211, 84, 0, 0.02)); border-color: rgba(211, 84, 0, 0.3); z-index: 1;}
+        .podium-3 .podium-rank { color: #d35400; }
+        .podium-3 .podium-avatar { background: linear-gradient(135deg, #e67e22, #d35400); }
+        
+        .ranking-list-item {
+            display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+            background: #fafbff; border-radius: 12px; border: 1px solid #f1f2f6;
+            transition: all 0.2s;
+        }
+        .ranking-list-item:hover { transform: translateX(4px); box-shadow: 0 4px 12px rgba(0,0,0,0.03); border-color: #e2e8f0; }
+        .rank-number { font-weight: 800; color: #a4b0be; width: 24px; text-align: center; }
+        .rank-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--tertiary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.9rem; flex-shrink:0;}
+        .rank-info { flex: 1; /* for truncated text */ min-width:0; }
+        .rank-name { font-weight: 600; color: var(--text-main); font-size: 0.9rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .rank-detail { font-size: 0.75rem; color: var(--text-light); }
+        .rank-score { font-weight: 700; color: var(--primary); font-size: 0.85rem; background: rgba(108, 92, 231, 0.1); padding: 4px 10px; border-radius: 20px;}
+
         /* ── TOAST NOTIFICATIONS ── */
         #toastContainer {
             position: fixed;
@@ -972,6 +1016,9 @@
             <div class="nav-item" id="nav-forum" onclick="switchView('forum','Fórum Geral','nav-forum')">
                 <i class="fa-solid fa-comments"></i> Fórum Geral
                 <span class="nav-badge" id="badge-forum" style="display:none">0</span>
+            </div>
+            <div class="nav-item" id="nav-ranking" onclick="switchView('ranking','Pódio de Líderes','nav-ranking'); window.carregarRanking()">
+                <i class="fa-solid fa-trophy" style="color:#fdcb6e"></i> Ranking
             </div>
 
             <div class="nav-section" id="section-aluno" style="display:none">Minha Conta</div>
@@ -1314,6 +1361,46 @@
             </div>
         </div>
 
+        <!-- ===== RANKING (GAMIFICAÇÃO) ===== -->
+        <div id="view-ranking" class="view-container">
+            <div style="text-align:center;margin-bottom:30px">
+                <h2 style="color:var(--primary);font-size:2rem;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:12px">
+                    <i class="fa-solid fa-trophy" style="color:#f1c40f;font-size:2.2rem;filter:drop-shadow(0 4px 8px rgba(241,196,15,0.4))"></i>
+                    Pódio de Líderes
+                </h2>
+                <p style="color:var(--text-light);font-size:1.05rem">Mantenha o foco, participe e estude na plataforma para subir no ranking!</p>
+            </div>
+
+            <div style="display:flex;gap:20px;flex-wrap:wrap">
+                <!-- Coluna 1: Top Alunos -->
+                <div style="flex:1;min-width:320px">
+                    <div class="dash-card">
+                        <h3 style="color:var(--tertiary);margin-bottom:20px;text-align:center;font-size:1.1rem"><i class="fa-solid fa-stopwatch"></i> Top Alunos (Tempo de Foco)</h3>
+                        
+                        <!-- Pódio UI -->
+                        <div id="rankingPodiumAlunos" class="podium-container" style="height:210px;margin-bottom:20px">
+                            <div class="empty-state">Gerando pódio...</div>
+                        </div>
+
+                        <!-- Lista Restante -->
+                        <div id="rankingListAlunos" style="display:flex;flex-direction:column;gap:10px">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coluna 2: Top Equipes -->
+                <div style="flex:1;min-width:320px">
+                    <div class="dash-card">
+                        <h3 style="color:var(--primary);margin-bottom:20px;text-align:center;font-size:1.1rem"><i class="fa-solid fa-flag-checkered"></i> Top Equipes (Progresso)</h3>
+                        <p style="font-size:0.8rem;color:var(--text-light);text-align:center;margin-top:-15px;margin-bottom:20px">Avanço das etapas e união do tempo de foco.</p>
+                        <div id="rankingListEquipes" style="display:flex;flex-direction:column;gap:12px">
+                            <div class="empty-state">Buscando equipes...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- ===== FÓRUM GERAL ===== -->
         <div id="view-forum" class="view-container">
             <div class="forum-container">
@@ -1600,94 +1687,91 @@
         </div>
         <!-- ===== ATAS DE DEFESA ===== -->
         <div id="view-atas" class="view-container" style="display:none">
-            <div class="dash-card" style="margin-bottom:20px">
-                <h3 style="color:var(--primary);margin-bottom:4px"><i class="fa-solid fa-file-contract"></i> Gerador de
-                    Atas de Defesa</h3>
-                <p style="color:var(--text-light);font-size:.88rem;margin-bottom:14px">Selecione a equipe para
-                    preencher os dados e gerar a Ata de Apresentação Final impressa, ou opte pelo preenchimento manual.</p>
-                <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-                    <select id="ataEquipeSelect"
-                        style="flex:1;min-width:200px;padding:8px 12px;border-radius:10px;border:1px solid #ddd;font-family:'Inter',sans-serif"
-                        onchange="window.selecionarEquipeAta()">
-                        <option value="">Carregando equipes...</option>
-                    </select>
-                    <button class="btn btn-primary" style="background:var(--tertiary);border:none;padding:9px 16px;white-space:nowrap;" onclick="window.selecionarAtaManual()">
-                        <i class="fa-solid fa-pen-to-square"></i> Preenchimento Manual
-                    </button>
-                </div>
-            </div>
-
-            <div class="dash-card" id="ataFormContainer" style="display:none">
-                <div style="display:flex;flex-direction:column;gap:12px">
-                    <div>
-                        <label
-                            style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px;color:var(--primary)"><i
-                                class="fa-solid fa-users"></i> Estudantes Avaliados (Você pode editar e separar por
-                            vírgulas)</label>
-                        <textarea id="ataNomesAlunos" rows="2"
-                            style="width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-family:'Inter',sans-serif"></textarea>
-                    </div>
-
-                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
-                        <div style="flex:1;min-width:120px">
-                            <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px">Data da
-                                Apresentação</label>
-                            <input type="date" id="ataData"
-                                style="width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-family:'Inter',sans-serif">
+            <div style="display:flex; gap:20px; flex-wrap:wrap; align-items:flex-start">
+                
+                <!-- Equipes Container -->
+                <div style="flex:1; min-width:300px">
+                    <div class="dash-card" style="position:sticky; top:20px">
+                        <h3 style="color:var(--primary);margin-bottom:4px"><i class="fa-solid fa-users-viewfinder"></i> Suas Equipes</h3>
+                        <p style="color:var(--text-light);font-size:.85rem;margin-bottom:15px">Consulte os alunos de cada equipe para facilitar o preenchimento da Ata ao lado.</p>
+                        <div id="ataEquipesListContainer" style="max-height:600px;overflow-y:auto;padding-right:10px;display:flex;flex-direction:column;gap:10px">
+                            <div class="empty-state" style="padding:20px;font-size:.9rem"><i class="fa-solid fa-spinner fa-spin"></i> Carregando equipes...</div>
                         </div>
-                        <div style="flex:1;min-width:100px">
-                            <label
-                                style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px">Horário</label>
-                            <input type="time" id="ataHora"
-                                style="width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-family:'Inter',sans-serif"
-                                value="08:00">
-                        </div>
-                    </div>
-
-                    <div style="display:flex;gap:10px;flex-wrap:wrap">
-                        <div style="flex:2;min-width:150px">
-                            <label
-                                style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px">Sala/Local</label>
-                            <input type="text" id="ataSala"
-                                style="width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-family:'Inter',sans-serif"
-                                placeholder="Ex: Sala 03">
-                        </div>
-                        <div style="flex:1;min-width:120px">
-                            <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px">Nota da
-                                Equipe</label>
-                            <input type="number" id="ataNota"
-                                style="width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-family:'Inter',sans-serif"
-                                placeholder="Ex: 9.5" step="0.1" max="10">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px">Orientador(a) /
-                            Presidente da Banca</label>
-                        <input type="text" id="ataOrientador"
-                            style="width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-family:'Inter',sans-serif">
-                    </div>
-
-                    <div>
-                        <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px">Membro da Banca
-                            1</label>
-                        <input type="text" id="ataBanca1"
-                            style="width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-family:'Inter',sans-serif"
-                            placeholder="Nome do examinador 1">
-                    </div>
-
-                    <div>
-                        <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px">Membro da Banca
-                            2</label>
-                        <input type="text" id="ataBanca2"
-                            style="width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-family:'Inter',sans-serif"
-                            placeholder="Nome do examinador 2">
                     </div>
                 </div>
-                <div
-                    style="margin-top:20px;padding-top:16px;border-top:1px solid #eee;display:flex;justify-content:flex-end">
-                    <button class="btn btn-primary" id="btnGerarAtaPdf" onclick="window.gerarPdfAta()"><i
-                            class="fa-solid fa-file-pdf"></i> Gerar e Baixar Ata</button>
+
+                <!-- Formulário Manual -->
+                <div style="flex:2; min-width:400px">
+                    <div class="dash-card" id="ataFormContainer">
+                        <h3 style="color:var(--tertiary);margin-bottom:4px"><i class="fa-solid fa-file-contract"></i> Gerador de Ata (Preenchimento Manual)</h3>
+                        <p style="color:var(--text-light);font-size:.85rem;margin-bottom:15px">Preencha os dados abaixo e os nomes dos estudantes para gerar o PDF da Ata de Defesa.</p>
+                        
+                        <div style="display:flex;flex-direction:column;gap:12px">
+                            <div>
+                                <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px;color:var(--primary)"><i class="fa-solid fa-users"></i> Estudantes Avaliados (separe por vírgulas)</label>
+                                <textarea id="ataNomesAlunos" rows="2" style="width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-family:'Inter',sans-serif" placeholder="Ex: João da Silva, Maria Oliveira, Carlos Santos" oninput="document.getElementById('ataEquipeNomePdf').value = 'Preenchimento Manual'"></textarea>
+                                <input type="hidden" id="ataEquipeNomePdf" value="Preenchimento Manual">
+                            </div>
+
+                            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+                                <div style="flex:1;min-width:120px">
+                                    <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px">Data da
+                                        Apresentação</label>
+                                    <input type="date" id="ataData"
+                                        style="width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-family:'Inter',sans-serif">
+                                </div>
+                                <div style="flex:1;min-width:100px">
+                                    <label
+                                        style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px">Horário</label>
+                                    <input type="time" id="ataHora"
+                                        style="width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-family:'Inter',sans-serif"
+                                        value="08:00">
+                                </div>
+                            </div>
+
+                            <div style="display:flex;gap:10px;flex-wrap:wrap">
+                                <div style="flex:2;min-width:150px">
+                                    <label
+                                        style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px">Sala/Local</label>
+                                    <input type="text" id="ataSala"
+                                        style="width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-family:'Inter',sans-serif"
+                                        placeholder="Ex: Sala 03">
+                                </div>
+                                <div style="flex:1;min-width:120px">
+                                    <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px">Nota da
+                                        Equipe</label>
+                                    <input type="number" id="ataNota"
+                                        style="width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-family:'Inter',sans-serif"
+                                        placeholder="Ex: 9.5" step="0.1" max="10">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px">Orientador(a) / Presidente da Banca</label>
+                                <input type="text" id="ataOrientador"
+                                    style="width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-family:'Inter',sans-serif">
+                            </div>
+
+                            <div>
+                                <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px">Membro da Banca 1</label>
+                                <input type="text" id="ataBanca1"
+                                    style="width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-family:'Inter',sans-serif"
+                                    placeholder="Nome do examinador 1">
+                            </div>
+
+                            <div>
+                                <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px">Membro da Banca 2</label>
+                                <input type="text" id="ataBanca2"
+                                    style="width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-family:'Inter',sans-serif"
+                                    placeholder="Nome do examinador 2">
+                            </div>
+                        </div>
+                        <div
+                            style="margin-top:20px;padding-top:16px;border-top:1px solid #eee;display:flex;justify-content:flex-end">
+                            <button class="btn btn-primary" id="btnGerarAtaPdf" onclick="window.gerarPdfAta()"><i
+                                    class="fa-solid fa-file-pdf"></i> Gerar e Baixar Ata</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1796,8 +1880,23 @@
         // Mark online when app ready, mark offline on close
         function initPresenceSystem(uid) {
             markPresence(uid, true);
-            // Heartbeat every 60s to keep isOnline fresh
-            setInterval(() => markPresence(uid, true), 60000);
+            // Heartbeat every 60s to keep isOnline fresh & increment study XP
+            setInterval(() => {
+                markPresence(uid, true);
+                if (ME && ME.role === 'aluno') {
+                    try {
+                        updateDoc(doc(db, 'users', uid), {
+                            studyMinutes: increment(1)
+                        });
+                        ME.studyMinutes = (ME.studyMinutes || 0) + 1;
+                        // Gamification Notification: every 60 mins
+                        if (ME.studyMinutes % 60 === 0 && ME.studyMinutes > 0) {
+                            showToast("🎯 Objetivo Alcançado!", `Parabéns! Você completou ${Math.floor(ME.studyMinutes / 60)} hora(s) de foco na plataforma.`, "fa-fire", true);
+                        }
+                    } catch(e){}
+                }
+            }, 60000);
+            
             // Mark offline when tab closes
             window.addEventListener('beforeunload', () => {
                 // Synchronous best-effort (beacon)
@@ -1832,9 +1931,16 @@
                 if (m.ouro) mStr += `🥇${m.ouro} `;
                 if (m.prata) mStr += `🥈${m.prata} `;
                 if (m.bronze) mStr += `🥉${m.bronze} `;
-                stats = `<div style="margin-top:6px; font-size:0.75rem; color:#dff9fb; background:rgba(0,0,0,0.15); padding:4px 6px; border-radius:6px; line-height:1.4;">
-            Nota Atual: <strong>${n}</strong><br>
-            ${mStr ? mStr : 'Sem medalhas ainda'}
+                
+                // Gamificacao: Tempo de Foco
+                const mins = data.studyMinutes || 0;
+                const hours = Math.floor(mins / 60);
+                const remMins = mins % 60;
+                const focusLevel = hours >= 50 ? "👑 Mestre" : hours >= 20 ? "⭐ Veterano" : hours >= 5 ? "🔥 Dedicado" : "🌱 Iniciante";
+
+                stats = `<div style="margin-top:6px; font-size:0.75rem; color:#dff9fb; background:rgba(0,0,0,0.15); padding:6px 8px; border-radius:8px; line-height:1.5;">
+            <div>Foco: <strong style="color:#f1c40f">${hours}h ${remMins}m</strong> (${focusLevel})</div>
+            <div style="margin-top:2px">Nota Atual: <strong>${n}</strong> ${mStr ? ' | ' + mStr : ''}</div>
         </div>`;
             }
 
@@ -2095,9 +2201,9 @@
 
                     // Query all users with status=pendente and turmaIdSolicitada in those turmas
                     let total = 0;
-                    // Firestore 'in' supports up to 30 items; chunk if needed
+                    // Firestore 'in' supports up to 10 items; chunk if needed
                     const chunks = [];
-                    for (let i = 0; i < turmaIds.length; i += 30) chunks.push(turmaIds.slice(i, i + 30));
+                    for (let i = 0; i < turmaIds.length; i += 10) chunks.push(turmaIds.slice(i, i + 10));
                     for (const chunk of chunks) {
                         try {
                             const aSnap = await getDocs(query(
@@ -3601,20 +3707,21 @@
         window._atasEquipesCache = []; // global init to prevent undefined errors
 
         window.carregarTurmasAta = async function () {
-            // Updated to load equipes directly without needing to select turma
-            const equipeSelect = document.getElementById('ataEquipeSelect');
-            if (!equipeSelect) return;
-            equipeSelect.innerHTML = '<option value="">Carregando equipes...</option>';
-            const formContainer = document.getElementById('ataFormContainer');
-            if (formContainer) formContainer.style.display = 'none';
-            window._atasEquipesCache = [];
-            ME._ataModoManual = false;
+            const equipeListContainer = document.getElementById('ataEquipesListContainer');
+            if (!equipeListContainer) return;
+            equipeListContainer.innerHTML = '<div class="empty-state" style="padding:20px;font-size:.9rem"><i class="fa-solid fa-spinner fa-spin"></i> Carregando equipes...</div>';
+            
+            const today = new Date();
+            const dataInput = document.getElementById('ataData');
+            const orientInput = document.getElementById('ataOrientador');
+            if(dataInput && !dataInput.value) dataInput.value = today.toISOString().split('T')[0];
+            if(orientInput && !orientInput.value) orientInput.value = ME.name || '';
 
             try {
                 const qTurmas = ME.role === 'admin' ? collection(db, 'turmas') : query(collection(db, 'turmas'), where('professorId', '==', ME.uid));
                 const snap = await getDocs(qTurmas);
                 if (snap.empty) {
-                    equipeSelect.innerHTML = '<option value="">Nenhuma equipe encontrada</option>';
+                    equipeListContainer.innerHTML = '<div class="empty-state" style="padding:20px;font-size:.9rem">Nenhuma turma/equipe encontrada.</div>';
                     return;
                 }
                 
@@ -3622,14 +3729,11 @@
                 snap.forEach(d => { turmasMap[d.id] = d.data().nome; });
                 const turmaIds = Object.keys(turmasMap);
                 
-                // Fetch all equipes for these turmas
-                // Because of 'in' limitation (max 30), we chunk it
+                // Fetch all equipes
                 const chunks = [];
-                for(let i=0; i<turmaIds.length; i+=30) chunks.push(turmaIds.slice(i, i+30));
+                for(let i=0; i<turmaIds.length; i+=10) chunks.push(turmaIds.slice(i, i+10));
                 
-                let html = '<option value="">Selecionar equipe...</option>';
-                let equipesFound = 0;
-
+                let equipes = [];
                 for (const chunk of chunks) {
                     const qEq = query(collection(db, 'equipes'), where('turmaId', 'in', chunk));
                     const eqSnap = await getDocs(qEq);
@@ -3637,108 +3741,84 @@
                         const eq = d.data();
                         eq.id = d.id;
                         eq.turmaNome = turmasMap[eq.turmaId] || 'Turma Desconhecida';
-                        window._atasEquipesCache.push(eq);
-                        html += `<option value="${eq.id}">${eq.nome} (${eq.turmaNome})</option>`;
-                        equipesFound++;
+                        equipes.push(eq);
                     });
                 }
                 
-                window._atasEquipesCache.sort((a,b) => a.nome.localeCompare(b.nome));
+                equipes.sort((a,b) => a.nome.localeCompare(b.nome));
                 
-                if(equipesFound === 0) {
-                    equipeSelect.innerHTML = '<option value="">Nenhuma equipe encontrada</option>';
+                if(equipes.length === 0) {
+                    equipeListContainer.innerHTML = '<div class="empty-state" style="padding:20px;font-size:.9rem">Nenhuma equipe encontrada nas suas turmas.</div>';
                 } else {
-                    equipeSelect.innerHTML = html;
+                    let html = '';
+                    for (const eq of equipes) {
+                        html += `
+                        <div class="dash-card" style="padding:15px; border-left:4px solid var(--primary); cursor:pointer; transition:all .2s; margin-bottom:0px" onmouseover="this.style.transform='translateX(4px)'" onmouseout="this.style.transform='translateX(0)'" onclick="window.preencherAtaAuto('${eq.id}')">
+                            <div style="font-weight:700; color:var(--text-main); font-size:.95rem; margin-bottom:4px">${eq.nome}</div>
+                            <div style="font-size:.75rem; color:var(--text-light); margin-bottom:8px"><i class="fa-solid fa-chalkboard-user"></i> ${eq.turmaNome}</div>
+                            <div id="membros-ata-eq-${eq.id}" style="font-size:.8rem; color:#555; background:#f5f6fa; padding:8px 10px; border-radius:6px; line-height:1.4">Buscando alunos... <i class="fa-solid fa-spinner fa-spin"></i></div>
+                        </div>`;
+                    }
+                    equipeListContainer.innerHTML = html;
+
+                    for (const eq of equipes) {
+                        if (eq.membros && eq.membros.length > 0) {
+                            const nomesArray = [];
+                            for (const uid of eq.membros) {
+                                try {
+                                    const uSnap = await getDoc(doc(db, 'users', uid));
+                                    if (uSnap.exists()) nomesArray.push(uSnap.data().name.toUpperCase());
+                                } catch (e) { }
+                            }
+                            const el = document.getElementById(`membros-ata-eq-${eq.id}`);
+                            if (el) {
+                                el.innerHTML = nomesArray.join('<br> &bull; ');
+                                el.dataset.nomes = nomesArray.join(', ');
+                                el.dataset.eqNome = eq.nome;
+                            }
+                        } else {
+                            const el = document.getElementById(`membros-ata-eq-${eq.id}`);
+                            if (el) el.innerHTML = 'Sem alunos vinculados';
+                        }
+                    }
                 }
             } catch (e) {
-                console.error(e);
-                equipeSelect.innerHTML = '<option value="">Erro ao carregar</option>';
+                console.error("Erro ao carregar atas equipes: ", e);
+                equipeListContainer.innerHTML = '<div class="empty-state" style="padding:20px;font-size:.9rem;color:red">Erro ao carregar equipes. Detalhes no console.</div>';
             }
         };
 
-        window.carregarEquipesAta = async function () {
-            // Obsolete but kept to avoid errors if triggered
-        };
-
-        window.selecionarAtaManual = function() {
-            ME._ataModoManual = true;
-            ME._ataEquipe = null;
-            const eqSelect = document.getElementById('ataEquipeSelect');
-            if(eqSelect) eqSelect.value = "";
-            const formContainer = document.getElementById('ataFormContainer');
-            if(!formContainer) return;
-            
-            const today = new Date();
-            document.getElementById('ataData').value = today.toISOString().split('T')[0];
-            document.getElementById('ataOrientador').value = ME.name || '';
-            document.getElementById('ataNota').value = '';
-            document.getElementById('ataSala').value = '';
-            document.getElementById('ataBanca1').value = '';
-            document.getElementById('ataBanca2').value = '';
-            document.getElementById('ataNomesAlunos').value = '';
-
-            formContainer.style.display = 'block';
-        };
-
-        window.selecionarEquipeAta = async function () {
-            ME._ataModoManual = false;
-            const equipeId = document.getElementById('ataEquipeSelect').value;
-            const formContainer = document.getElementById('ataFormContainer');
-
-            if (!equipeId) {
-                formContainer.style.display = 'none';
-                return;
+        window.carregarEquipesAta = async function () {};
+        window.selecionarAtaManual = function() {};
+        window.selecionarEquipeAta = async function () {};
+        
+        window.preencherAtaAuto = function(eqId) {
+            const el = document.getElementById(`membros-ata-eq-${eqId}`);
+            if (el && el.dataset.nomes) {
+                document.getElementById('ataNomesAlunos').value = el.dataset.nomes;
+                document.getElementById('ataEquipeNomePdf').value = el.dataset.eqNome || 'Preenchimento Manual';
+                
+                const t = document.getElementById('ataNomesAlunos');
+                t.style.transition = "background-color 0.3s";
+                t.style.backgroundColor = '#e8f5e9';
+                setTimeout(() => t.style.backgroundColor = 'transparent', 500);
             }
-
-            const eq = window._atasEquipesCache.find(e => e.id === equipeId);
-            if (!eq) return;
-
-            ME._ataEquipe = eq;
-
-            const today = new Date();
-            document.getElementById('ataData').value = today.toISOString().split('T')[0];
-            document.getElementById('ataOrientador').value = ME.name;
-            document.getElementById('ataNota').value = '';
-            document.getElementById('ataSala').value = '';
-            document.getElementById('ataBanca1').value = '';
-            document.getElementById('ataBanca2').value = '';
-
-            document.getElementById('ataNomesAlunos').value = 'Buscando nomes...';
-            formContainer.style.display = 'block';
-
-            const nomesArray = [];
-            for (const uid of (eq.membros || [])) {
-                try {
-                    const uSnap = await getDoc(doc(db, 'users', uid));
-                    if (uSnap.exists()) nomesArray.push(uSnap.data().name.toUpperCase());
-                } catch (e) { console.error('Erro ao buscar nome', e); }
-            }
-
-            document.getElementById('ataNomesAlunos').value = nomesArray.join(', ');
         };
 
         window.abrirModalAta = async function (equipeId) {
             window.switchView('atas', 'Atas de Defesa', 'nav-atas');
-
-            const equipeSelect = document.getElementById('ataEquipeSelect');
-            if (equipeSelect) equipeSelect.innerHTML = '<option value="">Carregando...</option>';
-
-            const docRef = doc(db, 'equipes', equipeId);
-            const snap = await getDoc(docRef);
-            if (!snap.exists()) return;
-
             await window.carregarTurmasAta();
-            
-            if (equipeSelect) equipeSelect.value = equipeId;
-
-            window.selecionarEquipeAta();
+            setTimeout(() => {
+                if (document.getElementById(`membros-ata-eq-${equipeId}`)) {
+                    window.preencherAtaAuto(equipeId);
+                }
+            }, 600);
         };
 
         window.gerarPdfAta = function () {
-            const eq = ME._ataEquipe;
-            if (!ME._ataModoManual && !eq) { alert('Selecione uma equipe ou clique em Preenchimento Manual.'); return; }
-
-            const eqNome = eq ? eq.nome : "Preenchimento Manual";
+            const numsAl = document.getElementById('ataNomesAlunos').value;
+            if (!numsAl || numsAl.trim() === "") { alert('Preencha os estudantes avaliados (separados por vírgula) primeiro.'); return; }
+            const eqNome = document.getElementById('ataEquipeNomePdf').value || 'Preenchimento Manual';
 
             const dataRaw = document.getElementById('ataData').value;
             if (!dataRaw) { alert('Preencha a data da apresentação.'); return; }
@@ -3754,8 +3834,7 @@
             const banca1 = document.getElementById('ataBanca1').value || '_______';
             const banca2 = document.getElementById('ataBanca2').value || '_______';
 
-            const editedNomesTxt = document.getElementById('ataNomesAlunos').value || '';
-            const equipeNomesArray = editedNomesTxt.split(',').map(n => n.trim()).filter(n => n.length > 0);
+            const equipeNomesArray = numsAl.split(',').map(n => n.trim()).filter(n => n.length > 0);
             const equipeNomesFormatados = equipeNomesArray.join(', ');
 
             let assinaturasHtml = `
@@ -4589,6 +4668,152 @@
             const updates = {};
             updates[`equipe_${equipeId}.${etapa}`] = status;
             await setDoc(doc(db, 'entregasConfig', turmaId), updates, { merge: true });
+        };
+
+        // ── RANKING E GAMIFICAÇÃO ──
+        window.carregarRanking = async function() {
+            const listAlunos = document.getElementById('rankingListAlunos');
+            const podContainer = document.getElementById('rankingPodiumAlunos');
+            const listEquipes = document.getElementById('rankingListEquipes');
+            if(!listAlunos || !podContainer || !listEquipes) return;
+
+            podContainer.innerHTML = '<div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i> Gerando pódio...</div>';
+            listAlunos.innerHTML = '';
+            listEquipes.innerHTML = '<div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i> Buscando equipes...</div>';
+
+            try {
+                // 1. Top Alunos (by studyMinutes)
+                const qAlunos = query(collection(db, 'users'), where('role', '==', 'aluno'));
+                const snapAlunos = await getDocs(qAlunos);
+                let alunos = [];
+                snapAlunos.forEach(d => {
+                    const a = d.data();
+                    a.id = d.id;
+                    a.foco = a.studyMinutes || 0;
+                    alunos.push(a);
+                });
+                
+                alunos.sort((a,b) => b.foco - a.foco);
+                const topAlunos = alunos.slice(0, 10);
+
+                if(topAlunos.length === 0) {
+                    podContainer.innerHTML = '<div class="empty-state">Nenhum aluno encontrado ou ninguém estudou ainda.</div>';
+                } else {
+                    const p1 = topAlunos[0];
+                    const p2 = topAlunos[1];
+                    const p3 = topAlunos[2];
+                    
+                    let podiumHtml = '';
+                    
+                    if(p2) {
+                        const h2 = Math.floor(p2.foco / 60); const m2 = p2.foco % 60;
+                        podiumHtml += `
+                        <div class="podium-step podium-2">
+                            <div class="podium-avatar">${p2.avatarUrl ? '<img src="'+p2.avatarUrl+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover">' : p2.name.charAt(0).toUpperCase()}</div>
+                            <div class="podium-rank">2</div>
+                            <div class="podium-name">${p2.name.split(' ')[0]}</div>
+                            <div class="podium-score">${h2}h ${m2}m</div>
+                        </div>`;
+                    }
+                    if(p1) {
+                        const h1 = Math.floor(p1.foco / 60); const m1 = p1.foco % 60;
+                        podiumHtml += `
+                        <div class="podium-step podium-1">
+                            <div class="podium-avatar">${p1.avatarUrl ? '<img src="'+p1.avatarUrl+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover">' : p1.name.charAt(0).toUpperCase()}</div>
+                            <div class="podium-rank">1</div>
+                            <div class="podium-name">${p1.name.split(' ')[0]}</div>
+                            <div class="podium-score">${h1}h ${m1}m</div>
+                        </div>`;
+                    }
+                    if(p3) {
+                        const h3 = Math.floor(p3.foco / 60); const m3 = p3.foco % 60;
+                        podiumHtml += `
+                        <div class="podium-step podium-3">
+                            <div class="podium-avatar">${p3.avatarUrl ? '<img src="'+p3.avatarUrl+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover">' : p3.name.charAt(0).toUpperCase()}</div>
+                            <div class="podium-rank">3</div>
+                            <div class="podium-name">${p3.name.split(' ')[0]}</div>
+                            <div class="podium-score">${h3}h ${m3}m</div>
+                        </div>`;
+                    }
+                    podContainer.innerHTML = podiumHtml;
+
+                    let restHtml = '';
+                    for(let i = 3; i < topAlunos.length; i++) {
+                        const a = topAlunos[i];
+                        const h = Math.floor(a.foco / 60); const m = a.foco % 60;
+                        restHtml += `
+                        <div class="ranking-list-item">
+                            <div class="rank-number">${i+1}º</div>
+                            <div class="rank-avatar">${a.avatarUrl ? '<img src="'+a.avatarUrl+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover">' : a.name.charAt(0).toUpperCase()}</div>
+                            <div class="rank-info">
+                                <div class="rank-name">${a.name}</div>
+                            </div>
+                            <div class="rank-score">${h}h ${m}m</div>
+                        </div>`;
+                    }
+                    listAlunos.innerHTML = restHtml;
+                }
+
+                // 2. Top Equipes
+                const qEq = query(collection(db, 'equipes'));
+                const snapEq = await getDocs(qEq);
+                let equipes = [];
+                snapEq.forEach(d => {
+                    const e = d.data();
+                    e.id = d.id;
+                    e.progresso = e.stepLiberado !== undefined ? e.stepLiberado : (e.tccStep || 0);
+                    equipes.push(e);
+                });
+
+                for(let eq of equipes) {
+                    let teamFocus = 0;
+                    if(eq.membros && eq.membros.length > 0) {
+                        for(let uid of eq.membros) {
+                            const u = alunos.find(a => a.id === uid);
+                            if(u) teamFocus += u.foco;
+                        }
+                    }
+                    eq.teamFocus = teamFocus;
+                }
+
+                equipes.sort((a,b) => {
+                    if(b.progresso !== a.progresso) return b.progresso - a.progresso;
+                    return b.teamFocus - a.teamFocus;
+                });
+
+                const topEquipes = equipes.slice(0, 10);
+                if(topEquipes.length === 0) {
+                    listEquipes.innerHTML = '<div class="empty-state">Nenhuma equipe formada.</div>';
+                } else {
+                    let eqHtml = '';
+                    for(let i = 0; i < topEquipes.length; i++) {
+                        const eq = topEquipes[i];
+                        const iconColor = i === 0 ? '#f1c40f' : i === 1 ? '#bdc3c7' : i === 2 ? '#e67e22' : 'var(--tertiary)';
+                        const h = Math.floor(eq.teamFocus / 60); const m = eq.teamFocus % 60;
+                        
+                        let progNome = "Etapa 1";
+                        if(window.TCC_STEPS && window.TCC_STEPS[eq.progresso]) {
+                            progNome = window.TCC_STEPS[eq.progresso];
+                        }
+
+                        eqHtml += `
+                        <div class="ranking-list-item" style="padding:16px">
+                            <div class="rank-number" style="font-size:1.2rem;color:${iconColor}">${i+1}º</div>
+                            <div class="rank-info" style="border-left:3px solid ${iconColor}; padding-left:12px">
+                                <div class="rank-name" style="font-size:1.05rem">${eq.nome}</div>
+                                <div class="rank-detail"><i class="fa-solid fa-layer-group"></i> ${progNome}</div>
+                                <div class="rank-detail" style="margin-top:4px"><i class="fa-solid fa-stopwatch"></i> ${h}h ${m}m coletivos</div>
+                            </div>
+                        </div>`;
+                    }
+                    listEquipes.innerHTML = eqHtml;
+                }
+
+            } catch(e) {
+                console.error("Erro ao carregar ranking:", e);
+                podContainer.innerHTML = '<div class="empty-state" style="color:red">Erro ao carregar ranking.</div>';
+                listEquipes.innerHTML = '';
+            }
         };
 
     </script>
