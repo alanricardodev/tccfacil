@@ -1686,7 +1686,7 @@
             </div>
         </div>
         <!-- ===== ATAS DE DEFESA ===== -->
-        <div id="view-atas" class="view-container" style="display:none">
+        <div id="view-atas" class="view-container">
             <div style="display:flex; gap:20px; flex-wrap:wrap; align-items:flex-start">
                 
                 <!-- Equipes Container -->
@@ -4238,14 +4238,13 @@
 
                 const utterance = new SpeechSynthesisUtterance(cleanText);
                 utterance.lang = 'pt-BR';
-                utterance.rate = 1.25; // Mais fluido
-                utterance.pitch = 0.9; // Tom um pouco mais grave para voz masculina
+                utterance.rate = 1.45; // Mais rápido e dinâmico
+                utterance.pitch = 1.6; // Tom mais agudo/engraçado
 
                 let voices = window.speechSynthesis.getVoices();
                 if (voices.length > 0) {
                     let ptVoices = voices.filter(v => v.lang.includes('pt-BR') || v.lang.includes('pt_BR'));
                     if (ptVoices.length > 0) {
-                        // Priority: Antonio, Daniel, ou Microsoft pt-BR (geralmente masculinas)
                         let bestVoice = ptVoices.find(v =>
                             v.name.includes('Antonio') ||
                             v.name.includes('Daniel') ||
@@ -4267,7 +4266,7 @@
             addAIMessage('<i class="fa-solid fa-circle-notch fa-spin"></i> Pai tá pensando...', 'ai', typingId);
 
             // Configura o prompt de sistema
-            const systemPrompt = "Você é o 'ConfiaNoPai AI', um professor orientador de TCC extremamente didático, brasileiro, motivador e que usa a gíria 'Confia no Pai' de forma moderada para incentivar os alunos. Responda as perguntas focando na metodologia científica, ABNT, planejamento e sempre seja claro, dividindo a tela em tópicos curtos. Nunca fuja de assuntos acadêmicos.";
+            const systemPrompt = "Você é o 'ConfiaNoPai AI', um professor orientador de TCC extremamente hilário, didático e brasileiro, que usa a gíria 'Confia no Pai' de forma moderada. Responda em tom engraçado, jovem e acelerado, como se estivesse sempre muito empolgado, mas não deixe de ajudar com a metodologia didática e planejamento científico e acadêmico. Foque no humor mas entregue o conteúdo.";
 
             try {
                 // Usando a API gratuita Pollinations que não exige chave (API 100% aberta)
