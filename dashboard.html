@@ -185,7 +185,7 @@
             align-items: center;
             gap: 15px;
         }
-        
+
         .header-notif {
             position: relative;
             background: white;
@@ -205,7 +205,7 @@
 
         .header-notif:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
         }
 
         .bell-badge {
@@ -232,8 +232,8 @@
             width: 320px;
             background: white;
             border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(0, 0, 0, 0.05);
             z-index: 999;
             overflow: hidden;
             transform-origin: top right;
@@ -263,17 +263,35 @@
             cursor: pointer;
             transition: background .2s;
         }
-        
-        .notif-item:hover { background: #f8f9fa; }
-        
-        .notif-item-icon {
-            width: 32px; height: 32px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            color: white; font-size: .8rem; flex-shrink: 0;
+
+        .notif-item:hover {
+            background: #f8f9fa;
         }
-        
-        .notif-item-text p { margin: 0; font-size: .82rem; font-weight: 600; color: var(--text-main); line-height: 1.3; }
-        .notif-item-text span { font-size: .72rem; color: var(--text-light); }
+
+        .notif-item-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: .8rem;
+            flex-shrink: 0;
+        }
+
+        .notif-item-text p {
+            margin: 0;
+            font-size: .82rem;
+            font-weight: 600;
+            color: var(--text-main);
+            line-height: 1.3;
+        }
+
+        .notif-item-text span {
+            font-size: .72rem;
+            color: var(--text-light);
+        }
 
         .view-container.active {
             display: block;
@@ -881,47 +899,192 @@
 
         /* ── RANKING / GAMIFICAÇÃO ── */
         .podium-container {
-            display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 15px;
+            margin-top: 30px;
         }
+
         .podium-step {
-            display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
             background: linear-gradient(to top, rgba(108, 92, 231, 0.08), rgba(108, 92, 231, 0.01));
-            border-top-left-radius: 12px; border-top-right-radius: 12px;
-            width: 85px; position: relative; transition: all 0.3s;
-            border: 1px solid rgba(108, 92, 231, 0.15); border-bottom: none;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            width: 85px;
+            position: relative;
+            transition: all 0.3s;
+            border: 1px solid rgba(108, 92, 231, 0.15);
+            border-bottom: none;
         }
-        .podium-step:hover { filter: brightness(1.05); transform: translateY(-3px); }
-        .podium-rank { font-weight: 800; font-size: 1.6rem; color: var(--primary); margin-bottom: 5px; }
+
+        .podium-step:hover {
+            filter: brightness(1.05);
+            transform: translateY(-3px);
+        }
+
+        .podium-rank {
+            font-weight: 800;
+            font-size: 1.6rem;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
         .podium-avatar {
-            width: 54px; height: 54px; border-radius: 50%; background: var(--primary);
-            color: white; display: flex; align-items: center; justify-content: center;
-            font-size: 1.3rem; font-weight: bold; position: absolute; top: -27px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15); border: 3px solid white;
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            position: absolute;
+            top: -27px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            border: 3px solid white;
         }
-        .podium-name { font-size: 0.8rem; font-weight: 600; text-align: center; margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 5px; color:var(--text-main); }
-        .podium-score { font-size: 0.75rem; color: var(--text-light); margin-bottom: 10px; font-weight: 700; background: rgba(255,255,255,0.8); padding: 2px 6px; border-radius: 10px;}
-        .podium-1 { height: 160px; background: linear-gradient(to top, rgba(241, 196, 15, 0.15), rgba(241, 196, 15, 0.02)); border-color: rgba(241, 196, 15, 0.3); z-index: 3;}
-        .podium-1 .podium-rank { color: #f39c12; text-shadow: 0 2px 4px rgba(243, 156, 18, 0.3); }
-        .podium-1 .podium-avatar { background: linear-gradient(135deg, #f1c40f, #f39c12); }
-        .podium-2 { height: 120px; background: linear-gradient(to top, rgba(189, 195, 199, 0.2), rgba(189, 195, 199, 0.02)); border-color: rgba(189, 195, 199, 0.4); z-index: 2;}
-        .podium-2 .podium-rank { color: #7f8c8d; }
-        .podium-2 .podium-avatar { background: linear-gradient(135deg, #bdc3c7, #95a5a6); }
-        .podium-3 { height: 90px; background: linear-gradient(to top, rgba(211, 84, 0, 0.15), rgba(211, 84, 0, 0.02)); border-color: rgba(211, 84, 0, 0.3); z-index: 1;}
-        .podium-3 .podium-rank { color: #d35400; }
-        .podium-3 .podium-avatar { background: linear-gradient(135deg, #e67e22, #d35400); }
-        
+
+        .podium-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 4px;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0 5px;
+            color: var(--text-main);
+        }
+
+        .podium-score {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-bottom: 10px;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        .podium-1 {
+            height: 160px;
+            background: linear-gradient(to top, rgba(241, 196, 15, 0.15), rgba(241, 196, 15, 0.02));
+            border-color: rgba(241, 196, 15, 0.3);
+            z-index: 3;
+        }
+
+        .podium-1 .podium-rank {
+            color: #f39c12;
+            text-shadow: 0 2px 4px rgba(243, 156, 18, 0.3);
+        }
+
+        .podium-1 .podium-avatar {
+            background: linear-gradient(135deg, #f1c40f, #f39c12);
+        }
+
+        .podium-2 {
+            height: 120px;
+            background: linear-gradient(to top, rgba(189, 195, 199, 0.2), rgba(189, 195, 199, 0.02));
+            border-color: rgba(189, 195, 199, 0.4);
+            z-index: 2;
+        }
+
+        .podium-2 .podium-rank {
+            color: #7f8c8d;
+        }
+
+        .podium-2 .podium-avatar {
+            background: linear-gradient(135deg, #bdc3c7, #95a5a6);
+        }
+
+        .podium-3 {
+            height: 90px;
+            background: linear-gradient(to top, rgba(211, 84, 0, 0.15), rgba(211, 84, 0, 0.02));
+            border-color: rgba(211, 84, 0, 0.3);
+            z-index: 1;
+        }
+
+        .podium-3 .podium-rank {
+            color: #d35400;
+        }
+
+        .podium-3 .podium-avatar {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+        }
+
         .ranking-list-item {
-            display: flex; align-items: center; gap: 12px; padding: 12px 16px;
-            background: #fafbff; border-radius: 12px; border: 1px solid #f1f2f6;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: #fafbff;
+            border-radius: 12px;
+            border: 1px solid #f1f2f6;
             transition: all 0.2s;
         }
-        .ranking-list-item:hover { transform: translateX(4px); box-shadow: 0 4px 12px rgba(0,0,0,0.03); border-color: #e2e8f0; }
-        .rank-number { font-weight: 800; color: #a4b0be; width: 24px; text-align: center; }
-        .rank-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--tertiary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.9rem; flex-shrink:0;}
-        .rank-info { flex: 1; /* for truncated text */ min-width:0; }
-        .rank-name { font-weight: 600; color: var(--text-main); font-size: 0.9rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-        .rank-detail { font-size: 0.75rem; color: var(--text-light); }
-        .rank-score { font-weight: 700; color: var(--primary); font-size: 0.85rem; background: rgba(108, 92, 231, 0.1); padding: 4px 10px; border-radius: 20px;}
+
+        .ranking-list-item:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            border-color: #e2e8f0;
+        }
+
+        .rank-number {
+            font-weight: 800;
+            color: #a4b0be;
+            width: 24px;
+            text-align: center;
+        }
+
+        .rank-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--tertiary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .rank-info {
+            flex: 1;
+            /* for truncated text */
+            min-width: 0;
+        }
+
+        .rank-name {
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .rank-detail {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        .rank-score {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.85rem;
+            background: rgba(108, 92, 231, 0.1);
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
 
         /* ── TOAST NOTIFICATIONS ── */
         #toastContainer {
@@ -938,7 +1101,7 @@
         .notif-toast {
             background: white;
             border-radius: 14px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
             padding: 14px 18px;
             display: flex;
             align-items: flex-start;
@@ -952,42 +1115,115 @@
             transition: transform .2s, box-shadow .2s;
         }
 
-        .notif-toast:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(0,0,0,0.18); }
-        .notif-toast.notif-info  { border-color: #0984e3; }
-        .notif-toast.notif-success { border-color: #00b894; }
-        .notif-toast.notif-warn  { border-color: #fdcb6e; }
-        .notif-toast.notif-error { border-color: #ff7675; }
-
-        .notif-icon {
-            width: 38px; height: 38px; border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--tertiary));
-            color: white; display: flex; align-items: center; justify-content: center;
-            font-size: 1rem; flex-shrink: 0;
+        .notif-toast:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.18);
         }
 
-        .notif-body { flex: 1; }
-        .notif-title { font-weight: 700; font-size: .88rem; color: var(--text-main); margin-bottom: 2px; }
-        .notif-msg   { font-size: .78rem; color: var(--text-light); line-height: 1.4; }
-        .notif-close { background: none; border: none; color: #aaa; cursor: pointer; font-size: 1rem; padding: 0; align-self: flex-start; }
+        .notif-toast.notif-info {
+            border-color: #0984e3;
+        }
+
+        .notif-toast.notif-success {
+            border-color: #00b894;
+        }
+
+        .notif-toast.notif-warn {
+            border-color: #fdcb6e;
+        }
+
+        .notif-toast.notif-error {
+            border-color: #ff7675;
+        }
+
+        .notif-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--tertiary));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .notif-body {
+            flex: 1;
+        }
+
+        .notif-title {
+            font-weight: 700;
+            font-size: .88rem;
+            color: var(--text-main);
+            margin-bottom: 2px;
+        }
+
+        .notif-msg {
+            font-size: .78rem;
+            color: var(--text-light);
+            line-height: 1.4;
+        }
+
+        .notif-close {
+            background: none;
+            border: none;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0;
+            align-self: flex-start;
+        }
 
         @keyframes toastIn {
-            from { opacity:0; transform: translateX(60px) scale(0.9); }
-            to   { opacity:1; transform: translateX(0) scale(1); }
+            from {
+                opacity: 0;
+                transform: translateX(60px) scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
         }
 
         @keyframes toastOut {
-            from { opacity:1; transform: translateX(0) scale(1); max-height: 100px; }
-            to   { opacity:0; transform: translateX(60px) scale(0.9); max-height: 0; padding: 0; margin:0; }
+            from {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+                max-height: 100px;
+            }
+
+            to {
+                opacity: 0;
+                transform: translateX(60px) scale(0.9);
+                max-height: 0;
+                padding: 0;
+                margin: 0;
+            }
         }
 
-        .notif-toast.removing { animation: toastOut 0.3s ease forwards; }
+        .notif-toast.removing {
+            animation: toastOut 0.3s ease forwards;
+        }
 
         /* badge pulse when new */
         @keyframes badgePulse {
-            0%,100% { transform: scale(1); }
-            50% { transform: scale(1.35); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.35);
+            }
         }
-        .nav-badge.pulse { animation: badgePulse 0.5s ease; }
+
+        .nav-badge.pulse {
+            animation: badgePulse 0.5s ease;
+        }
     </style>
 </head>
 
@@ -1017,7 +1253,8 @@
                 <i class="fa-solid fa-comments"></i> Fórum Geral
                 <span class="nav-badge" id="badge-forum" style="display:none">0</span>
             </div>
-            <div class="nav-item" id="nav-ranking" onclick="switchView('ranking','Pódio de Líderes','nav-ranking'); window.carregarRanking()">
+            <div class="nav-item" id="nav-ranking"
+                onclick="switchView('ranking','Pódio de Líderes','nav-ranking'); window.carregarRanking()">
                 <i class="fa-solid fa-trophy" style="color:#fdcb6e"></i> Ranking
             </div>
 
@@ -1067,6 +1304,10 @@
                 onclick="switchView('atas','Gerar Atas de Defesa','nav-atas'); window.carregarTurmasAta()">
                 <i class="fa-solid fa-file-contract"></i> Atas de Defesa
             </div>
+            <div class="nav-item" id="nav-configs" style="display:none"
+                onclick="switchView('configs','Configurações de Impressão','nav-configs'); window.carregarConfigImpressao()">
+                <i class="fa-solid fa-print"></i> Config. Impressão
+            </div>
 
             <div class="nav-section" id="section-admin" style="display:none">Administração</div>
             <div class="nav-item" id="nav-admin" style="display:none"
@@ -1104,11 +1345,13 @@
                 <div class="header-notif" id="notifBell" onclick="window.toggleNotifDropdown(event)">
                     <i class="fa-solid fa-bell"></i>
                     <span class="bell-badge" id="bellBadge" style="display:none">0</span>
-                    <div class="notif-dropdown" id="notifDropdown" style="display:none" onclick="event.stopPropagation()">
+                    <div class="notif-dropdown" id="notifDropdown" style="display:none"
+                        onclick="event.stopPropagation()">
                         <div class="notif-dropdown-header">Notificações Recentes</div>
                         <div class="notif-dropdown-list" id="notifDropdownList">
                             <div class="empty-state" style="padding:20px 10px;font-size:0.85rem">
-                                <i class="fa-regular fa-bell-slash" style="font-size:2rem;margin-bottom:8px"></i><br>Nenhuma novidade.
+                                <i class="fa-regular fa-bell-slash"
+                                    style="font-size:2rem;margin-bottom:8px"></i><br>Nenhuma novidade.
                             </div>
                         </div>
                     </div>
@@ -1260,6 +1503,79 @@
             </div>
         </div>
 
+        <!-- ===== CONFIGURAÇÕES DE IMPRESSÃO ===== -->
+        <div id="view-configs" class="view-container">
+            <div class="dash-card" style="margin-bottom:24px">
+                <h2 style="color:var(--primary); margin-bottom:15px"><i class="fa-solid fa-file-contract"></i> Layout da
+                    Ata de Defesa</h2>
+                <div style="display:flex;gap:20px;flex-wrap:wrap">
+                    <div style="flex:1;min-width:250px">
+                        <label
+                            style="font-size:0.9rem;font-weight:700;color:var(--text-main);display:block;margin-bottom:8px">Imagem/Logo
+                            do Cabeçalho</label>
+                        <input type="file" id="inputLogoAta" accept="image/*" style="display:none"
+                            onchange="window.handleImageUpload(event, 'previewLogoAta', 'cfgLogoAtaBase64')">
+                        <button class="btn btn-primary" onclick="document.getElementById('inputLogoAta').click()"
+                            style="margin-bottom:10px"><i class="fa-solid fa-upload"></i> Escolher Imagem (Max
+                            3MB)</button>
+                        <br><button class="btn" style="background:#eee;color:#777;font-size:0.75rem;padding:4px 8px"
+                            onclick="window.limparImagem('previewLogoAta', 'cfgLogoAtaBase64')"><i
+                                class="fa-solid fa-trash"></i> Remover Imagem</button>
+                        <input type="hidden" id="cfgLogoAtaBase64">
+                        <div id="previewLogoAta"
+                            style="margin-top:10px;width:100%;max-width:200px;height:120px;border:1px dashed #ccc;display:flex;align-items:center;justify-content:center;border-radius:8px;background:#f9f9f9;overflow:hidden">
+                            <span style="font-size:0.8rem;color:#888">Sem Imagem</span>
+                        </div>
+                    </div>
+                    <div style="flex:2;min-width:300px">
+                        <label
+                            style="font-size:0.9rem;font-weight:700;color:var(--text-main);display:block;margin-bottom:8px">Texto
+                            da Instituição (Centro/Estado)</label>
+                        <textarea id="cfgTextoAta" rows="4"
+                            style="width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;font-family:'Inter',sans-serif"
+                            placeholder="Ex: ESTADO DA BAHIA&#10;SECRETARIA DA EDUCAÇÃO..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dash-card" style="margin-bottom:24px">
+                <h2 style="color:var(--tertiary); margin-bottom:15px"><i class="fa-solid fa-file-pdf"></i> Layout do TCC
+                    (Capa do Relatório)</h2>
+                <div style="display:flex;gap:20px;flex-wrap:wrap">
+                    <div style="flex:1;min-width:250px">
+                        <label
+                            style="font-size:0.9rem;font-weight:700;color:var(--text-main);display:block;margin-bottom:8px">Imagem/Logo
+                            da Capa</label>
+                        <input type="file" id="inputLogoTcc" accept="image/*" style="display:none"
+                            onchange="window.handleImageUpload(event, 'previewLogoTcc', 'cfgLogoTccBase64')">
+                        <button class="btn" style="background:var(--tertiary);color:white;margin-bottom:10px"
+                            onclick="document.getElementById('inputLogoTcc').click()"><i class="fa-solid fa-upload"></i>
+                            Escolher Imagem</button>
+                        <br><button class="btn" style="background:#eee;color:#777;font-size:0.75rem;padding:4px 8px"
+                            onclick="window.limparImagem('previewLogoTcc', 'cfgLogoTccBase64')"><i
+                                class="fa-solid fa-trash"></i> Remover Imagem</button>
+                        <input type="hidden" id="cfgLogoTccBase64">
+                        <div id="previewLogoTcc"
+                            style="margin-top:10px;width:100%;max-width:200px;height:120px;border:1px dashed #ccc;display:flex;align-items:center;justify-content:center;border-radius:8px;background:#f9f9f9;overflow:hidden">
+                            <span style="font-size:0.8rem;color:#888">Sem Imagem</span>
+                        </div>
+                    </div>
+                    <div style="flex:2;min-width:300px">
+                        <label
+                            style="font-size:0.9rem;font-weight:700;color:var(--text-main);display:block;margin-bottom:8px">Texto
+                            da Instituição (Topo da Capa)</label>
+                        <textarea id="cfgTextoTcc" rows="4"
+                            style="width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;font-family:'Inter',sans-serif"
+                            placeholder="Ex: ESCOLA ESTADUAL XYZ&#10;CURSO TÉCNICO DE..."></textarea>
+                    </div>
+                </div>
+                <div style="margin-top:20px;text-align:right">
+                    <button class="btn btn-primary" id="btnSalvarCfgPrint" onclick="window.salvarConfigImpressao()"><i
+                            class="fa-solid fa-floppy-disk"></i> Salvar Todas as Configurações</button>
+                </div>
+            </div>
+        </div>
+
         <!-- ===== GUIA DO TCC ===== -->
         <div id="view-guia-tcc" class="view-container">
             <div class="dash-card mb-4" style="margin-bottom:24px">
@@ -1364,19 +1680,23 @@
         <!-- ===== RANKING (GAMIFICAÇÃO) ===== -->
         <div id="view-ranking" class="view-container">
             <div style="text-align:center;margin-bottom:30px">
-                <h2 style="color:var(--primary);font-size:2rem;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:12px">
-                    <i class="fa-solid fa-trophy" style="color:#f1c40f;font-size:2.2rem;filter:drop-shadow(0 4px 8px rgba(241,196,15,0.4))"></i>
+                <h2
+                    style="color:var(--primary);font-size:2rem;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:12px">
+                    <i class="fa-solid fa-trophy"
+                        style="color:#f1c40f;font-size:2.2rem;filter:drop-shadow(0 4px 8px rgba(241,196,15,0.4))"></i>
                     Pódio de Líderes
                 </h2>
-                <p style="color:var(--text-light);font-size:1.05rem">Mantenha o foco, participe e estude na plataforma para subir no ranking!</p>
+                <p style="color:var(--text-light);font-size:1.05rem">Mantenha o foco, participe e estude na plataforma
+                    para subir no ranking!</p>
             </div>
 
             <div style="display:flex;gap:20px;flex-wrap:wrap">
                 <!-- Coluna 1: Top Alunos -->
                 <div style="flex:1;min-width:320px">
                     <div class="dash-card">
-                        <h3 style="color:var(--tertiary);margin-bottom:20px;text-align:center;font-size:1.1rem"><i class="fa-solid fa-stopwatch"></i> Top Alunos (Tempo de Foco)</h3>
-                        
+                        <h3 style="color:var(--tertiary);margin-bottom:20px;text-align:center;font-size:1.1rem"><i
+                                class="fa-solid fa-stopwatch"></i> Top Alunos (Tempo de Foco)</h3>
+
                         <!-- Pódio UI -->
                         <div id="rankingPodiumAlunos" class="podium-container" style="height:210px;margin-bottom:20px">
                             <div class="empty-state">Gerando pódio...</div>
@@ -1391,8 +1711,11 @@
                 <!-- Coluna 2: Top Equipes -->
                 <div style="flex:1;min-width:320px">
                     <div class="dash-card">
-                        <h3 style="color:var(--primary);margin-bottom:20px;text-align:center;font-size:1.1rem"><i class="fa-solid fa-flag-checkered"></i> Top Equipes (Progresso)</h3>
-                        <p style="font-size:0.8rem;color:var(--text-light);text-align:center;margin-top:-15px;margin-bottom:20px">Avanço das etapas e união do tempo de foco.</p>
+                        <h3 style="color:var(--primary);margin-bottom:20px;text-align:center;font-size:1.1rem"><i
+                                class="fa-solid fa-flag-checkered"></i> Top Equipes (Progresso)</h3>
+                        <p
+                            style="font-size:0.8rem;color:var(--text-light);text-align:center;margin-top:-15px;margin-bottom:20px">
+                            Avanço das etapas e união do tempo de foco.</p>
                         <div id="rankingListEquipes" style="display:flex;flex-direction:column;gap:12px">
                             <div class="empty-state">Buscando equipes...</div>
                         </div>
@@ -1688,14 +2011,18 @@
         <!-- ===== ATAS DE DEFESA ===== -->
         <div id="view-atas" class="view-container">
             <div style="display:flex; gap:20px; flex-wrap:wrap; align-items:flex-start">
-                
+
                 <!-- Equipes Container -->
                 <div style="flex:1; min-width:300px">
                     <div class="dash-card" style="position:sticky; top:20px">
-                        <h3 style="color:var(--primary);margin-bottom:4px"><i class="fa-solid fa-users-viewfinder"></i> Suas Equipes</h3>
-                        <p style="color:var(--text-light);font-size:.85rem;margin-bottom:15px">Consulte os alunos de cada equipe para facilitar o preenchimento da Ata ao lado.</p>
-                        <div id="ataEquipesListContainer" style="max-height:600px;overflow-y:auto;padding-right:10px;display:flex;flex-direction:column;gap:10px">
-                            <div class="empty-state" style="padding:20px;font-size:.9rem"><i class="fa-solid fa-spinner fa-spin"></i> Carregando equipes...</div>
+                        <h3 style="color:var(--primary);margin-bottom:4px"><i class="fa-solid fa-users-viewfinder"></i>
+                            Suas Equipes</h3>
+                        <p style="color:var(--text-light);font-size:.85rem;margin-bottom:15px">Consulte os alunos de
+                            cada equipe para facilitar o preenchimento da Ata ao lado.</p>
+                        <div id="ataEquipesListContainer"
+                            style="max-height:600px;overflow-y:auto;padding-right:10px;display:flex;flex-direction:column;gap:10px">
+                            <div class="empty-state" style="padding:20px;font-size:.9rem"><i
+                                    class="fa-solid fa-spinner fa-spin"></i> Carregando equipes...</div>
                         </div>
                     </div>
                 </div>
@@ -1703,19 +2030,29 @@
                 <!-- Formulário Manual -->
                 <div style="flex:2; min-width:400px">
                     <div class="dash-card" id="ataFormContainer">
-                        <h3 style="color:var(--tertiary);margin-bottom:4px"><i class="fa-solid fa-file-contract"></i> Gerador de Ata (Preenchimento Manual)</h3>
-                        <p style="color:var(--text-light);font-size:.85rem;margin-bottom:15px">Preencha os dados abaixo e os nomes dos estudantes para gerar o PDF da Ata de Defesa.</p>
-                        
+                        <h3 style="color:var(--tertiary);margin-bottom:4px"><i class="fa-solid fa-file-contract"></i>
+                            Gerador de Ata (Preenchimento Manual)</h3>
+                        <p style="color:var(--text-light);font-size:.85rem;margin-bottom:15px">Preencha os dados abaixo
+                            e os nomes dos estudantes para gerar o PDF da Ata de Defesa.</p>
+
                         <div style="display:flex;flex-direction:column;gap:12px">
                             <div>
-                                <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px;color:var(--primary)"><i class="fa-solid fa-users"></i> Estudantes Avaliados (separe por vírgulas)</label>
-                                <textarea id="ataNomesAlunos" rows="2" style="width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-family:'Inter',sans-serif" placeholder="Ex: João da Silva, Maria Oliveira, Carlos Santos" oninput="document.getElementById('ataEquipeNomePdf').value = 'Preenchimento Manual'"></textarea>
+                                <label
+                                    style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px;color:var(--primary)"><i
+                                        class="fa-solid fa-users"></i> Estudantes Avaliados (separe por
+                                    vírgulas)</label>
+                                <textarea id="ataNomesAlunos" rows="2"
+                                    style="width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-family:'Inter',sans-serif"
+                                    placeholder="Ex: João da Silva, Maria Oliveira, Carlos Santos"
+                                    oninput="document.getElementById('ataEquipeNomePdf').value = 'Preenchimento Manual'"></textarea>
                                 <input type="hidden" id="ataEquipeNomePdf" value="Preenchimento Manual">
                             </div>
 
                             <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
                                 <div style="flex:1;min-width:120px">
-                                    <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px">Data da
+                                    <label
+                                        style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px">Data
+                                        da
                                         Apresentação</label>
                                     <input type="date" id="ataData"
                                         style="width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-family:'Inter',sans-serif">
@@ -1738,7 +2075,9 @@
                                         placeholder="Ex: Sala 03">
                                 </div>
                                 <div style="flex:1;min-width:120px">
-                                    <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px">Nota da
+                                    <label
+                                        style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px">Nota
+                                        da
                                         Equipe</label>
                                     <input type="number" id="ataNota"
                                         style="width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-family:'Inter',sans-serif"
@@ -1747,20 +2086,24 @@
                             </div>
 
                             <div>
-                                <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px">Orientador(a) / Presidente da Banca</label>
+                                <label
+                                    style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px">Orientador(a)
+                                    / Presidente da Banca</label>
                                 <input type="text" id="ataOrientador"
                                     style="width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-family:'Inter',sans-serif">
                             </div>
 
                             <div>
-                                <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px">Membro da Banca 1</label>
+                                <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px">Membro
+                                    da Banca 1</label>
                                 <input type="text" id="ataBanca1"
                                     style="width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-family:'Inter',sans-serif"
                                     placeholder="Nome do examinador 1">
                             </div>
 
                             <div>
-                                <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px">Membro da Banca 2</label>
+                                <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px">Membro
+                                    da Banca 2</label>
                                 <input type="text" id="ataBanca2"
                                     style="width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-family:'Inter',sans-serif"
                                     placeholder="Nome do examinador 2">
@@ -1893,10 +2236,10 @@
                         if (ME.studyMinutes % 60 === 0 && ME.studyMinutes > 0) {
                             showToast("🎯 Objetivo Alcançado!", `Parabéns! Você completou ${Math.floor(ME.studyMinutes / 60)} hora(s) de foco na plataforma.`, "fa-fire", true);
                         }
-                    } catch(e){}
+                    } catch (e) { }
                 }
             }, 60000);
-            
+
             // Mark offline when tab closes
             window.addEventListener('beforeunload', () => {
                 // Synchronous best-effort (beacon)
@@ -1931,7 +2274,7 @@
                 if (m.ouro) mStr += `🥇${m.ouro} `;
                 if (m.prata) mStr += `🥈${m.prata} `;
                 if (m.bronze) mStr += `🥉${m.bronze} `;
-                
+
                 // Gamificacao: Tempo de Foco
                 const mins = data.studyMinutes || 0;
                 const hours = Math.floor(mins / 60);
@@ -2096,7 +2439,7 @@
             }
         }
 
-        window.toggleNotifDropdown = function(e) {
+        window.toggleNotifDropdown = function (e) {
             if (e) e.stopPropagation();
             const el = document.getElementById('notifDropdown');
             if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
@@ -2112,11 +2455,11 @@
 
         window._activeNotifs = { prof: 0, alunos: 0, forumTurma: 0, forumEquipe: 0, forumGeral: 0 };
 
-        window.updateBellDropdown = function() {
+        window.updateBellDropdown = function () {
             let total = 0;
             let html = '';
             const n = window._activeNotifs;
-            
+
             if (n.alunos > 0) {
                 total += n.alunos;
                 html += `<div class="notif-item" onclick="if(document.getElementById('nav-alunos')) document.getElementById('nav-alunos').click()">
@@ -2165,7 +2508,7 @@
                 const prev = parseInt(badge.textContent) || 0;
                 badge.style.display = 'flex';
                 badge.textContent = total > 99 ? '99+' : total;
-                if(total !== prev) {
+                if (total !== prev) {
                     badge.classList.remove('pulse');
                     void badge.offsetWidth;
                     badge.classList.add('pulse');
@@ -2186,7 +2529,7 @@
             _notifUnsubs.length = 0;
 
             const role = data.role;
-            const uid  = data.uid;
+            const uid = data.uid;
 
             // ── 1. Pending students (professor & admin) ──
             if (role === 'professor' || role === 'admin') {
@@ -3595,9 +3938,9 @@
         </style>
     </head><body>
         <div class="capa">
+            ${(ME.printConfig && ME.printConfig.logoTcc) ? `<img src="${ME.printConfig.logoTcc}" style="max-height:150px; max-width:200px; object-fit:contain; margin-bottom:1cm;">` : ''}
             <div class="capa-inst">
-                CENTRO ESTADUAL DE EDUCAÇÃO PROFISSIONAL FORMAÇÃO E EVENTOS ISAÍAS ALVES<br>
-                CURSO TÉCNICO DE NÍVEL MÉDIO EM INFORMÁTICA
+                ${(ME.printConfig && ME.printConfig.textoTcc) ? ME.printConfig.textoTcc.replace(/\n/g, '<br>') : `CENTRO ESTADUAL DE EDUCAÇÃO PROFISSIONAL FORMAÇÃO E EVENTOS ISAÍAS ALVES<br>CURSO TÉCNICO DE NÍVEL MÉDIO EM INFORMÁTICA`}
             </div>
             <div class="capa-equipe">
                 EQUIPE: ${eq.nome.toUpperCase()}<br><br>
@@ -3710,12 +4053,12 @@
             const equipeListContainer = document.getElementById('ataEquipesListContainer');
             if (!equipeListContainer) return;
             equipeListContainer.innerHTML = '<div class="empty-state" style="padding:20px;font-size:.9rem"><i class="fa-solid fa-spinner fa-spin"></i> Carregando equipes...</div>';
-            
+
             const today = new Date();
             const dataInput = document.getElementById('ataData');
             const orientInput = document.getElementById('ataOrientador');
-            if(dataInput && !dataInput.value) dataInput.value = today.toISOString().split('T')[0];
-            if(orientInput && !orientInput.value) orientInput.value = ME.name || '';
+            if (dataInput && !dataInput.value) dataInput.value = today.toISOString().split('T')[0];
+            if (orientInput && !orientInput.value) orientInput.value = ME.name || '';
 
             try {
                 const qTurmas = ME.role === 'admin' ? collection(db, 'turmas') : query(collection(db, 'turmas'), where('professorId', '==', ME.uid));
@@ -3724,15 +4067,15 @@
                     equipeListContainer.innerHTML = '<div class="empty-state" style="padding:20px;font-size:.9rem">Nenhuma turma/equipe encontrada.</div>';
                     return;
                 }
-                
+
                 const turmasMap = {};
                 snap.forEach(d => { turmasMap[d.id] = d.data().nome; });
                 const turmaIds = Object.keys(turmasMap);
-                
+
                 // Fetch all equipes
                 const chunks = [];
-                for(let i=0; i<turmaIds.length; i+=10) chunks.push(turmaIds.slice(i, i+10));
-                
+                for (let i = 0; i < turmaIds.length; i += 10) chunks.push(turmaIds.slice(i, i + 10));
+
                 let equipes = [];
                 for (const chunk of chunks) {
                     const qEq = query(collection(db, 'equipes'), where('turmaId', 'in', chunk));
@@ -3744,10 +4087,10 @@
                         equipes.push(eq);
                     });
                 }
-                
-                equipes.sort((a,b) => a.nome.localeCompare(b.nome));
-                
-                if(equipes.length === 0) {
+
+                equipes.sort((a, b) => a.nome.localeCompare(b.nome));
+
+                if (equipes.length === 0) {
                     equipeListContainer.innerHTML = '<div class="empty-state" style="padding:20px;font-size:.9rem">Nenhuma equipe encontrada nas suas turmas.</div>';
                 } else {
                     let html = '';
@@ -3788,16 +4131,16 @@
             }
         };
 
-        window.carregarEquipesAta = async function () {};
-        window.selecionarAtaManual = function() {};
-        window.selecionarEquipeAta = async function () {};
-        
-        window.preencherAtaAuto = function(eqId) {
+        window.carregarEquipesAta = async function () { };
+        window.selecionarAtaManual = function () { };
+        window.selecionarEquipeAta = async function () { };
+
+        window.preencherAtaAuto = function (eqId) {
             const el = document.getElementById(`membros-ata-eq-${eqId}`);
             if (el && el.dataset.nomes) {
                 document.getElementById('ataNomesAlunos').value = el.dataset.nomes;
                 document.getElementById('ataEquipeNomePdf').value = el.dataset.eqNome || 'Preenchimento Manual';
-                
+
                 const t = document.getElementById('ataNomesAlunos');
                 t.style.transition = "background-color 0.3s";
                 t.style.backgroundColor = '#e8f5e9';
@@ -3858,6 +4201,10 @@
         </div>`;
             });
 
+            const cfg = (window.ME && window.ME.printConfig) ? window.ME.printConfig : {};
+            const logoHtmlAta = cfg.logoAta ? `<img src="${cfg.logoAta}" alt="Logo Ata" style="width:70px; height:auto; margin-right:1cm; object-fit:contain;">` : `<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Bras%C3%A3o_da_Bahia.svg/512px-Bras%C3%A3o_da_Bahia.svg.png" alt="Brasão">`;
+            const tituloHtmlAta = cfg.textoAta ? cfg.textoAta.replace(/\n/g, '<br>') : `ESTADO DA BAHIA<br>SECRETARIA DA EDUCAÇÃO<br>CENTRO ESTADUAL DE EDUCAÇÃO PROFISSIONAL FORMAÇÃO E EVENTOS ISAÍAS ALVES`;
+
             const docHtml = `<!DOCTYPE html><html lang="pt-BR"><head>
         <meta charset="UTF-8">
         <title>Ata de Defesa - ${eqNome}</title>
@@ -3876,10 +4223,9 @@
         </style>
     </head><body>
         <div class="cabecalho">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Bras%C3%A3o_da_Bahia.svg/512px-Bras%C3%A3o_da_Bahia.svg.png" alt="Brasão">
+            ${logoHtmlAta}
             <div class="cabecalho-texto">
-                ESTADO DA BAHIA<br>SECRETARIA DA EDUCAÇÃO<br>
-                CENTRO ESTADUAL DE EDUCAÇÃO PROFISSIONAL FORMAÇÃO E EVENTOS ISAÍAS ALVES
+                ${tituloHtmlAta}
             </div>
         </div>
         <div class="titulo">ATA DE APRESENTAÇÃO<br>DO<br>TRABALHO DE CONCLUSÃO DE CURSO</div>
@@ -4266,7 +4612,7 @@
             addAIMessage('<i class="fa-solid fa-circle-notch fa-spin"></i> Pai tá pensando...', 'ai', typingId);
 
             // Configura o prompt de sistema
-            const systemPrompt = "Você é o 'ConfiaNoPai AI', um professor orientador de TCC extremamente hilário, didático e brasileiro, que usa a gíria 'Confia no Pai' de forma moderada. Responda em tom engraçado, jovem e acelerado, como se estivesse sempre muito empolgado, mas não deixe de ajudar com a metodologia didática e planejamento científico e acadêmico. Foque no humor mas entregue o conteúdo.";
+            const systemPrompt = "Você é o 'ConfiaNoPai AI', um professor orientador de TCC que é um baiano raiz, nascido e criado em Salvador/BA. Você DEVE usar gírias soteropolitanas no meio da conversa (como 'oxe', 'barril dobrado', 'qual foi pivete', 'mizéra', 'na moral', 'retado'). REGRA CÔMICA: Sempre que houver margem para duplo sentido ou brincadeiras (exemplo: 'entrar', 'no fundo', 'tamanho', 'atrás'), você DEVE gritar 'LÁ ELE!!!' na resposta de forma muito engraçada. Use a gíria 'Confia no Pai'. Sem perder a essência baiana e o humor hilário, você sempre deve entregar as respostas acadêmicas sérias sobre TCC, ABNT ou metodologia científica logo em seguida, estruturadas em tópicos curtos.";
 
             try {
                 // Usando a API gratuita Pollinations que não exige chave (API 100% aberta)
@@ -4670,11 +5016,11 @@
         };
 
         // ── RANKING E GAMIFICAÇÃO ──
-        window.carregarRanking = async function() {
+        window.carregarRanking = async function () {
             const listAlunos = document.getElementById('rankingListAlunos');
             const podContainer = document.getElementById('rankingPodiumAlunos');
             const listEquipes = document.getElementById('rankingListEquipes');
-            if(!listAlunos || !podContainer || !listEquipes) return;
+            if (!listAlunos || !podContainer || !listEquipes) return;
 
             podContainer.innerHTML = '<div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i> Gerando pódio...</div>';
             listAlunos.innerHTML = '';
@@ -4691,44 +5037,44 @@
                     a.foco = a.studyMinutes || 0;
                     alunos.push(a);
                 });
-                
-                alunos.sort((a,b) => b.foco - a.foco);
+
+                alunos.sort((a, b) => b.foco - a.foco);
                 const topAlunos = alunos.slice(0, 10);
 
-                if(topAlunos.length === 0) {
+                if (topAlunos.length === 0) {
                     podContainer.innerHTML = '<div class="empty-state">Nenhum aluno encontrado ou ninguém estudou ainda.</div>';
                 } else {
                     const p1 = topAlunos[0];
                     const p2 = topAlunos[1];
                     const p3 = topAlunos[2];
-                    
+
                     let podiumHtml = '';
-                    
-                    if(p2) {
+
+                    if (p2) {
                         const h2 = Math.floor(p2.foco / 60); const m2 = p2.foco % 60;
                         podiumHtml += `
                         <div class="podium-step podium-2">
-                            <div class="podium-avatar">${p2.avatarUrl ? '<img src="'+p2.avatarUrl+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover">' : p2.name.charAt(0).toUpperCase()}</div>
+                            <div class="podium-avatar">${p2.avatarUrl ? '<img src="' + p2.avatarUrl + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover">' : p2.name.charAt(0).toUpperCase()}</div>
                             <div class="podium-rank">2</div>
                             <div class="podium-name">${p2.name.split(' ')[0]}</div>
                             <div class="podium-score">${h2}h ${m2}m</div>
                         </div>`;
                     }
-                    if(p1) {
+                    if (p1) {
                         const h1 = Math.floor(p1.foco / 60); const m1 = p1.foco % 60;
                         podiumHtml += `
                         <div class="podium-step podium-1">
-                            <div class="podium-avatar">${p1.avatarUrl ? '<img src="'+p1.avatarUrl+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover">' : p1.name.charAt(0).toUpperCase()}</div>
+                            <div class="podium-avatar">${p1.avatarUrl ? '<img src="' + p1.avatarUrl + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover">' : p1.name.charAt(0).toUpperCase()}</div>
                             <div class="podium-rank">1</div>
                             <div class="podium-name">${p1.name.split(' ')[0]}</div>
                             <div class="podium-score">${h1}h ${m1}m</div>
                         </div>`;
                     }
-                    if(p3) {
+                    if (p3) {
                         const h3 = Math.floor(p3.foco / 60); const m3 = p3.foco % 60;
                         podiumHtml += `
                         <div class="podium-step podium-3">
-                            <div class="podium-avatar">${p3.avatarUrl ? '<img src="'+p3.avatarUrl+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover">' : p3.name.charAt(0).toUpperCase()}</div>
+                            <div class="podium-avatar">${p3.avatarUrl ? '<img src="' + p3.avatarUrl + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover">' : p3.name.charAt(0).toUpperCase()}</div>
                             <div class="podium-rank">3</div>
                             <div class="podium-name">${p3.name.split(' ')[0]}</div>
                             <div class="podium-score">${h3}h ${m3}m</div>
@@ -4737,13 +5083,13 @@
                     podContainer.innerHTML = podiumHtml;
 
                     let restHtml = '';
-                    for(let i = 3; i < topAlunos.length; i++) {
+                    for (let i = 3; i < topAlunos.length; i++) {
                         const a = topAlunos[i];
                         const h = Math.floor(a.foco / 60); const m = a.foco % 60;
                         restHtml += `
                         <div class="ranking-list-item">
-                            <div class="rank-number">${i+1}º</div>
-                            <div class="rank-avatar">${a.avatarUrl ? '<img src="'+a.avatarUrl+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover">' : a.name.charAt(0).toUpperCase()}</div>
+                            <div class="rank-number">${i + 1}º</div>
+                            <div class="rank-avatar">${a.avatarUrl ? '<img src="' + a.avatarUrl + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover">' : a.name.charAt(0).toUpperCase()}</div>
                             <div class="rank-info">
                                 <div class="rank-name">${a.name}</div>
                             </div>
@@ -4764,40 +5110,40 @@
                     equipes.push(e);
                 });
 
-                for(let eq of equipes) {
+                for (let eq of equipes) {
                     let teamFocus = 0;
-                    if(eq.membros && eq.membros.length > 0) {
-                        for(let uid of eq.membros) {
+                    if (eq.membros && eq.membros.length > 0) {
+                        for (let uid of eq.membros) {
                             const u = alunos.find(a => a.id === uid);
-                            if(u) teamFocus += u.foco;
+                            if (u) teamFocus += u.foco;
                         }
                     }
                     eq.teamFocus = teamFocus;
                 }
 
-                equipes.sort((a,b) => {
-                    if(b.progresso !== a.progresso) return b.progresso - a.progresso;
+                equipes.sort((a, b) => {
+                    if (b.progresso !== a.progresso) return b.progresso - a.progresso;
                     return b.teamFocus - a.teamFocus;
                 });
 
                 const topEquipes = equipes.slice(0, 10);
-                if(topEquipes.length === 0) {
+                if (topEquipes.length === 0) {
                     listEquipes.innerHTML = '<div class="empty-state">Nenhuma equipe formada.</div>';
                 } else {
                     let eqHtml = '';
-                    for(let i = 0; i < topEquipes.length; i++) {
+                    for (let i = 0; i < topEquipes.length; i++) {
                         const eq = topEquipes[i];
                         const iconColor = i === 0 ? '#f1c40f' : i === 1 ? '#bdc3c7' : i === 2 ? '#e67e22' : 'var(--tertiary)';
                         const h = Math.floor(eq.teamFocus / 60); const m = eq.teamFocus % 60;
-                        
+
                         let progNome = "Etapa 1";
-                        if(window.TCC_STEPS && window.TCC_STEPS[eq.progresso]) {
+                        if (window.TCC_STEPS && window.TCC_STEPS[eq.progresso]) {
                             progNome = window.TCC_STEPS[eq.progresso];
                         }
 
                         eqHtml += `
                         <div class="ranking-list-item" style="padding:16px">
-                            <div class="rank-number" style="font-size:1.2rem;color:${iconColor}">${i+1}º</div>
+                            <div class="rank-number" style="font-size:1.2rem;color:${iconColor}">${i + 1}º</div>
                             <div class="rank-info" style="border-left:3px solid ${iconColor}; padding-left:12px">
                                 <div class="rank-name" style="font-size:1.05rem">${eq.nome}</div>
                                 <div class="rank-detail"><i class="fa-solid fa-layer-group"></i> ${progNome}</div>
@@ -4808,10 +5154,82 @@
                     listEquipes.innerHTML = eqHtml;
                 }
 
-            } catch(e) {
+            } catch (e) {
                 console.error("Erro ao carregar ranking:", e);
                 podContainer.innerHTML = '<div class="empty-state" style="color:red">Erro ao carregar ranking.</div>';
                 listEquipes.innerHTML = '';
+            }
+        };
+
+        // ── CONFIGURAÇÕES DE IMPRESSÃO (PDFs) ──
+        window.handleImageUpload = function (event, previewId, hiddenId) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (file.size > 3 * 1024 * 1024) {
+                alert('A imagem é muito grande. O limite é de 3MB.');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const b64 = e.target.result;
+                document.getElementById(hiddenId).value = b64;
+                document.getElementById(previewId).innerHTML = `<img src="${b64}" style="max-width:100%;max-height:100%;object-fit:contain;">`;
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.limparImagem = function (previewId, hiddenId) {
+            document.getElementById(hiddenId).value = '';
+            document.getElementById(previewId).innerHTML = '<span style="font-size:0.8rem;color:#888">Sem Imagem</span>';
+        };
+
+        window.salvarConfigImpressao = async function () {
+            if (!ME || !ME.uid) return;
+            const btn = document.getElementById('btnSalvarCfgPrint');
+            const oldHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando...';
+            btn.disabled = true;
+
+            const printConfig = {
+                logoAta: document.getElementById('cfgLogoAtaBase64').value || '',
+                textoAta: document.getElementById('cfgTextoAta').value || '',
+                logoTcc: document.getElementById('cfgLogoTccBase64').value || '',
+                textoTcc: document.getElementById('cfgTextoTcc').value || ''
+            };
+
+            try {
+                await updateDoc(doc(db, 'users', ME.uid), { printConfig });
+                ME.printConfig = printConfig; // Update local state
+                alert('Configurações salvas com sucesso! Elas serão usadas nos próximos PDFs gerados.');
+            } catch (e) {
+                console.error("Erro ao salvar config:", e);
+                alert('Erro ao salvar configurações.');
+            }
+            btn.innerHTML = oldHtml;
+            btn.disabled = false;
+        };
+
+        window.carregarConfigImpressao = async function () {
+            const cfg = (ME && ME.printConfig) ? ME.printConfig : {};
+
+            // Populate Ata
+            document.getElementById('cfgTextoAta').value = cfg.textoAta || '';
+            document.getElementById('cfgLogoAtaBase64').value = cfg.logoAta || '';
+            const previewAta = document.getElementById('previewLogoAta');
+            if (cfg.logoAta) {
+                previewAta.innerHTML = `<img src="${cfg.logoAta}" style="max-width:100%;max-height:100%;object-fit:contain;">`;
+            } else {
+                previewAta.innerHTML = '<span style="font-size:0.8rem;color:#888">Sem Imagem</span>';
+            }
+
+            // Populate TCC
+            document.getElementById('cfgTextoTcc').value = cfg.textoTcc || '';
+            document.getElementById('cfgLogoTccBase64').value = cfg.logoTcc || '';
+            const previewTcc = document.getElementById('previewLogoTcc');
+            if (cfg.logoTcc) {
+                previewTcc.innerHTML = `<img src="${cfg.logoTcc}" style="max-width:100%;max-height:100%;object-fit:contain;">`;
+            } else {
+                previewTcc.innerHTML = '<span style="font-size:0.8rem;color:#888">Sem Imagem</span>';
             }
         };
 
