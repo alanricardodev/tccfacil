@@ -2122,7 +2122,7 @@ window.carregarEquipesAta = async function() {
     }
 };
 
-window.selecionarEquipeAta = function() {
+window.selecionarEquipeAta = async function() {
     const equipeId = document.getElementById('ataEquipeSelect').value;
     const formContainer = document.getElementById('ataFormContainer');
     
@@ -2144,10 +2144,18 @@ window.selecionarEquipeAta = function() {
     document.getElementById('ataBanca1').value = '';
     document.getElementById('ataBanca2').value = '';
     
-    const nomesArray = (eq.membros || []).map(m => m.nome.toUpperCase());
-    document.getElementById('ataNomesAlunos').value = nomesArray.join(', ');
-
+    document.getElementById('ataNomesAlunos').value = 'Buscando nomes...';
     formContainer.style.display = 'block';
+
+    const nomesArray = [];
+    for (const uid of (eq.membros || [])) {
+        try {
+            const uSnap = await getDoc(doc(db, 'users', uid));
+            if (uSnap.exists()) nomesArray.push(uSnap.data().name.toUpperCase());
+        } catch(e) { console.error('Erro ao buscar nome', e); }
+    }
+    
+    document.getElementById('ataNomesAlunos').value = nomesArray.join(', ');
 };
 
 window.abrirModalAta = async function(equipeId) {
@@ -2200,7 +2208,7 @@ window.gerarPdfAta = function() {
     
     let html = `
         <div style="display:flex;align-items:flex-start;margin-bottom:30px">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Bras%C3%A3o_da_Bahia.svg/512px-Bras%C3%A3o_da_Bahia.svg.png" style="width:70px;height:auto;margin-right:20px" alt="Brasão do Estado da Bahia">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Bras%C3%A3o_da_Bahia.svg/512px-Bras%C3%A3o_da_Bahia.svg.png" crossorigin="anonymous" style="width:70px;height:auto;margin-right:20px" alt="Brasão do Estado da Bahia">
             <div style="flex:1;text-align:center;font-weight:bold;font-size:11pt;padding-top:10px">
                 ESTADO DA BAHIA<br>
                 SECRETARIA DA EDUCAÇÃO<br>
