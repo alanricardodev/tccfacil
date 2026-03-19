@@ -179,6 +179,102 @@
             animation: fadeIn .35s ease;
         }
 
+        /* ── NOTIF BELL ── */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .header-notif {
+            position: relative;
+            background: white;
+            color: var(--text-main);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, .04);
+            border: 1px solid rgba(0, 0, 0, .05);
+            transition: all .3s;
+        }
+
+        .header-notif:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        }
+
+        .bell-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: #ff7675;
+            color: white;
+            font-size: .65rem;
+            font-weight: 900;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #f0f2f5;
+        }
+
+        .notif-dropdown {
+            position: absolute;
+            top: 55px;
+            right: 0;
+            width: 320px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border: 1px solid rgba(0,0,0,0.05);
+            z-index: 999;
+            overflow: hidden;
+            transform-origin: top right;
+            animation: fadeIn .2s ease;
+        }
+
+        .notif-dropdown-header {
+            padding: 14px 18px;
+            font-weight: 700;
+            border-bottom: 1px solid #eee;
+            color: var(--primary);
+            font-size: .9rem;
+        }
+
+        .notif-dropdown-list {
+            max-height: 350px;
+            overflow-y: auto;
+            background: #fff;
+        }
+
+        .notif-item {
+            padding: 12px 18px;
+            border-bottom: 1px solid #f5f5f5;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            cursor: pointer;
+            transition: background .2s;
+        }
+        
+        .notif-item:hover { background: #f8f9fa; }
+        
+        .notif-item-icon {
+            width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: .8rem; flex-shrink: 0;
+        }
+        
+        .notif-item-text p { margin: 0; font-size: .82rem; font-weight: 600; color: var(--text-main); line-height: 1.3; }
+        .notif-item-text span { font-size: .72rem; color: var(--text-light); }
+
         .view-container.active {
             display: block;
         }
@@ -957,7 +1053,21 @@
     <main class="main-content">
         <div class="top-header">
             <h1 id="pageTitle">Início</h1>
-            <button id="btnLogout" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
+            <div class="header-actions">
+                <div class="header-notif" id="notifBell" onclick="window.toggleNotifDropdown(event)">
+                    <i class="fa-solid fa-bell"></i>
+                    <span class="bell-badge" id="bellBadge" style="display:none">0</span>
+                    <div class="notif-dropdown" id="notifDropdown" style="display:none" onclick="event.stopPropagation()">
+                        <div class="notif-dropdown-header">Notificações Recentes</div>
+                        <div class="notif-dropdown-list" id="notifDropdownList">
+                            <div class="empty-state" style="padding:20px 10px;font-size:0.85rem">
+                                <i class="fa-regular fa-bell-slash" style="font-size:2rem;margin-bottom:8px"></i><br>Nenhuma novidade.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button id="btnLogout" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
+            </div>
         </div>
 
         <!-- ===== HOME ===== -->
@@ -1493,19 +1603,17 @@
             <div class="dash-card" style="margin-bottom:20px">
                 <h3 style="color:var(--primary);margin-bottom:4px"><i class="fa-solid fa-file-contract"></i> Gerador de
                     Atas de Defesa</h3>
-                <p style="color:var(--text-light);font-size:.88rem;margin-bottom:14px">Selecione a turma e a equipe para
-                    preencher os dados e gerar a Ata de Apresentação Final impressa.</p>
-                <div style="display:flex;gap:10px;flex-wrap:wrap">
-                    <select id="ataTurmaSelect"
-                        style="flex:1;min-width:200px;padding:8px 12px;border-radius:10px;border:1px solid #ddd;font-family:'Inter',sans-serif"
-                        onchange="window.carregarEquipesAta()">
-                        <option value="">Selecionar turma...</option>
-                    </select>
+                <p style="color:var(--text-light);font-size:.88rem;margin-bottom:14px">Selecione a equipe para
+                    preencher os dados e gerar a Ata de Apresentação Final impressa, ou opte pelo preenchimento manual.</p>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
                     <select id="ataEquipeSelect"
                         style="flex:1;min-width:200px;padding:8px 12px;border-radius:10px;border:1px solid #ddd;font-family:'Inter',sans-serif"
                         onchange="window.selecionarEquipeAta()">
-                        <option value="">Selecione primeiro a turma...</option>
+                        <option value="">Carregando equipes...</option>
                     </select>
+                    <button class="btn btn-primary" style="background:var(--tertiary);border:none;padding:9px 16px;white-space:nowrap;" onclick="window.selecionarAtaManual()">
+                        <i class="fa-solid fa-pen-to-square"></i> Preenchimento Manual
+                    </button>
                 </div>
             </div>
 
@@ -1882,6 +1990,87 @@
             }
         }
 
+        window.toggleNotifDropdown = function(e) {
+            if (e) e.stopPropagation();
+            const el = document.getElementById('notifDropdown');
+            if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        };
+
+        document.addEventListener('click', (e) => {
+            const bell = document.getElementById('notifBell');
+            const ddown = document.getElementById('notifDropdown');
+            if (bell && !bell.contains(e.target) && ddown && ddown.style.display === 'block') {
+                ddown.style.display = 'none';
+            }
+        });
+
+        window._activeNotifs = { prof: 0, alunos: 0, forumTurma: 0, forumEquipe: 0, forumGeral: 0 };
+
+        window.updateBellDropdown = function() {
+            let total = 0;
+            let html = '';
+            const n = window._activeNotifs;
+            
+            if (n.alunos > 0) {
+                total += n.alunos;
+                html += `<div class="notif-item" onclick="if(document.getElementById('nav-alunos')) document.getElementById('nav-alunos').click()">
+                    <div class="notif-item-icon" style="background:#0984e3"><i class="fa-solid fa-user-graduate"></i></div>
+                    <div class="notif-item-text"><p>${n.alunos} aluno(s) aguardam aprovação.</p><span>Clique para verificar</span></div>
+                </div>`;
+            }
+
+            if (n.prof > 0) {
+                total += n.prof;
+                html += `<div class="notif-item" onclick="if(document.getElementById('nav-admin')) document.getElementById('nav-admin').click()">
+                    <div class="notif-item-icon" style="background:#fdcb6e;color:#333"><i class="fa-solid fa-user-tie"></i></div>
+                    <div class="notif-item-text"><p>${n.prof} professor(es) aguardam aprovação.</p><span>Painel Admin</span></div>
+                </div>`;
+            }
+
+            if (n.forumTurma > 0) {
+                total += n.forumTurma;
+                html += `<div class="notif-item" onclick="if(document.getElementById('nav-forum-turma')) document.getElementById('nav-forum-turma').click()">
+                    <div class="notif-item-icon" style="background:var(--tertiary)"><i class="fa-solid fa-users"></i></div>
+                    <div class="notif-item-text"><p>${n.forumTurma} novas mensagens na Turma.</p><span>Fórum da Turma</span></div>
+                </div>`;
+            }
+
+            if (n.forumEquipe > 0) {
+                total += n.forumEquipe;
+                html += `<div class="notif-item" onclick="if(document.getElementById('nav-forum-equipe')) document.getElementById('nav-forum-equipe').click()">
+                    <div class="notif-item-icon" style="background:#00b894"><i class="fa-solid fa-users-gear"></i></div>
+                    <div class="notif-item-text"><p>${n.forumEquipe} novas mensagens na Equipe.</p><span>Chat da Equipe</span></div>
+                </div>`;
+            }
+
+            if (n.forumGeral > 0) {
+                total += n.forumGeral;
+                html += `<div class="notif-item" onclick="if(document.getElementById('nav-forum')) document.getElementById('nav-forum').click()">
+                    <div class="notif-item-icon" style="background:var(--primary)"><i class="fa-solid fa-comments"></i></div>
+                    <div class="notif-item-text"><p>${n.forumGeral} novas mensagens gerais.</p><span>Fórum Geral</span></div>
+                </div>`;
+            }
+
+            const badge = document.getElementById('bellBadge');
+            const list = document.getElementById('notifDropdownList');
+            if (!badge || !list) return;
+
+            if (total > 0) {
+                const prev = parseInt(badge.textContent) || 0;
+                badge.style.display = 'flex';
+                badge.textContent = total > 99 ? '99+' : total;
+                if(total !== prev) {
+                    badge.classList.remove('pulse');
+                    void badge.offsetWidth;
+                    badge.classList.add('pulse');
+                }
+                list.innerHTML = html;
+            } else {
+                badge.style.display = 'none';
+                list.innerHTML = `<div class="empty-state" style="padding:20px 10px;font-size:0.85rem"><i class="fa-regular fa-bell-slash" style="font-size:2rem;margin-bottom:8px"></i><br>Nenhuma novidade no momento.</div>`;
+            }
+        };
+
         // Keep track of onSnapshot unsub functions to avoid duplicates
         const _notifUnsubs = [];
 
@@ -1921,6 +2110,8 @@
                     }
                     updateBadge('badge-alunos', total);
                     updateBadge('badge-turmas', total);
+                    window._activeNotifs.alunos = total;
+                    window.updateBellDropdown();
                 });
                 _notifUnsubs.push(unsubTurmas);
             }
@@ -1946,6 +2137,8 @@
                         } else {
                             localStorage.setItem('_prevPendingProfs', 0);
                         }
+                        window._activeNotifs.prof = cnt;
+                        window.updateBellDropdown();
                     }
                 );
                 _notifUnsubs.push(unsubProfs);
@@ -1988,6 +2181,8 @@
                             }
                             localStorage.setItem('_prevUnreadForumTurma', unread);
                         } else { localStorage.setItem('_prevUnreadForumTurma', 0); }
+                        window._activeNotifs.forumTurma = unread;
+                        window.updateBellDropdown();
                     }
                 );
                 _notifUnsubs.push(unsubForumTurma);
@@ -1999,6 +2194,8 @@
                         localStorage.setItem(`lastRead_forum_turma_${data.turmaId}`, Date.now());
                         localStorage.setItem('_prevUnreadForumTurma', 0);
                         updateBadge('badge-forum-turma', 0);
+                        window._activeNotifs.forumTurma = 0;
+                        window.updateBellDropdown();
                     }, { capture: true });
                 }
             }
@@ -2027,6 +2224,8 @@
                             }
                             localStorage.setItem('_prevUnreadEquipe', unread);
                         } else { localStorage.setItem('_prevUnreadEquipe', 0); }
+                        window._activeNotifs.forumEquipe = unread;
+                        window.updateBellDropdown();
                     }
                 );
                 _notifUnsubs.push(unsubEquipe);
@@ -2038,6 +2237,8 @@
                         localStorage.setItem(`lastRead_chat_equipe_${equipeId}`, Date.now());
                         localStorage.setItem('_prevUnreadEquipe', 0);
                         updateBadge('badge-forum-equipe', 0);
+                        window._activeNotifs.forumEquipe = 0;
+                        window.updateBellDropdown();
                     }, { capture: true });
                 }
             }
@@ -2061,6 +2262,8 @@
                             }
                             localStorage.setItem('_prevUnreadGeral', unread);
                         } else { localStorage.setItem('_prevUnreadGeral', 0); }
+                        window._activeNotifs.forumGeral = unread;
+                        window.updateBellDropdown();
                     }
                 );
                 _notifUnsubs.push(unsubGeral);
@@ -2070,6 +2273,8 @@
                         localStorage.setItem('lastRead_forum_geral', Date.now());
                         localStorage.setItem('_prevUnreadGeral', 0);
                         updateBadge('badge-forum', 0);
+                        window._activeNotifs.forumGeral = 0;
+                        window.updateBellDropdown();
                     }, { capture: true });
                 }
             }
@@ -3396,66 +3601,87 @@
         window._atasEquipesCache = []; // global init to prevent undefined errors
 
         window.carregarTurmasAta = async function () {
-            const turmaSelect = document.getElementById('ataTurmaSelect');
-            if (!turmaSelect) return;
-            turmaSelect.innerHTML = '<option value="">Carregando turmas...</option>';
-            document.getElementById('ataEquipeSelect').innerHTML = '<option value="">Selecione primeiro a turma...</option>';
-            document.getElementById('ataFormContainer').style.display = 'none';
+            // Updated to load equipes directly without needing to select turma
+            const equipeSelect = document.getElementById('ataEquipeSelect');
+            if (!equipeSelect) return;
+            equipeSelect.innerHTML = '<option value="">Carregando equipes...</option>';
+            const formContainer = document.getElementById('ataFormContainer');
+            if (formContainer) formContainer.style.display = 'none';
             window._atasEquipesCache = [];
+            ME._ataModoManual = false;
 
             try {
                 const qTurmas = ME.role === 'admin' ? collection(db, 'turmas') : query(collection(db, 'turmas'), where('professorId', '==', ME.uid));
                 const snap = await getDocs(qTurmas);
-                let html = '<option value="">Selecionar turma...</option>';
                 if (snap.empty) {
-                    html = '<option value="">Nenhuma turma encontrada</option>';
-                } else {
-                    snap.forEach(d => {
-                        html += `<option value="${d.id}">${d.data().nome}</option>`;
-                    });
+                    equipeSelect.innerHTML = '<option value="">Nenhuma equipe encontrada</option>';
+                    return;
                 }
-                turmaSelect.innerHTML = html;
-            } catch (e) {
-                console.error(e);
-                turmaSelect.innerHTML = '<option value="">Erro ao carregar</option>';
-            }
-        };
-
-        window.carregarEquipesAta = async function () {
-            const turmaId = document.getElementById('ataTurmaSelect').value;
-            const equipeSelect = document.getElementById('ataEquipeSelect');
-            document.getElementById('ataFormContainer').style.display = 'none';
-
-            if (!turmaId) {
-                equipeSelect.innerHTML = '<option value="">Selecione primeiro a turma...</option>';
-                return;
-            }
-
-            equipeSelect.innerHTML = '<option value="">Carregando equipes...</option>';
-            try {
-                const qEq = query(collection(db, 'equipes'), where('turmaId', '==', turmaId));
-                const snap = await getDocs(qEq);
+                
+                const turmasMap = {};
+                snap.forEach(d => { turmasMap[d.id] = d.data().nome; });
+                const turmaIds = Object.keys(turmasMap);
+                
+                // Fetch all equipes for these turmas
+                // Because of 'in' limitation (max 30), we chunk it
+                const chunks = [];
+                for(let i=0; i<turmaIds.length; i+=30) chunks.push(turmaIds.slice(i, i+30));
+                
                 let html = '<option value="">Selecionar equipe...</option>';
-                window._atasEquipesCache = [];
+                let equipesFound = 0;
 
-                if (snap.empty) {
-                    html = '<option value="">Nenhuma equipe nesta turma</option>';
-                } else {
-                    snap.forEach(d => {
-                        const data = d.data();
-                        data.id = d.id;
-                        window._atasEquipesCache.push(data);
-                        html += `<option value="${d.id}">${data.nome}</option>`;
+                for (const chunk of chunks) {
+                    const qEq = query(collection(db, 'equipes'), where('turmaId', 'in', chunk));
+                    const eqSnap = await getDocs(qEq);
+                    eqSnap.forEach(d => {
+                        const eq = d.data();
+                        eq.id = d.id;
+                        eq.turmaNome = turmasMap[eq.turmaId] || 'Turma Desconhecida';
+                        window._atasEquipesCache.push(eq);
+                        html += `<option value="${eq.id}">${eq.nome} (${eq.turmaNome})</option>`;
+                        equipesFound++;
                     });
                 }
-                equipeSelect.innerHTML = html;
+                
+                window._atasEquipesCache.sort((a,b) => a.nome.localeCompare(b.nome));
+                
+                if(equipesFound === 0) {
+                    equipeSelect.innerHTML = '<option value="">Nenhuma equipe encontrada</option>';
+                } else {
+                    equipeSelect.innerHTML = html;
+                }
             } catch (e) {
                 console.error(e);
                 equipeSelect.innerHTML = '<option value="">Erro ao carregar</option>';
             }
         };
 
+        window.carregarEquipesAta = async function () {
+            // Obsolete but kept to avoid errors if triggered
+        };
+
+        window.selecionarAtaManual = function() {
+            ME._ataModoManual = true;
+            ME._ataEquipe = null;
+            const eqSelect = document.getElementById('ataEquipeSelect');
+            if(eqSelect) eqSelect.value = "";
+            const formContainer = document.getElementById('ataFormContainer');
+            if(!formContainer) return;
+            
+            const today = new Date();
+            document.getElementById('ataData').value = today.toISOString().split('T')[0];
+            document.getElementById('ataOrientador').value = ME.name || '';
+            document.getElementById('ataNota').value = '';
+            document.getElementById('ataSala').value = '';
+            document.getElementById('ataBanca1').value = '';
+            document.getElementById('ataBanca2').value = '';
+            document.getElementById('ataNomesAlunos').value = '';
+
+            formContainer.style.display = 'block';
+        };
+
         window.selecionarEquipeAta = async function () {
+            ME._ataModoManual = false;
             const equipeId = document.getElementById('ataEquipeSelect').value;
             const formContainer = document.getElementById('ataFormContainer');
 
@@ -3494,26 +3720,25 @@
         window.abrirModalAta = async function (equipeId) {
             window.switchView('atas', 'Atas de Defesa', 'nav-atas');
 
-            document.getElementById('ataTurmaSelect').innerHTML = '<option value="">Carregando...</option>';
-            document.getElementById('ataEquipeSelect').innerHTML = '<option value="">Carregando...</option>';
+            const equipeSelect = document.getElementById('ataEquipeSelect');
+            if (equipeSelect) equipeSelect.innerHTML = '<option value="">Carregando...</option>';
 
             const docRef = doc(db, 'equipes', equipeId);
             const snap = await getDoc(docRef);
             if (!snap.exists()) return;
-            const eq = snap.data();
 
             await window.carregarTurmasAta();
-            document.getElementById('ataTurmaSelect').value = eq.turmaId;
-
-            await window.carregarEquipesAta();
-            document.getElementById('ataEquipeSelect').value = equipeId;
+            
+            if (equipeSelect) equipeSelect.value = equipeId;
 
             window.selecionarEquipeAta();
         };
 
         window.gerarPdfAta = function () {
             const eq = ME._ataEquipe;
-            if (!eq) { alert('Selecione uma equipe primeiro.'); return; }
+            if (!ME._ataModoManual && !eq) { alert('Selecione uma equipe ou clique em Preenchimento Manual.'); return; }
+
+            const eqNome = eq ? eq.nome : "Preenchimento Manual";
 
             const dataRaw = document.getElementById('ataData').value;
             if (!dataRaw) { alert('Preencha a data da apresentação.'); return; }
@@ -3556,7 +3781,7 @@
 
             const docHtml = `<!DOCTYPE html><html lang="pt-BR"><head>
         <meta charset="UTF-8">
-        <title>Ata de Defesa - ${eq.nome}</title>
+        <title>Ata de Defesa - ${eqNome}</title>
         <style>
             @page { size: A4; margin: 3cm 2cm 2cm 3cm; }
             * { box-sizing: border-box; }
