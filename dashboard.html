@@ -782,6 +782,72 @@
                 transform: translateY(0);
             }
         }
+
+        /* ── TOAST NOTIFICATIONS ── */
+        #toastContainer {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 10px;
+            z-index: 99999;
+            pointer-events: none;
+        }
+
+        .notif-toast {
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            padding: 14px 18px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            min-width: 280px;
+            max-width: 340px;
+            pointer-events: all;
+            border-left: 4px solid var(--primary);
+            animation: toastIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .notif-toast:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(0,0,0,0.18); }
+        .notif-toast.notif-info  { border-color: #0984e3; }
+        .notif-toast.notif-success { border-color: #00b894; }
+        .notif-toast.notif-warn  { border-color: #fdcb6e; }
+        .notif-toast.notif-error { border-color: #ff7675; }
+
+        .notif-icon {
+            width: 38px; height: 38px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--tertiary));
+            color: white; display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; flex-shrink: 0;
+        }
+
+        .notif-body { flex: 1; }
+        .notif-title { font-weight: 700; font-size: .88rem; color: var(--text-main); margin-bottom: 2px; }
+        .notif-msg   { font-size: .78rem; color: var(--text-light); line-height: 1.4; }
+        .notif-close { background: none; border: none; color: #aaa; cursor: pointer; font-size: 1rem; padding: 0; align-self: flex-start; }
+
+        @keyframes toastIn {
+            from { opacity:0; transform: translateX(60px) scale(0.9); }
+            to   { opacity:1; transform: translateX(0) scale(1); }
+        }
+
+        @keyframes toastOut {
+            from { opacity:1; transform: translateX(0) scale(1); max-height: 100px; }
+            to   { opacity:0; transform: translateX(60px) scale(0.9); max-height: 0; padding: 0; margin:0; }
+        }
+
+        .notif-toast.removing { animation: toastOut 0.3s ease forwards; }
+
+        /* badge pulse when new */
+        @keyframes badgePulse {
+            0%,100% { transform: scale(1); }
+            50% { transform: scale(1.35); }
+        }
+        .nav-badge.pulse { animation: badgePulse 0.5s ease; }
     </style>
 </head>
 
@@ -793,6 +859,9 @@
         <div class="spinner"></div>
         <h2>Carregando...</h2>
     </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toastContainer"></div>
 
     <!-- SIDEBAR -->
     <aside class="sidebar">
@@ -828,20 +897,24 @@
             <div class="nav-item" id="nav-forum-turma" style="display:none"
                 onclick="switchView('forum-turma','Fórum da Turma','nav-forum-turma')">
                 <i class="fa-solid fa-message"></i> Fórum da Turma
+                <span class="nav-badge" id="badge-forum-turma" style="display:none">0</span>
             </div>
             <div class="nav-item" id="nav-forum-equipe" style="display:none"
                 onclick="switchView('forum-equipe','Fórum da Equipe','nav-forum-equipe')">
                 <i class="fa-solid fa-comment-dots"></i> Fórum da Equipe
+                <span class="nav-badge" id="badge-forum-equipe" style="display:none">0</span>
             </div>
 
             <div class="nav-section" id="section-prof" style="display:none">Professor</div>
             <div class="nav-item" id="nav-turmas" style="display:none"
                 onclick="switchView('turmas','Gerenciar Turmas','nav-turmas')">
                 <i class="fa-solid fa-chalkboard-user"></i> Turmas
+                <span class="nav-badge" id="badge-turmas" style="display:none">0</span>
             </div>
             <div class="nav-item" id="nav-alunos" style="display:none"
                 onclick="switchView('alunos','Lista de Alunos','nav-alunos')">
                 <i class="fa-solid fa-user-group"></i> Alunos
+                <span class="nav-badge" id="badge-alunos" style="display:none">0</span>
             </div>
             <div class="nav-item" id="nav-temas-notas" style="display:none"
                 onclick="switchView('temas-notas','Temas, Notas & Entregas','nav-temas-notas')">
@@ -856,6 +929,7 @@
             <div class="nav-item" id="nav-admin" style="display:none"
                 onclick="switchView('admin','Painel Admin','nav-admin')">
                 <i class="fa-solid fa-shield-halved"></i> Painel Admin
+                <span class="nav-badge" id="badge-admin" style="display:none">0</span>
             </div>
         </nav>
         <div class="user-profile">
@@ -1749,8 +1823,260 @@
             }, 150);
         }
 
+        // ===== NOTIFICATION ENGINE =====
+
+        /**
+         * Show a toast notification
+         * @param {string} title - Bold title
+         * @param {string} msg   - Body message
+         * @param {string} icon  - FontAwesome icon class (e.g. 'fa-bell')
+         * @param {string} type  - 'info'|'success'|'warn'|'error'
+         * @param {string} [navId] - Optional nav item to click when toast is clicked
+         */
+        window.showToast = function (title, msg, icon = 'fa-bell', type = 'info', navId = null) {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = `notif-toast notif-${type}`;
+            toast.innerHTML = `
+                <div class="notif-icon"><i class="fa-solid ${icon}"></i></div>
+                <div class="notif-body">
+                    <div class="notif-title">${title}</div>
+                    <div class="notif-msg">${msg}</div>
+                </div>
+                <button class="notif-close" onclick="this.parentElement.remove()">&times;</button>`;
+            if (navId) {
+                toast.style.cursor = 'pointer';
+                toast.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('notif-close')) return;
+                    const navEl = document.getElementById(navId);
+                    if (navEl) navEl.click();
+                    removeToast(toast);
+                });
+            }
+            container.appendChild(toast);
+            // Auto-remove after 6s
+            setTimeout(() => removeToast(toast), 6000);
+        };
+
+        function removeToast(toast) {
+            if (!toast || !toast.parentElement) return;
+            toast.classList.add('removing');
+            setTimeout(() => toast.remove(), 350);
+        }
+
+        function updateBadge(id, count) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (count > 0) {
+                const prev = parseInt(el.textContent) || 0;
+                el.textContent = count > 99 ? '99+' : count;
+                el.style.display = 'inline-block';
+                if (count !== prev) {
+                    el.classList.remove('pulse');
+                    void el.offsetWidth; // reflow
+                    el.classList.add('pulse');
+                }
+            } else {
+                el.style.display = 'none';
+            }
+        }
+
+        // Keep track of onSnapshot unsub functions to avoid duplicates
+        const _notifUnsubs = [];
+
+        function initNotifications(data) {
+            // Clean up any previous listeners
+            _notifUnsubs.forEach(fn => fn());
+            _notifUnsubs.length = 0;
+
+            const role = data.role;
+            const uid  = data.uid;
+
+            // ── 1. Pending students (professor & admin) ──
+            if (role === 'professor' || role === 'admin') {
+                const tQuery = role === 'admin'
+                    ? collection(db, 'turmas')
+                    : query(collection(db, 'turmas'), where('professorId', '==', uid));
+
+                const unsubTurmas = onSnapshot(tQuery, async (turmasSnap) => {
+                    // Gather turma IDs
+                    const turmaIds = turmasSnap.docs.map(d => d.id);
+                    if (turmaIds.length === 0) { updateBadge('badge-alunos', 0); updateBadge('badge-turmas', 0); return; }
+
+                    // Query all users with status=pendente and turmaIdSolicitada in those turmas
+                    let total = 0;
+                    // Firestore 'in' supports up to 30 items; chunk if needed
+                    const chunks = [];
+                    for (let i = 0; i < turmaIds.length; i += 30) chunks.push(turmaIds.slice(i, i + 30));
+                    for (const chunk of chunks) {
+                        try {
+                            const aSnap = await getDocs(query(
+                                collection(db, 'users'),
+                                where('status', '==', 'pendente'),
+                                where('turmaIdSolicitada', 'in', chunk)
+                            ));
+                            total += aSnap.size;
+                        } catch (e) { /* ignore */ }
+                    }
+                    updateBadge('badge-alunos', total);
+                    updateBadge('badge-turmas', total);
+                });
+                _notifUnsubs.push(unsubTurmas);
+            }
+
+            // ── 2. Pending professors (admin only) ──
+            if (role === 'admin') {
+                const unsubProfs = onSnapshot(
+                    query(collection(db, 'users'), where('role', '==', 'professor'), where('status', '==', 'pendente')),
+                    (snap) => {
+                        const cnt = snap.size;
+                        updateBadge('badge-admin', cnt);
+                        if (cnt > 0) {
+                            // Only show toast for new arrivals (compare to stored count)
+                            const prev = parseInt(localStorage.getItem('_prevPendingProfs') || '0');
+                            if (cnt > prev) {
+                                window.showToast(
+                                    'Novo Professor Aguardando',
+                                    `${cnt} professor(es) aguardam aprovação no painel Admin.`,
+                                    'fa-user-tie', 'warn', 'nav-admin'
+                                );
+                            }
+                            localStorage.setItem('_prevPendingProfs', cnt);
+                        } else {
+                            localStorage.setItem('_prevPendingProfs', 0);
+                        }
+                    }
+                );
+                _notifUnsubs.push(unsubProfs);
+
+                // ── 2b. Also watch professors' online status (for admin view) ──
+                window._profOnlineCache = {};
+                const unsubProfOnline = onSnapshot(
+                    query(collection(db, 'users'), where('role', '==', 'professor')),
+                    (snap) => {
+                        snap.forEach(d => {
+                            window._profOnlineCache[d.id] = { isOnline: d.data().isOnline, lastSeen: d.data().lastSeen, name: d.data().name };
+                        });
+                        // Re-render admin professor list if visible
+                        if (typeof window._reloadPendingProfessorsUI === 'function') window._reloadPendingProfessorsUI();
+                    }
+                );
+                _notifUnsubs.push(unsubProfOnline);
+            }
+
+            // ── 3. Unread forum turma messages ──
+            if (data.turmaId) {
+                const lastReadTurma = parseInt(localStorage.getItem(`lastRead_forum_turma_${data.turmaId}`) || '0');
+                const unsubForumTurma = onSnapshot(
+                    query(collection(db, 'forum_turma'), where('turmaId', '==', data.turmaId)),
+                    (snap) => {
+                        let unread = 0;
+                        snap.forEach(d => {
+                            const msg = d.data();
+                            if ((msg.timestamp || 0) > lastReadTurma && msg.autorId !== uid && !msg.parentId) unread++;
+                        });
+                        updateBadge('badge-forum-turma', unread);
+                        if (unread > 0) {
+                            const prev = parseInt(localStorage.getItem('_prevUnreadForumTurma') || '0');
+                            if (unread > prev) {
+                                window.showToast(
+                                    'Nova mensagem no Fórum da Turma',
+                                    'Há mensagens não lidas no fórum da sua turma.',
+                                    'fa-message', 'info', 'nav-forum-turma'
+                                );
+                            }
+                            localStorage.setItem('_prevUnreadForumTurma', unread);
+                        } else { localStorage.setItem('_prevUnreadForumTurma', 0); }
+                    }
+                );
+                _notifUnsubs.push(unsubForumTurma);
+
+                // Clear badge when user opens Forum Turma
+                const navForumTurma = document.getElementById('nav-forum-turma');
+                if (navForumTurma) {
+                    navForumTurma.addEventListener('click', () => {
+                        localStorage.setItem(`lastRead_forum_turma_${data.turmaId}`, Date.now());
+                        localStorage.setItem('_prevUnreadForumTurma', 0);
+                        updateBadge('badge-forum-turma', 0);
+                    }, { capture: true });
+                }
+            }
+
+            // ── 4. Unread equipe chat messages ──
+            if (data._equipe) {
+                const equipeId = data._equipe.id;
+                const lastReadEquipe = parseInt(localStorage.getItem(`lastRead_chat_equipe_${equipeId}`) || '0');
+                const unsubEquipe = onSnapshot(
+                    query(collection(db, 'mensagens'), where('equipeId', '==', equipeId)),
+                    (snap) => {
+                        let unread = 0;
+                        snap.forEach(d => {
+                            const msg = d.data();
+                            if ((msg.timestamp || 0) > lastReadEquipe && msg.autorId !== uid) unread++;
+                        });
+                        updateBadge('badge-forum-equipe', unread);
+                        if (unread > 0) {
+                            const prev = parseInt(localStorage.getItem('_prevUnreadEquipe') || '0');
+                            if (unread > prev) {
+                                window.showToast(
+                                    'Nova mensagem da Equipe',
+                                    'Há mensagens não lidas no chat da sua equipe.',
+                                    'fa-comment-dots', 'success', 'nav-forum-equipe'
+                                );
+                            }
+                            localStorage.setItem('_prevUnreadEquipe', unread);
+                        } else { localStorage.setItem('_prevUnreadEquipe', 0); }
+                    }
+                );
+                _notifUnsubs.push(unsubEquipe);
+
+                // Clear badge when user opens Equipe Forum
+                const navEq = document.getElementById('nav-forum-equipe');
+                if (navEq) {
+                    navEq.addEventListener('click', () => {
+                        localStorage.setItem(`lastRead_chat_equipe_${equipeId}`, Date.now());
+                        localStorage.setItem('_prevUnreadEquipe', 0);
+                        updateBadge('badge-forum-equipe', 0);
+                    }, { capture: true });
+                }
+            }
+
+            // ── 5. Unread messages in general forum ──
+            {
+                const lastReadGeral = parseInt(localStorage.getItem('lastRead_forum_geral') || '0');
+                const unsubGeral = onSnapshot(
+                    query(collection(db, 'forum_geral')),
+                    (snap) => {
+                        let unread = 0;
+                        snap.forEach(d => {
+                            const msg = d.data();
+                            if ((msg.timestamp || 0) > lastReadGeral && msg.autorId !== uid && !msg.parentId) unread++;
+                        });
+                        updateBadge('badge-forum', unread);
+                        if (unread > 0) {
+                            const prev = parseInt(localStorage.getItem('_prevUnreadGeral') || '0');
+                            if (unread > prev) {
+                                window.showToast('Nova mensagem no Fórum Geral', 'Há mensagens no fórum geral.', 'fa-comments', 'info', 'nav-forum');
+                            }
+                            localStorage.setItem('_prevUnreadGeral', unread);
+                        } else { localStorage.setItem('_prevUnreadGeral', 0); }
+                    }
+                );
+                _notifUnsubs.push(unsubGeral);
+                const navFg = document.getElementById('nav-forum');
+                if (navFg) {
+                    navFg.addEventListener('click', () => {
+                        localStorage.setItem('lastRead_forum_geral', Date.now());
+                        localStorage.setItem('_prevUnreadGeral', 0);
+                        updateBadge('badge-forum', 0);
+                    }, { capture: true });
+                }
+            }
+        }
+
         // ── TCC PROGRESS ──
-        const TCC_STEPS = ['Proposta', 'Desenvolvimento', 'Revisão', 'Entrega', 'Apresentação'];
+        const TCC_STEPS = ['Proposta', 'Desenvolvimento', 'Revis\u00e3o', 'Entrega', 'Apresenta\u00e7\u00e3o'];
 
         function renderProgress(currentStep) {
             const track = document.getElementById('progressTrack');
