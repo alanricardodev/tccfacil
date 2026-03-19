@@ -33,14 +33,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Elements to animate
     const animatedElements = document.querySelectorAll('.card, .timeline-item, .fancy-list li, .banca-box');
-    
+
     animatedElements.forEach((el, index) => {
         el.style.opacity = 0;
         // slight staggering effect based on index for items in the same container naturally
         el.style.transform = 'translateY(40px) scale(0.95)';
         el.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
         el.style.transitionDelay = `${(index % 3) * 0.1}s`;
-        
+
         observer.observe(el);
     });
 
