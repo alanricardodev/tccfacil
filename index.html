@@ -1,699 +1,93 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desvendando o TCC | Guia Interativo</title>
-    <meta name="description"
-        content="Um guia passo a passo, lúdico e profissional, para entender o que é o TCC, suas modalidades e regras.">
-    <!-- Google Fonts -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Inter:wght@400;500;600&display=swap"
-        rel="stylesheet">
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="styles.css">
+    <title>Aviso Importante</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
 
-    <!-- Anti-Inspect Security -->
-    <script>
-        document.addEventListener('contextmenu', e => e.preventDefault());
-        document.addEventListener('keydown', e => {
-            if (e.key === 'F12' ||
-                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
-                (e.ctrlKey && e.key === 'U')) {
-                e.preventDefault();
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            text-align: center;
+            color: #fff;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        a {
+            display: inline-block;
+            text-decoration: none;
+            background: #00c853;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        a:hover {
+            background: #009624;
+            transform: scale(1.05);
+        }
+
+        .assinatura {
+            margin-top: 25px;
+            font-size: 0.95rem;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.4rem;
             }
-        });
-    </script>
+
+            p {
+                font-size: 1rem;
+            }
+        }
+    </style>
 </head>
-
 <body>
-    <!-- Login Badge -->
-    <div class="login-badge btn-open-auth" title="Entrar na Plataforma">
-        <i class="fa-solid fa-user-circle"></i>
-        <span>Login</span>
-    </div>
 
-    <!-- Background Animated Shapes -->
-    <div class="bg-shape shape-1"></div>
-    <div class="bg-shape shape-2"></div>
-    <div class="bg-shape shape-3"></div>
+    <div class="container">
+        <h1>⚠️ Atenção Alunos</h1>
+        <p>O novo link da plataforma é:</p>
+        <a href="https://confianopai.ia.br/" target="_blank">
+            Acessar Plataforma
+        </a>
 
-    <header class="hero">
-        <div class="container hero-content">
-            <div class="hero-text">
-                <span class="badge">🎓 Guia Definitivo</span>
-                <h1>O que é o <span class="highlight">TCC</span>?</h1>
-                <p>O <strong>Trabalho de Conclusão de Curso (TCC)</strong> é o seu grande projeto final! Ele é um dos
-                    requisitos obrigatórios para a conclusão do seu curso técnico de nível médio.</p>
-                <div class="hero-cards">
-                    <div class="info-card glass">
-                        <i class="fa-solid fa-code-branch icon-primary"></i>
-                        <h3>Você Escolhe!</h3>
-                        <p>O aluno pode optar entre realizar o TCC ou o Estágio para ser diplomado.</p>
-                    </div>
-                    <div class="info-card glass alert">
-                        <i class="fa-solid fa-triangle-exclamation icon-warning"></i>
-                        <h3>Atenção Enfermagem</h3>
-                        <p>Para o curso de Técnico em Enfermagem, o Estágio é obrigatório.</p>
-                    </div>
-                </div>
-                <p class="law-text"><i class="fa-solid fa-book-bookmark"></i> Instituído pela Portaria Nº 3704/2017 como
-                    norma da Rede da Educação Profissional do Estado da Bahia.</p>
-                <button id="btnOpenAuth" class="btn btn-primary btn-open-auth">Acessar Plataforma <i
-                        class="fa-solid fa-arrow-right-to-bracket"></i></button>
-            </div>
-            <div class="hero-image">
-                <div class="floating-illustration">
-                    <i class="fa-solid fa-user-graduate main-icon"></i>
-                    <i class="fa-solid fa-lightbulb float-icon float-1"></i>
-                    <i class="fa-solid fa-book float-icon float-2"></i>
-                    <i class="fa-solid fa-laptop-code float-icon float-3"></i>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <section id="modalidades" class="section">
-        <div class="container">
-            <div class="section-header text-center">
-                <h2>Modalidades de TCC</h2>
-                <p>O aluno deve selecionar a modalidade levando em conta a especificidade do seu curso e o eixo
-                    tecnológico. <strong>Tudo nas normas da ABNT!</strong></p>
-            </div>
-
-            <div class="grid cards-grid">
-                <!-- Card 1 -->
-                <a href="projeto.html#pesquisa" class="card glass interactive no-decoration">
-                    <div class="card-icon"><i class="fa-solid fa-microscope"></i></div>
-                    <h3>Pesquisa Técnica-Científica</h3>
-                    <p>Envolve 5 etapas: preparatória, projeto, execução, redação e divulgação.</p>
-                </a>
-                <!-- Card 2 -->
-                <a href="projeto.html#tecnologia" class="card glass interactive no-decoration">
-                    <div class="card-icon"><i class="fa-solid fa-rocket"></i></div>
-                    <h3>Desenvolvimento de Tecnologia</h3>
-                    <p>Inovação em práticas, produtos ou serviços. Pode resultar em patente!</p>
-                </a>
-                <!-- Card 3 -->
-                <a href="projeto.html#artigo" class="card glass interactive no-decoration">
-                    <div class="card-icon"><i class="fa-solid fa-file-lines"></i></div>
-                    <h3>Artigos Científicos</h3>
-                    <p>Apresenta ideias e métodos. Podem ser temas originais ou de revisão.</p>
-                </a>
-                <!-- Card 4 -->
-                <a href="projeto.html#monografia" class="card glass interactive no-decoration">
-                    <div class="card-icon"><i class="fa-solid fa-book-open"></i></div>
-                    <h3>Monografia</h3>
-                    <p>Focado em um único tema com estrutura lógica. Exige pesquisa detalhada.</p>
-                </a>
-                <!-- Card 5 -->
-                <a href="projeto.html#relatorio" class="card glass interactive no-decoration">
-                    <div class="card-icon"><i class="fa-solid fa-clipboard-list"></i></div>
-                    <h3>Relatório com Ficha Técnica</h3>
-                    <p>Apresentação concisa e padronizada sobre um projeto ou produto.</p>
-                </a>
-                <!-- Card 6 -->
-                <a href="projeto.html#prototipo" class="card glass interactive no-decoration">
-                    <div class="card-icon"><i class="fa-solid fa-cubes"></i></div>
-                    <h3>Protótipos com Manual</h3>
-                    <p>Modelo em escala, acompanhado de instruções de funcionamento.</p>
-                </a>
-                <!-- Card 7 -->
-                <a href="projeto.html#maquete" class="card glass interactive no-decoration">
-                    <div class="card-icon"><i class="fa-solid fa-city"></i></div>
-                    <h3>Maquete com Memorial</h3>
-                    <p>Representação 3D com documento descrevendo materiais e procedimentos.</p>
-                </a>
-                <!-- Card 8 -->
-                <a href="projeto.html#negocios" class="card glass interactive no-decoration">
-                    <div class="card-icon"><i class="fa-solid fa-chart-line"></i></div>
-                    <h3>Plano de Negócios</h3>
-                    <p>Especifica um negócio novo/existente com pesquisa e viabilidade.</p>
-                </a>
-                <!-- Card 9 -->
-                <a href="projeto.html#evtec" class="card glass interactive no-decoration">
-                    <div class="card-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
-                    <h3>EVTEC</h3>
-                    <p>Estudo de viabilidade tecnológica, econômica e financeira de um negócio.</p>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <section id="fases" class="section bg-light">
-        <div class="container">
-            <div class="section-header text-center">
-                <h2>Guia de Elaboração e Fases</h2>
-                <p>O TCC é construído durante todo o curso. Veja as 4 fases obrigatórias!</p>
-            </div>
-
-            <div class="timeline">
-                <div class="timeline-item glass" style="--delay: 1">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <h3>Pesquisa</h3>
-                        <p>O início de tudo. Levante os dados e referências que vão embasar o seu trabalho.</p>
-                    </div>
-                </div>
-                <div class="timeline-item glass" style="--delay: 2">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <h3>Planejamento</h3>
-                        <p>Estruture as ideias, defina cronogramas e monte o projeto base.</p>
-                    </div>
-                </div>
-                <div class="timeline-item glass" style="--delay: 3">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <h3>Desenvolvimento</h3>
-                        <p>A mão na massa! Produção do material, protótipos, redação ou testes.</p>
-                    </div>
-                </div>
-                <div class="timeline-item glass" style="--delay: 4">
-                    <div class="step-number">4</div>
-                    <div class="step-content">
-                        <h3>Apresentação</h3>
-                        <p>Mostre ao mundo (e à banca) o incrível resultado do seu estudo.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="note-box glass mt-4">
-                <i class="fa-solid fa-info-circle icon-info"></i>
-                <p><strong>Nota importante:</strong> A disciplina de <em>Metodologia do Trabalho Científico</em> é
-                    ministrada logo no 1º Série/Módulo I para preparar o aluno para esta jornada!</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="elementos" class="section">
-        <div class="container">
-            <div class="section-header text-center">
-                <h2>Elementos do Projeto 🧩</h2>
-                <p>Todo TCC precisa de uma base sólida. Conheça as partes essenciais que sustentam a sua pesquisa!</p>
-            </div>
-
-            <div class="elementos-grid">
-                <a href="projeto.html#problema" class="elemento-card glass interactive no-decoration">
-                    <div class="elemento-icon"><i class="fa-solid fa-bullseye"></i></div>
-                    <h3>Problema de Pesquisa</h3>
-                    <p>A grande pergunta que o seu trabalho quer responder. O que te incomoda, o que falta ou o que
-                        precisa ser resolvido?</p>
-                </a>
-                <a href="projeto.html#justificativa" class="elemento-card glass interactive no-decoration">
-                    <div class="elemento-icon"><i class="fa-solid fa-balance-scale"></i></div>
-                    <h3>Justificativa</h3>
-                    <p>O "porquê" do seu trabalho. É aqui que você vende a ideia, convencendo o leitor da
-                        importância e relevância do seu tema para a sociedade.</p>
-                </a>
-                <a href="projeto.html#objetivo-geral" class="elemento-card glass interactive no-decoration">
-                    <div class="elemento-icon"><i class="fa-solid fa-flag-checkered"></i></div>
-                    <h3>Objetivo Geral</h3>
-                    <p>Aonde você quer chegar! A meta principal do projeto escrita sempre com um verbo no infinitivo
-                        (ex: Analisar, Desenvolver, Propor).</p>
-                </a>
-                <a href="projeto.html#objetivo-especifico" class="elemento-card glass interactive no-decoration">
-                    <div class="elemento-icon"><i class="fa-solid fa-list-check"></i></div>
-                    <h3>Objetivos Específicos</h3>
-                    <p>O passo a passo (metas menores) que você precisa cumprir para conseguir atingir o seu Objetivo
-                        Geral. Como pequenas missões!</p>
-                </a>
-                <a href="projeto.html#referencial" class="elemento-card glass interactive no-decoration"
-                    style="grid-column: 1 / -1; max-width: 800px; margin: 0 auto; width: 100%;">
-                    <div class="elemento-icon"
-                        style="background: linear-gradient(135deg, var(--primary), var(--tertiary));"><i
-                            class="fa-solid fa-book-journal-whills"></i></div>
-                    <h3>Referencial Teórico</h3>
-                    <p>A base teórica e científica do seu trabalho. É o embasamento feito através do que outros
-                        autores, livros e artigos já estudaram sobre o seu tema. Nada sai do nada!</p>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <section id="regras" class="section">
-        <div class="container">
-            <div class="grid rules-layout">
-                <div class="rules-text">
-                    <h2>Regras Gerais &amp; Avaliação ⚖️</h2>
-                    <p>Tudo o que você precisa saber para não ter surpresas indesejáveis.</p>
-
-                    <ul class="fancy-list">
-                        <li>
-                            <i class="fa-solid fa-users"></i>
-                            <div>
-                                <strong>Equipes</strong>
-                                <p>Pode ser feito em grupos de até <strong>05 alunos</strong>.</p>
-                            </div>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-hourglass-end"></i>
-                            <div>
-                                <strong>Prazo Limite</strong>
-                                <p>Até 5 anos para concluir o curso técnico após o início.</p>
-                            </div>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-ban text-danger"></i>
-                            <div>
-                                <strong>Reprovação</strong>
-                                <p>Ocorre se não entregar nos prazos ou faltar à apresentação sem justificativa legal.
-                                </p>
-                            </div>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-chalkboard-user text-success"></i>
-                            <div>
-                                <strong>Apresentação Oral</strong>
-                                <p>Seção pública perante banca. Tempo máximo: <strong>30 minutos</strong>.</p>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="banca-box glass">
-                    <h3>O que a Banca avalia? 🔍</h3>
-                    <div class="criteria-tags">
-                        <span class="tag">Postura Pessoal</span>
-                        <span class="tag">Adequação aos Objetivos</span>
-                        <span class="tag">Domínio do Assunto</span>
-                        <span class="tag">Sequência Lógica</span>
-                        <span class="tag">Vocabulário Utilizado</span>
-                    </div>
-                    <div class="banca-illustration">
-                        <i class="fa-solid fa-clipboard-check"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="modelos" class="section bg-light">
-        <div class="container">
-            <div class="section-header text-center">
-                <h2>Modelos Práticos de Pesquisa 📂</h2>
-                <p>Precisa de inspiração? Acesse modelos reais de diferentes tipos de pesquisa para entender na
-                    prática como a estrutura funciona e ter um ponto de partida para o seu!</p>
-            </div>
-
-            <div class="grid cards-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
-                <a href="projeto.html#modelo-artigo" class="card glass interactive no-decoration text-center">
-                    <div class="card-icon" style="margin: 0 auto 20px;"><i class="fa-regular fa-file-word"></i></div>
-                    <h3>Modelo de Artigo</h3>
-                    <p>Estrutura padrão de Introdução, Revisão, Método e Conclusão.</p>
-                </a>
-                <a href="projeto.html#modelo-tecnologia" class="card glass interactive no-decoration text-center">
-                    <div class="card-icon" style="margin: 0 auto 20px;"><i class="fa-solid fa-code"></i></div>
-                    <h3>Modelo de Tecnologia</h3>
-                    <p>Como documentar a criação de um software ou produto inovador.</p>
-                </a>
-                <a href="projeto.html#modelo-negocios" class="card glass interactive no-decoration text-center">
-                    <div class="card-icon" style="margin: 0 auto 20px;"><i class="fa-solid fa-chart-line"></i></div>
-                    <h3>Modelo de Negócios</h3>
-                    <p>Exemplo prático de viabilidade técnica e financeira.</p>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <section id="exemplos" class="section examples-section">
-        <div class="container text-center">
-            <div class="section-header">
-                <h2>Exemplos de Produtos TCC 🎨</h2>
-                <p>O TCC não precisa ser só texto! Dependendo do seu curso, veja o que pode ser criado:</p>
-            </div>
-
-            <div class="examples-carousel">
-                <div class="example-pill"><i class="fa-solid fa-vial"></i> Novas técnicas ou procedimentos</div>
-                <div class="example-pill"><i class="fa-solid fa-mobile-screen"></i> Softwares e Aplicativos</div>
-                <div class="example-pill"><i class="fa-solid fa-music"></i> Apresentações Musicais</div>
-                <div class="example-pill"><i class="fa-solid fa-palette"></i> Artes, Dança e Teatro</div>
-                <div class="example-pill"><i class="fa-solid fa-briefcase"></i> Modelagem de Negócios</div>
-                <div class="example-pill"><i class="fa-solid fa-utensils"></i> Pratos e Cardápios</div>
-                <div class="example-pill"><i class="fa-solid fa-video"></i> Áudios e Vídeos</div>
-                <div class="example-pill"><i class="fa-solid fa-folder-open"></i> Portfólios Profissionais</div>
-            </div>
-
-            <div class="cta-bottom mt-5">
-                <h3>Pronto para começar sua jornada?</h3>
-                <p>Escolha sua modalidade, junte sua equipe e transforme ideias em realidade!</p>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <p>&copy; 2026 - Guia do TCC para Cursos Técnicos | Design Lúdico &amp; Profissional</p>
-        <div class="developer-info">
-            <p>Desenvolvido por <span class="dev-name">Alan Ricardo</span> <i class="fa-solid fa-code"
-                    style="color: var(--primary); margin-left: 5px;"></i></p>
-            <div class="social-links">
-                <a href="#" class="social-icon no-decoration" target="_blank" title="LinkedIn"><i
-                        class="fa-brands fa-linkedin-in"></i></a>
-                <a href="#" class="social-icon no-decoration" target="_blank" title="GitHub"><i
-                        class="fa-brands fa-github"></i></a>
-                <a href="#" class="social-icon no-decoration" target="_blank" title="Instagram"><i
-                        class="fa-brands fa-instagram"></i></a>
-                <a href="#" class="social-icon no-decoration" target="_blank" title="WhatsApp"><i
-                        class="fa-brands fa-whatsapp"></i></a>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Auth Modal Overlay -->
-    <div id="authModal" class="modal-overlay">
-        <div class="modal-content glass">
-            <span class="close-modal" id="closeAuthModal">&times;</span>
-            <div class="modal-header">
-                <h2 id="modalTitle">Entrar na Plataforma</h2>
-                <p id="modalSubtitle">Faça login para acessar suas turmas e equipes.</p>
-            </div>
-
-            <form id="authForm" class="auth-form">
-                <div class="input-group" id="nameGroup" style="display: none;">
-                    <i class="fa-solid fa-user"></i>
-                    <input type="text" id="nameInput" placeholder="Seu Nome Completo">
-                </div>
-                <div class="input-group">
-                    <i class="fa-solid fa-envelope"></i>
-                    <input type="email" id="emailInput" placeholder="Seu E-mail" required>
-                </div>
-                <div class="input-group">
-                    <i class="fa-solid fa-lock"></i>
-                    <input type="password" id="passwordInput" placeholder="Sua Senha" required>
-                </div>
-
-                <div class="input-group" id="roleGroup" style="display: none;">
-                    <i class="fa-solid fa-id-badge"></i>
-                    <select id="roleInput">
-                        <option value="aluno" selected>Sou Aluno</option>
-                        <option value="professor">Sou Professor</option>
-                    </select>
-                </div>
-                <!-- Master code (only visible when Professor selected) -->
-                <div class="input-group" id="masterCodeGroup" style="display: none;">
-                    <i class="fa-solid fa-key"></i>
-                    <input type="password" id="masterCodeInput" placeholder="Código de Professor" autocomplete="off">
-                </div>
-
-                <button type="submit" id="mainAuthBtn" class="btn btn-primary w-100 mt-4">Entrar</button>
-
-                <div style="text-align: center; margin: 15px 0; color: var(--text-light); font-size: 0.9rem;">OU</div>
-
-                <button type="button" id="btnGoogleAuth" class="btn w-100"
-                    style="background: white; color: #333; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google"
-                        style="width: 20px;">
-                    <span id="googleBtnText">Entrar com Google</span>
-                </button>
-
-                <p class="mt-4 text-center auth-switch">
-                    <span id="switchText">Ainda não tem conta?</span>
-                    <a href="#" id="authSwitchBtn">Criar nova conta</a>
-                </p>
-                <div id="authErrorMsg" class="error-msg" style="display: none;">Erro ao autenticar.</div>
-            </form>
+        <div class="assinatura">
+            Atenciosamente,<br>
+            <strong>Alan Ricardo</strong>
         </div>
     </div>
 
-    <!-- Google Role Modal (for new Google users) -->
-    <div id="googleRoleModal" style="
-        display:none; position:fixed; inset:0; z-index:10000;
-        background:rgba(0,0,0,0.6); backdrop-filter:blur(6px);
-        align-items:center; justify-content:center;">
-        <div class="modal-content glass" style="max-width:420px; width:90%; padding:35px; text-align:center;">
-            <h2 style="margin-bottom:8px;">Bem-vindo! 🎓</h2>
-            <p style="color:var(--text-light); margin-bottom:25px;">Qual é o seu papel na plataforma?</p>
-
-            <div style="display:flex; gap:15px; margin-bottom:20px;">
-                <button id="gRoleAluno" class="btn btn-primary" style="flex:1; padding:18px; font-size:1rem;">
-                    <i class="fa-solid fa-user-graduate"
-                        style="display:block; font-size:1.8rem; margin-bottom:8px;"></i>Sou Aluno
-                </button>
-                <button id="gRoleProf" class="btn"
-                    style="flex:1; padding:18px; font-size:1rem; background:var(--tertiary); color:white;">
-                    <i class="fa-solid fa-chalkboard-user"
-                        style="display:block; font-size:1.8rem; margin-bottom:8px;"></i>Sou Professor
-                </button>
-            </div>
-
-            <div id="gPendingNote"
-                style="display:none; background:#fff8e1; border-radius:12px; padding:12px 15px; margin-bottom:15px; font-size:0.85rem; color:#7c5e0e; text-align:left;">
-                <i class="fa-solid fa-clock"></i> Sua conta será criada com status <strong>Pendente</strong>.
-                Após o cadastro, aguarde o administrador <strong>ativar sua conta</strong> para ter acesso completo.
-            </div>
-
-            <button id="gRoleConfirm" class="btn btn-primary w-100" style="display:none;">
-                Confirmar e Entrar →
-            </button>
-            <p id="gRoleError" style="color:var(--secondary); font-size:0.85rem; margin-top:10px; display:none;"></p>
-        </div>
-    </div>
-
-    <!-- Scripts -->
-    <script src="script.js"></script>
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyAtws25Kse-YsiEGOpxyztCa7a4q305T5I",
-            authDomain: "projetotcc-37266.firebaseapp.com",
-            projectId: "projetotcc-37266",
-            storageBucket: "projetotcc-37266.firebasestorage.app",
-            messagingSenderId: "11620412356",
-            appId: "1:11620412356:web:aee78b6248dfa3b4e69291"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // ====== MASTER CODE (change this to your preferred code!) ======
-        const MASTER_CODE_PROFESSOR = "TCC2026PROF";
-
-        // Save user profile to Firestore (non-blocking - doesn't delay navigation)
-        function saveUserProfile(user, role = "aluno") {
-            const docRef = doc(db, "users", user.uid);
-            getDoc(docRef).then(snap => {
-                if (!snap.exists()) {
-                    setDoc(docRef, {
-                        uid: user.uid,
-                        name: user.displayName || user.email.split('@')[0],
-                        email: user.email,
-                        role: role,
-                        createdAt: new Date().toISOString()
-                    }).catch(err => console.warn("Erro ao salvar perfil:", err));
-                }
-            }).catch(err => console.warn("Erro ao verificar perfil:", err));
-        }
-
-        // Auth State Observer — update UI when logged in
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                const docSnap = await getDoc(doc(db, "users", user.uid)).catch(() => null);
-
-                if (docSnap && docSnap.exists()) {
-                    // User is fully registered. Instead of forcing redirect, update the buttons
-                    // so they can read the guide and click "Ir para Dashboard" when ready.
-                    document.querySelectorAll('.btn-open-auth').forEach(btn => {
-                        // Change text depending on the button element type
-                        if (btn.tagName === 'DIV') {
-                            btn.innerHTML = '<i class="fa-solid fa-table-columns"></i><span>Dashboard</span>';
-                        } else {
-                            btn.innerHTML = 'Ir para o Dashboard <i class="fa-solid fa-arrow-right-to-bracket"></i>';
-                        }
-
-                        // Replace the old event listener by cloning or overriding click
-                        btn.onclick = (e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            window.location.href = 'dashboard.html';
-                        };
-                    });
-                }
-            }
-        });
-
-        function showGoogleRoleModal(googleUser) {
-            const modal = document.getElementById('googleRoleModal');
-            modal.style.display = 'flex';
-            let selectedRole = null;
-
-            document.getElementById('gRoleAluno').addEventListener('click', () => {
-                selectedRole = 'aluno';
-                document.getElementById('gRoleAluno').style.outline = '3px solid var(--primary)';
-                document.getElementById('gRoleProf').style.outline = 'none';
-                document.getElementById('gPendingNote').style.display = 'none';
-                document.getElementById('gRoleConfirm').style.display = 'block';
-            });
-
-            document.getElementById('gRoleProf').addEventListener('click', () => {
-                selectedRole = 'professor';
-                document.getElementById('gRoleProf').style.outline = '3px solid var(--tertiary)';
-                document.getElementById('gRoleAluno').style.outline = 'none';
-                document.getElementById('gPendingNote').style.display = 'block';
-                document.getElementById('gRoleConfirm').style.display = 'block';
-            });
-
-            document.getElementById('gRoleConfirm').addEventListener('click', async () => {
-                const errEl = document.getElementById('gRoleError');
-                errEl.style.display = 'none';
-                if (!selectedRole) {
-                    errEl.innerText = 'Selecione seu papel antes de confirmar.';
-                    errEl.style.display = 'block';
-                    return;
-                }
-                document.getElementById('gRoleConfirm').innerText = 'Processando...';
-                document.getElementById('gRoleConfirm').disabled = true;
-
-                const userData = {
-                    uid: googleUser.uid,
-                    name: googleUser.displayName || googleUser.email.split('@')[0],
-                    email: googleUser.email,
-                    role: selectedRole,
-                    status: selectedRole === 'professor' ? 'pendente' : 'ativo',
-                    createdAt: new Date().toISOString()
-                };
-                try {
-                    await setDoc(doc(db, "users", googleUser.uid), userData);
-                    window.location.href = 'dashboard.html';
-                } catch (e) {
-                    console.error("Erro ao criar user", e);
-                    errEl.innerText = 'Erro ao finalizar o cadastro. Tente novamente.';
-                    errEl.style.display = 'block';
-                    document.getElementById('gRoleConfirm').innerText = 'Confirmar e Entrar →';
-                    document.getElementById('gRoleConfirm').disabled = false;
-                }
-            });
-        }
-
-        // === UI Logic ===
-        let isLoginMode = true;
-
-        // Note: The onclick will be overridden by onAuthStateChanged if the user is already logged in.
-        document.querySelectorAll('.btn-open-auth').forEach(btn => {
-            btn.onclick = () => document.getElementById('authModal').classList.add('active');
-        });
-        document.getElementById('closeAuthModal').addEventListener('click', () => {
-            document.getElementById('authModal').classList.remove('active');
-        });
-
-        document.getElementById('authSwitchBtn').addEventListener('click', (e) => {
-            e.preventDefault();
-            isLoginMode = !isLoginMode;
-            document.getElementById('nameGroup').style.display = isLoginMode ? 'none' : 'flex';
-            document.getElementById('roleGroup').style.display = isLoginMode ? 'none' : 'flex';
-            document.getElementById('masterCodeGroup').style.display = 'none'; // reset
-            document.getElementById('modalTitle').innerText = isLoginMode ? 'Entrar na Plataforma' : 'Criar Conta';
-            document.getElementById('modalSubtitle').innerText = isLoginMode ? 'Faça login para acessar suas turmas e equipes.' : 'Junte-se à plataforma de gestão de TCC.';
-            document.getElementById('mainAuthBtn').innerText = isLoginMode ? 'Entrar' : 'Cadastrar';
-            document.getElementById('switchText').innerText = isLoginMode ? 'Ainda não tem conta?' : 'Já possui uma conta?';
-            document.getElementById('authSwitchBtn').innerText = isLoginMode ? 'Criar nova conta' : 'Fazer login';
-            document.getElementById('googleBtnText').innerText = isLoginMode ? 'Entrar com Google' : 'Cadastrar com Google';
-            document.getElementById('authErrorMsg').style.display = 'none';
-            if (isLoginMode) {
-                document.getElementById('nameInput').removeAttribute('required');
-            } else {
-                document.getElementById('nameInput').setAttribute('required', 'true');
-            }
-        });
-
-        // Show/hide master code field based on role selection
-        document.getElementById('roleInput').addEventListener('change', function () {
-            const masterCodeGroup = document.getElementById('masterCodeGroup');
-            masterCodeGroup.style.display = this.value === 'professor' ? 'flex' : 'none';
-            if (this.value !== 'professor') {
-                document.getElementById('masterCodeInput').value = '';
-            }
-        });
-
-        // Email/Password Auth
-        document.getElementById('authForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('mainAuthBtn');
-            const errMsg = document.getElementById('authErrorMsg');
-            const email = document.getElementById('emailInput').value.trim();
-            const password = document.getElementById('passwordInput').value;
-
-            btn.disabled = true;
-            btn.innerText = 'Processando...';
-            errMsg.style.display = 'none';
-
-            try {
-                if (isLoginMode) {
-                    // SignIn is naturally handled by onAuthStateChanged if successful
-                    await signInWithEmailAndPassword(auth, email, password);
-                } else {
-                    const name = document.getElementById('nameInput').value.trim();
-                    const role = document.getElementById('roleInput').value;
-                    const cred = await createUserWithEmailAndPassword(auth, email, password);
-                    await setDoc(doc(db, "users", cred.user.uid), {
-                        uid: cred.user.uid, name, email, role,
-                        status: role === 'professor' ? 'pendente' : 'ativo',
-                        createdAt: new Date().toISOString()
-                    });
-                    window.location.href = 'dashboard.html';
-                }
-            } catch (error) {
-                console.error(error);
-                errMsg.style.display = 'block';
-                const msgs = {
-                    'auth/email-already-in-use': 'Este e-mail já está cadastrado. Tente fazer login.',
-                    'auth/invalid-email': 'E-mail inválido. Verifique o formato: nome@dominio.com',
-                    'auth/invalid-credential': 'E-mail ou senha incorretos.',
-                    'auth/weak-password': 'A senha deve ter pelo menos 6 caracteres.',
-                    'auth/user-not-found': 'Nenhuma conta encontrada com este e-mail.',
-                    'auth/wrong-password': 'Senha incorreta. Tente novamente.',
-                    'auth/operation-not-allowed': 'Método de login não ativado no Firebase Console.',
-                    'auth/too-many-requests': 'Muitas tentativas. Aguarde alguns minutos e tente novamente.',
-                    'app/invalid-master-code': error.message
-                };
-                errMsg.innerText = msgs[error.code] || ('Erro: ' + error.message);
-                btn.disabled = false;
-                btn.innerText = isLoginMode ? 'Entrar' : 'Cadastrar';
-            }
-        });
-
-        // Google Auth (via popup - highly reliable for local & web)
-        document.getElementById('btnGoogleAuth').addEventListener('click', async () => {
-            const errMsg = document.getElementById('authErrorMsg');
-            const googleBtnText = document.getElementById('googleBtnText');
-            errMsg.style.display = 'none';
-
-            if (window.location.protocol === 'file:') {
-                errMsg.style.display = 'block';
-                errMsg.innerHTML = "Google Auth não funciona com <strong>file://</strong>. Use o <strong>Live Server</strong> no VSCode.";
-                return;
-            }
-
-            googleBtnText.innerText = 'Abrindo Google...';
-            document.getElementById('btnGoogleAuth').disabled = true;
-
-            try {
-                const provider = new GoogleAuthProvider();
-                const result = await signInWithPopup(auth, provider);
-
-                // Immediately check if user is already registered in DB
-                const docSnap = await getDoc(doc(db, "users", result.user.uid)).catch(() => null);
-                if (docSnap && docSnap.exists()) {
-                    window.location.href = 'dashboard.html';
-                } else {
-                    // New user -> ask for role
-                    showGoogleRoleModal(result.user);
-                    googleBtnText.innerText = 'Entrar com Google';
-                    document.getElementById('btnGoogleAuth').disabled = false;
-                }
-
-            } catch (error) {
-                console.error("Google Auth Error:", error);
-                document.getElementById('btnGoogleAuth').disabled = false;
-                googleBtnText.innerText = 'Entrar com Google';
-                errMsg.style.display = 'block';
-                errMsg.innerText = 'Erro: ' + (error.message || error.code);
-            }
-        });
-    </script>
+</body>
+</html>
